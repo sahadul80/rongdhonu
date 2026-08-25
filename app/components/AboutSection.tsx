@@ -20,7 +20,7 @@ export default function AboutSection() {
               </span>
             </div>
             <h2 className="text-3xl font-black uppercase leading-tight text-foreground sm:text-5xl">
-              A FINISHING PARTNER FOR YOUR <span className="text-rainbow">SPACE</span>
+              A FINISHING PARTNER FOR YOUR <span className="text-rainbow animate-rainbow">SPACE</span>
             </h2>
             <p className="mt-5 text-sm leading-relaxed text-muted sm:text-base">
               {BRAND.name} is positioned around a simple promise: Color, Design and

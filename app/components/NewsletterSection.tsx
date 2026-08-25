@@ -18,7 +18,7 @@ export default function NewsletterSection() {
         <div className="absolute inset-x-0 top-0 h-1 bg-rainbow" />
         <BrandLogo size={72} showTagline />
         <h2 className="mt-6 text-2xl font-black uppercase text-foreground sm:text-4xl">
-          DISCUSS YOUR <span className="text-rainbow">PROJECT</span>
+          DISCUSS YOUR <span className="text-rainbow animate-rainbow">PROJECT</span>
         </h2>
         <p className="mx-auto mt-3 max-w-xl text-sm leading-relaxed text-muted sm:text-base">
           Leave your email and start a conversation about your painting, color,

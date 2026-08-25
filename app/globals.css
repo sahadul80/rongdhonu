@@ -34,8 +34,12 @@
     var(--rd-orange),
     var(--rd-yellow),
     var(--rd-green),
+    var(--rd-teal),
     var(--rd-blue),
-    var(--rd-purple)
+    var(--rd-indigo),
+    var(--rd-purple),
+    var(--rd-pink),
+    var(--rd-red)
   );
 }
 
@@ -87,7 +91,6 @@ body {
   font-family: Arial, Helvetica, sans-serif;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
-  transition: background-color 0.25s ease, color 0.25s ease;
 }
 
 *,
@@ -169,8 +172,16 @@ body {
 }
 
 .animate-rainbow {
-  background-size: 200% 100%;
-  animation: rainbow-shift 6s linear infinite;
+  background-size: 220% 100%;
+  animation: rainbow-shift 8s linear infinite;
+  will-change: background-position;
+}
+
+/* Keep the animated gradient lightweight: only the background position changes. */
+@media (hover: none) and (pointer: coarse) {
+  .animate-rainbow {
+    animation-duration: 10s;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -178,7 +189,38 @@ body {
     scroll-behavior: auto;
   }
 
-  .animate-rainbow {
-    animation: none;
+  .animate-rainbow { animation: none; }
+}
+
+/* Mobile responsiveness and overflow protection */
+html, body {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+img, svg, video, canvas {
+  max-width: 100%;
+}
+
+section {
+  scroll-margin-top: 4.5rem;
+}
+
+.swiper {
+  width: 100%;
+}
+
+.swiper-pagination {
+  bottom: 0 !important;
+}
+
+@media (max-width: 639px) {
+  body {
+    overflow-x: clip;
+  }
+
+  button, a, input {
+    -webkit-tap-highlight-color: transparent;
   }
 }

@@ -20,7 +20,7 @@ export default function ContactSection() {
               </span>
             </div>
             <h2 className="text-3xl font-black uppercase text-foreground sm:text-5xl">
-              READY TO <span className="text-rainbow">TRANSFORM?</span>
+              READY TO <span className="text-rainbow animate-rainbow">TRANSFORM?</span>
             </h2>
             <p className="mt-4 text-sm leading-relaxed text-muted sm:text-base">
               Tell us about the space, the finish you want and the type of work you need.

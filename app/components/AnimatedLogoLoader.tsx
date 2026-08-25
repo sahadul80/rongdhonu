@@ -29,9 +29,9 @@ export default function AnimatedLogoLoader({ duration = 1800, onComplete }: Anim
       aria-label="Loading Rong Dhonu Renovation Limited"
     >
       <div className="relative flex flex-col items-center">
-        <div className="absolute -inset-8 rounded-full border border-rd-red/20 animate-ping" />
+        <div className="absolute -inset-8 rounded-full border border-rd-red/20 animate-pulse" />
         <div className="absolute -inset-5 rounded-full border border-rd-amber/30 animate-[spin_3s_linear_infinite]" />
-        <div className="relative h-32 w-32 sm:h-40 sm:w-40 overflow-hidden rounded-full bg-white/50 backdrop-blur-2xl shadow-2xl animate-[pulse_1.8s_ease-in-out_infinite]">
+        <div className="relative h-32 w-32 sm:h-40 sm:w-40 overflow-hidden rounded-full bg-white/50 shadow-lg">
           <Image
             src={BRAND.assets.logo}
             alt={BRAND.name}

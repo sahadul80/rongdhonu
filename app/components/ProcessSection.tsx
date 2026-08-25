@@ -15,7 +15,7 @@ export default function ProcessSection() {
             <div className="h-px w-8 bg-rainbow sm:w-12" />
           </div>
           <h2 className="text-3xl font-black uppercase text-foreground sm:text-5xl">
-            FROM <span className="text-rainbow">IDEA</span> TO FINISH
+            FROM <span className="text-rainbow animate-rainbow">IDEA</span> TO FINISH
           </h2>
         </div>
 

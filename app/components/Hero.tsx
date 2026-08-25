@@ -12,7 +12,7 @@ const highlights = [
 
 export default function Hero() {
   return (
-    <section className="relative flex min-h-screen items-center overflow-hidden bg-background pt-16">
+    <section className="relative flex min-h-[100svh] items-center overflow-hidden bg-background pt-16 lg:min-h-[calc(100svh-4rem)] lg:h-[calc(100svh-4rem)]">
       <div
         className="absolute inset-0 opacity-[0.04] dark:opacity-[0.06]"
         style={{
@@ -27,8 +27,8 @@ export default function Hero() {
       <div className="pointer-events-none absolute left-1/2 top-0 h-40 w-40 rounded-full bg-rd-green/10 blur-[60px] sm:h-80 sm:w-80 sm:blur-[100px]" />
       <div className="absolute bottom-0 left-0 top-0 w-0.5 bg-rainbow opacity-70 sm:w-1" />
 
-      <div className="relative mx-auto w-full max-w-7xl px-4 py-10 sm:px-6 sm:py-16 lg:px-8">
-        <div className="grid items-center gap-10 lg:grid-cols-[1.15fr_0.85fr] lg:gap-16">
+      <div className="relative mx-auto flex w-full max-w-7xl items-center px-4 py-10 sm:px-6 sm:py-16 lg:h-full lg:px-8 lg:py-8">
+        <div className="grid w-full items-center gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:gap-8 xl:gap-12">
           <div>
             <div className="mb-5 flex items-center gap-2 sm:mb-7 sm:gap-3">
               <div className="h-px w-8 bg-rainbow sm:w-12" />
@@ -37,7 +37,7 @@ export default function Hero() {
               </span>
             </div>
 
-            <h1 className="max-w-3xl text-4xl font-black uppercase leading-[0.95] text-foreground sm:text-6xl lg:text-7xl">
+            <h1 className="max-w-3xl text-[clamp(2.5rem,12vw,4rem)] font-black uppercase leading-[0.95] text-foreground sm:text-6xl lg:text-7xl">
               COLOR.
               <br />
               DESIGN.
@@ -61,24 +61,24 @@ export default function Hero() {
               ))}
             </div>
 
-            <div className="mt-8 flex flex-wrap gap-3 sm:mt-10 sm:gap-4">
+            <div className="mt-8 flex flex-col gap-3 sm:mt-10 sm:flex-row sm:flex-wrap sm:gap-4">
               <a
                 href="#services"
-                className="rounded-sm bg-rd-red px-5 py-3 text-[10px] font-black uppercase tracking-widest text-white transition-colors hover:bg-rd-pink sm:px-7 sm:py-4 sm:text-xs"
+                className="w-full text-center rounded-sm bg-rd-red px-5 py-3 sm:w-auto text-[10px] font-black uppercase tracking-widest text-white transition-colors hover:bg-rd-pink sm:px-7 sm:py-4 sm:text-xs"
               >
                 Explore Services
               </a>
               <a
                 href="#contact"
-                className="rounded-sm border border-border px-5 py-3 text-[10px] font-black uppercase tracking-widest text-foreground transition-colors hover:border-rd-amber hover:text-rd-amber sm:px-7 sm:py-4 sm:text-xs"
+                className="w-full text-center rounded-sm border border-border px-5 py-3 sm:w-auto text-[10px] font-black uppercase tracking-widest text-foreground transition-colors hover:border-rd-amber hover:text-rd-amber sm:px-7 sm:py-4 sm:text-xs"
               >
                 Request a Consultation
               </a>
             </div>
           </div>
 
-          <div className="relative mx-auto w-full max-w-lg">
-            <section className="relative mx-auto max-w-md">
+          <div className="relative mx-auto w-full min-w-0 overflow-hidden lg:max-w-[560px]">
+            <section className="relative mx-auto w-full max-w-md lg:max-w-full">
               <SwiperCarousel slides={PROCESS_STEPS} className="relative" componentSize="lg" />
             </section>
           </div>

@@ -18,7 +18,7 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
   return (
     <>
       <div className="fixed inset-0 z-40 bg-black/60" onClick={onClose} />
-      <aside className="fixed right-0 top-0 z-50 h-full w-72 border-l border-border bg-surface p-6 shadow-xl">
+      <aside className="fixed right-0 top-0 z-50 h-[100dvh] w-[min(22rem,88vw)] overflow-y-auto border-l border-border bg-surface p-6 shadow-xl">
         <div className="absolute inset-y-0 left-0 w-1 bg-rainbow" />
         <div className="flex items-center justify-between">
           <span className="text-[10px] font-black uppercase tracking-widest text-muted">Menu</span>

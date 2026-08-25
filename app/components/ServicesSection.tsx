@@ -44,7 +44,7 @@ export default function ServicesSection() {
             </span>
           </div>
           <h2 className="text-3xl font-black uppercase leading-tight text-foreground sm:text-5xl">
-            FINISHES THAT <span className="text-rainbow">TRANSFORM</span>
+            FINISHES THAT <span className="text-rainbow animate-rainbow">TRANSFORM</span>
           </h2>
           <p className="mt-3 text-sm leading-relaxed text-muted sm:mt-4 sm:text-base">
             From general painting to decorative marble, Ambrose and texture work, we

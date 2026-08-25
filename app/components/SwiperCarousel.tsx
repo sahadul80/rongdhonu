@@ -1,131 +1,90 @@
-'use client'
-import { useRef, useEffect } from 'react'
-import Image from 'next/image'
-import Link from 'next/link'
+"use client";
 
-// Swiper components
-import { Swiper, SwiperSlide } from 'swiper/react'
-import { EffectCoverflow, Navigation, Pagination, Autoplay } from 'swiper/modules'
-import type { Swiper as SwiperType } from 'swiper'
-import 'swiper/css'
-import 'swiper/css/effect-coverflow'
-import 'swiper/css/navigation'
-import 'swiper/css/pagination'
-import { ProcessSteps } from '../types/rong-dhonu'
+import { useRef } from "react";
+import Image from "next/image";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Pagination, Autoplay, EffectCoverflow } from "swiper/modules";
+import type { Swiper as SwiperType } from "swiper";
+import "swiper/css";
+import "swiper/css/pagination";
+import "swiper/css/effect-coverflow";
+import type { ProcessSteps } from "../types/rong-dhonu";
 
 interface SwiperCarouselProps {
   slides: ProcessSteps[];
   className?: string;
-  componentSize?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
+  componentSize?: "xs" | "sm" | "md" | "lg" | "xl";
 }
 
-const SwiperCarousel: React.FC<SwiperCarouselProps> = ({ 
-  slides, 
-  className = '',
-  componentSize = 'sm'
-}) => {
-  const swiperRef = useRef<SwiperType | null>(null)
-  const nextArrowRef = useRef<HTMLDivElement>(null)
-  const prevArrowRef = useRef<HTMLDivElement>(null)
-
-  // Size mapping for container dimensions
+export default function SwiperCarousel({
+  slides,
+  className = "",
+  componentSize = "sm",
+}: SwiperCarouselProps) {
+  const swiperRef = useRef<SwiperType | null>(null);
   const sizeClasses = {
-    xs: 'max-w-xs max-h-xs',      // 320px
-    sm: 'max-w-sm max-h-sm',      // 384px
-    md: 'max-w-md max-h-md',      // 448px
-    lg: 'max-w-lg max-h-lg',      // 512px
-    xl: 'max-w-xl max-h-xl'       // 576px
-  }
+    xs: "max-w-[280px] sm:max-w-xs",
+    sm: "max-w-[300px] sm:max-w-sm",
+    md: "max-w-[320px] sm:max-w-md",
+    lg: "max-w-[340px] sm:max-w-lg",
+    xl: "max-w-[360px] sm:max-w-xl",
+  };
 
-  useEffect(() => {
-    // Initialize navigation after component mounts
-    if (swiperRef.current && nextArrowRef.current && prevArrowRef.current) {
-      swiperRef.current.navigation.init()
-      swiperRef.current.navigation.update()
-    }
-  }, [])
-
-  // Don't render if no slides
-  if (!slides || slides.length === 0) {
-    return null
-  }
+  if (!slides?.length) return null;
 
   return (
-    <div className={`relative w-full ${sizeClasses[componentSize]} mx-auto ${className}`}>
+    <div className={`w-full min-w-0 ${sizeClasses[componentSize]} ${className}`}>
       <Swiper
-        onSwiper={(swiper) => {
-          swiperRef.current = swiper
-        }}
-        effect={'coverflow'}
-        grabCursor={true}
-        centeredSlides={true}
-        slidesPerView={'auto'}
-        spaceBetween={20}
-        loop={true}
-        autoplay={{
-          delay: 4000,
-          disableOnInteraction: false,
-          pauseOnMouseEnter: true,
-        }}
+        onSwiper={(swiper) => (swiperRef.current = swiper)}
+        grabCursor
+        centeredSlides
+        slidesPerView={1}
+        spaceBetween={-6}
+        effect="coverflow"
         coverflowEffect={{
-          rotate: 0,
+          rotate: 12,
           stretch: 0,
-          depth: 100,
-          modifier: 2.5,
+          depth: 70,
+          modifier: 0.8,
           slideShadows: false,
         }}
-        navigation={{
-          nextEl: '.swiper-next-arrow',
-          prevEl: '.swiper-prev-arrow',
-        }}
-        pagination={{
-          clickable: true,
-          el: '.swiper-pagination',
-          bulletClass: 'swiper-pagination-bullet bg-rd-purple/50 hover:bg-rd-pink transition-all duration-300',
-          bulletActiveClass: 'swiper-pagination-bullet-active !bg-rd-pink',
-        }}
-        modules={[EffectCoverflow, Navigation, Pagination, Autoplay]}
-        className="w-full h-full"
+        loop={slides.length > 1}
+        speed={450}
+        autoplay={{ delay: 6000, disableOnInteraction: true, pauseOnMouseEnter: true }}
+        pagination={{ clickable: true, dynamicBullets: true }}
+        modules={[Pagination, Autoplay, EffectCoverflow]}
+        className="overflow-hidden! pb-10!"
       >
         {slides.map((slide, index) => (
-          <SwiperSlide 
-            key={slide.number || index} 
-            className="w-70! h-100! sm:w-[320px]! sm:h-112.5! md:w-95! md:h-125! lg:w-105! lg:h-137.5! transition-all duration-500 ease-in-out"
+          <SwiperSlide
+            key={slide.number || index}
+            className="h-100! sm:h-115! md:h-125! lg:h-[min(68svh,540px)]!"
           >
-            <div className="relative group w-full h-full">
-              <div className="views-field views-field-field-image w-full h-full">
-                <div className="field-content relative overflow-hidden rounded-lg shadow-xl transition-all duration-500 w-full h-full backdrop-blur-glass border-none">
-                  <Image
-                    src={slide.image || '/images/placeholder.jpg'}
-                    alt={slide.title || 'Product image'}
-                    fill
-                    className="object-cover rounded-lg transition-transform duration-500 group-hover:scale-105"
-                    loading="eager"
-                    sizes="(max-width: 640px) 280px, (max-width: 768px) 320px, (max-width: 1024px) 380px, 420px"
-                  />
-                  
-                  {/* Gradient Overlay */}
-                  <div className="absolute inset-0 bg-linear-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg" />
-                  
-                  {/* Content */}
-                  <div className="absolute bottom-0 left-0 right-0 p-4 md:p-6 transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
-                    <div className="text-center">
-                      <Link 
-                        href={slide.title ? `/process/${slide.number}` : '#'}
-                        className="text-xl font-bold text-white hover:text-rd-pink transition-all duration-300 inline-block font-heading bg-rd-purple/90 backdrop-blur-sm px-4 py-2 rounded-lg hover:bg-rd-purple hover:scale-105"
-                      >
-                        {slide.description || 'Learn More'}
-                      </Link>
-                    </div>
-                  </div>
-                </div>
+            <article className="group relative h-full w-full overflow-hidden rounded-xl border border-border bg-surface shadow-xl">
+              <Image
+                src={slide.image || "/images/placeholder.jpg"}
+                alt={slide.title || `Process step ${index + 1}`}
+                fill
+                priority={index === 0}
+                className="object-cover"
+                sizes="(max-width: 640px) 260px, (max-width: 768px) 300px, (max-width: 1024px) 320px, 32vw"
+              />
+              <div className="absolute inset-0 bg-linear-to-t from-black/90 via-black/20 to-transparent" />
+              <div className="absolute inset-x-0 bottom-0 p-4 sm:p-6">
+                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-white/70">
+                  Step {slide.number}
+                </p>
+                <h3 className="mt-2 text-lg font-black uppercase leading-tight text-white sm:text-xl">
+                  {slide.title}
+                </h3>
+                <p className="mt-2 text-xs leading-relaxed text-white/85 sm:text-sm">
+                  {slide.description}
+                </p>
               </div>
-            </div>
+            </article>
           </SwiperSlide>
         ))}
       </Swiper>
     </div>
-  )
+  );
 }
-
-export default SwiperCarousel
