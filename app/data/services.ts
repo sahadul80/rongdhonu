@@ -4,7 +4,7 @@ export interface Service {
   category: string;
   description: string;
   bestFor: string;
-  accent: "red" | "amber";
+  accent: "red" | "orange" | "amber" | "green" | "teal" | "blue" | "purple" | "pink";
 }
 
 export const SERVICES: Service[] = [
@@ -22,7 +22,7 @@ export const SERVICES: Service[] = [
     category: "Color & Design",
     description: "Wall paint application and coordinated color schemes designed around the character of your space.",
     bestFor: "Homes, offices and feature spaces",
-    accent: "amber",
+    accent: "orange",
   },
   {
     id: "skim-coat",
@@ -30,7 +30,7 @@ export const SERVICES: Service[] = [
     category: "Surface Preparation",
     description: "Smooth surface preparation using skim coat work before the final decorative finish.",
     bestFor: "Uneven or imperfect wall surfaces",
-    accent: "red",
+    accent: "amber",
   },
   {
     id: "marble-painting",
@@ -38,7 +38,7 @@ export const SERVICES: Service[] = [
     category: "Decorative Finish",
     description: "Decorative marble-effect painting for spaces that need a distinctive premium finish.",
     bestFor: "Feature walls and statement interiors",
-    accent: "amber",
+    accent: "green",
   },
   {
     id: "ambrose-painting",
@@ -46,7 +46,7 @@ export const SERVICES: Service[] = [
     category: "Decorative Finish",
     description: "Ambrose painting work for decorative surfaces and customized interior treatments.",
     bestFor: "Decorative and premium surfaces",
-    accent: "red",
+    accent: "teal",
   },
   {
     id: "texture-work",
@@ -54,6 +54,6 @@ export const SERVICES: Service[] = [
     category: "Texture & Feature Walls",
     description: "Texture finishes that add depth, character and visual interest to walls and selected surfaces.",
     bestFor: "Feature walls and accent areas",
-    accent: "amber",
+    accent: "blue",
   },
 ];

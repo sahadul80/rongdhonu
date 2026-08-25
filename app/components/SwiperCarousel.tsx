@@ -81,8 +81,8 @@ const SwiperCarousel: React.FC<SwiperCarouselProps> = ({
         pagination={{
           clickable: true,
           el: '.swiper-pagination',
-          bulletClass: 'swiper-pagination-bullet bg-soft-sage/60 hover:bg-forest-emerald transition-all duration-300',
-          bulletActiveClass: 'swiper-pagination-bullet-active !bg-forest-emerald',
+          bulletClass: 'swiper-pagination-bullet bg-rd-purple/50 hover:bg-rd-pink transition-all duration-300',
+          bulletActiveClass: 'swiper-pagination-bullet-active !bg-rd-pink',
         }}
         modules={[EffectCoverflow, Navigation, Pagination, Autoplay]}
         className="w-full h-full"
@@ -100,7 +100,7 @@ const SwiperCarousel: React.FC<SwiperCarouselProps> = ({
                     alt={slide.title || 'Product image'}
                     fill
                     className="object-cover rounded-lg transition-transform duration-500 group-hover:scale-105"
-                    loading="lazy"
+                    loading="eager"
                     sizes="(max-width: 640px) 280px, (max-width: 768px) 320px, (max-width: 1024px) 380px, 420px"
                   />
                   
@@ -112,7 +112,7 @@ const SwiperCarousel: React.FC<SwiperCarouselProps> = ({
                     <div className="text-center">
                       <Link 
                         href={slide.title ? `/process/${slide.number}` : '#'}
-                        className="text-xl font-bold text-white hover:text-soft-sage transition-all duration-300 inline-block font-heading bg-forest-emerald/90 backdrop-blur-sm px-4 py-2 rounded-lg hover:bg-forest-emerald hover:scale-105"
+                        className="text-xl font-bold text-white hover:text-rd-pink transition-all duration-300 inline-block font-heading bg-rd-purple/90 backdrop-blur-sm px-4 py-2 rounded-lg hover:bg-rd-purple hover:scale-105"
                       >
                         {slide.description || 'Learn More'}
                       </Link>

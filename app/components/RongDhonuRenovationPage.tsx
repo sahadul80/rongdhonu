@@ -17,7 +17,7 @@ export default function RongDhonuRenovationPage() {
   return (
     <>
       {loading && <AnimatedLogoLoader onComplete={() => setLoading(false)} />}
-      <div className="min-h-screen bg-black">
+      <div className="min-h-screen bg-background">
         <Navbar />
         <main>
           <Hero />

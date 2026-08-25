@@ -1,4 +1,12 @@
-export type ServiceAccent = "red" | "amber";
+export type ServiceAccent =
+  | "red"
+  | "orange"
+  | "amber"
+  | "green"
+  | "teal"
+  | "blue"
+  | "purple"
+  | "pink";
 
 export interface Service {
   id: string;

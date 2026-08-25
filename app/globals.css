@@ -1,7 +1,78 @@
 @import "tailwindcss";
 
+/* Enable class-based dark mode (toggled by next-themes) so it can be
+   switched manually AND follow the OS via `defaultTheme="system"`. */
+@custom-variant dark (&:where(.dark, .dark *));
+
 :root {
+  color-scheme: light;
+
+  /* --- surfaces & text (swap between :root and .dark below) --- */
+  --background: #ffffff;
+  --foreground: #0a0a0c;
+  --surface: #f6f6f9;
+  --surface-2: #eeeef3;
+  --border-color: #e3e3ea;
+  --muted: #57575f;
+  --muted-strong: #2b2b31;
+
+  /* --- rongdhonu (rainbow) accent palette — stays vivid in both themes --- */
+  --rd-red: #ef4444;
+  --rd-orange: #f97316;
+  --rd-amber: #f59e0b;
+  --rd-yellow: #eab308;
+  --rd-green: #22c55e;
+  --rd-teal: #14b8a6;
+  --rd-blue: #3b82f6;
+  --rd-indigo: #6366f1;
+  --rd-purple: #a855f7;
+  --rd-pink: #ec4899;
+
+  --rainbow-gradient: linear-gradient(
+    90deg,
+    var(--rd-red),
+    var(--rd-orange),
+    var(--rd-yellow),
+    var(--rd-green),
+    var(--rd-blue),
+    var(--rd-purple)
+  );
+}
+
+.dark {
   color-scheme: dark;
+
+  --background: #000000;
+  --foreground: #ffffff;
+  --surface: #0a0a0a;
+  --surface-2: #151517;
+  --border-color: #27272a;
+  --muted: #a1a1aa;
+  --muted-strong: #d4d4d8;
+}
+
+/* Expose the CSS variables above as real Tailwind utilities:
+   bg-background, text-foreground, bg-surface, border-border, text-muted,
+   text-rd-red, from-rd-blue, etc. */
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-border: var(--border-color);
+  --color-muted: var(--muted);
+  --color-muted-strong: var(--muted-strong);
+
+  --color-rd-red: var(--rd-red);
+  --color-rd-orange: var(--rd-orange);
+  --color-rd-amber: var(--rd-amber);
+  --color-rd-yellow: var(--rd-yellow);
+  --color-rd-green: var(--rd-green);
+  --color-rd-teal: var(--rd-teal);
+  --color-rd-blue: var(--rd-blue);
+  --color-rd-indigo: var(--rd-indigo);
+  --color-rd-purple: var(--rd-purple);
+  --color-rd-pink: var(--rd-pink);
 }
 
 html {
@@ -11,11 +82,12 @@ html {
 body {
   margin: 0;
   min-height: 100%;
-  background: #000;
-  color: #fff;
+  background: var(--background);
+  color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+  transition: background-color 0.25s ease, color 0.25s ease;
 }
 
 *,
@@ -25,7 +97,7 @@ body {
 }
 
 ::selection {
-  background: #e94560;
+  background: var(--rd-pink);
   color: #fff;
 }
 
@@ -35,16 +107,78 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-  background: #000;
+  background: var(--surface);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #e94560;
+  background-image: var(--rainbow-gradient);
   border-radius: 999px;
+}
+
+/* --- Rongdhonu (rainbow) utilities ------------------------------------ */
+
+.text-rainbow {
+  background-image: var(--rainbow-gradient);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+.bg-rainbow {
+  background-image: var(--rainbow-gradient);
+}
+
+.border-rainbow {
+  border-image: var(--rainbow-gradient) 1;
+}
+
+.rainbow-ring {
+  position: relative;
+}
+
+.rainbow-ring::before {
+  content: "";
+  position: absolute;
+  inset: -2px;
+  border-radius: inherit;
+  padding: 2px;
+  background-image: var(--rainbow-gradient);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+@keyframes loader {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+@keyframes rainbow-shift {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 200% 50%;
+  }
+}
+
+.animate-rainbow {
+  background-size: 200% 100%;
+  animation: rainbow-shift 6s linear infinite;
 }
 
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
+  }
+
+  .animate-rainbow {
+    animation: none;
   }
 }
