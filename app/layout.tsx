@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import ThemeProvider from "./components/ThemeProvider";
+import FloatingSupport from "./components/FloatingSupport";
 
 export const metadata: Metadata = {
   title: "Rong Dhonu Renovation Limited",
@@ -58,7 +59,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     <html lang="en" suppressHydrationWarning>
       <body>
-        <ThemeProvider>{children}</ThemeProvider>
+        <ThemeProvider>{children}<FloatingSupport /></ThemeProvider>
       </body>
     </html>
   );

@@ -12,7 +12,7 @@ const highlights = [
 
 export default function Hero() {
   return (
-    <section className="relative flex min-h-[100svh] items-center overflow-hidden bg-background pt-16 lg:min-h-[calc(100svh-4rem)] lg:h-[calc(100svh-4rem)]">
+    <section className="relative flex min-h-svh items-center overflow-hidden bg-background lg:min-h-[calc(100svh-4rem)] lg:h-[calc(100svh-4rem)]">
       <div
         className="absolute inset-0 opacity-[0.04] dark:opacity-[0.06]"
         style={{
@@ -22,18 +22,14 @@ export default function Hero() {
           color: "var(--foreground)",
         }}
       />
-      <div className="pointer-events-none absolute inset-0 opacity-50 [background:radial-gradient(circle_at_90%_30%,color-mix(in_srgb,var(--rd-red)_10%,transparent),transparent_32%),radial-gradient(circle_at_15%_85%,color-mix(in_srgb,var(--rd-blue)_9%,transparent),transparent_28%),radial-gradient(circle_at_55%_0%,color-mix(in_srgb,var(--rd-green)_7%,transparent),transparent_25%)]" />
+      <div className="pointer-events-none absolute right-0 top-1/4 h-64 w-64 rounded-full bg-rd-red/10 blur-[80px] sm:h-150 sm:w-150 sm:blur-[120px]" />
+      <div className="pointer-events-none absolute bottom-0 left-1/4 h-48 w-48 rounded-full bg-rd-blue/10 blur-[60px] sm:h-100 sm:w-100 sm:blur-[100px]" />
+      <div className="pointer-events-none absolute left-1/2 top-0 h-40 w-40 rounded-full bg-rd-green/10 blur-[60px] sm:h-80 sm:w-80 sm:blur-[100px]" />
       <div className="absolute bottom-0 left-0 top-0 w-0.5 bg-rainbow opacity-70 sm:w-1" />
 
-      <div className="relative mx-auto flex w-full max-w-7xl items-center px-4 py-10 sm:px-6 sm:py-16 lg:h-full lg:px-8 lg:py-8">
+      <div className="relative mx-auto flex w-full max-w-7xl items-center gap-10 px-6 py-16 lg:gap-8 lg:px-8 lg:py-20 xl:gap-12">
         <div className="grid w-full items-center gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:gap-8 xl:gap-12">
           <div>
-            <div className="mb-5 flex items-center gap-2 sm:mb-7 sm:gap-3">
-              <div className="h-px w-8 bg-rainbow sm:w-12" />
-              <span className="text-[10px] font-black uppercase tracking-[0.22em] text-rd-amber sm:text-xs sm:tracking-[0.4em]">
-                Renovation & Painting Services
-              </span>
-            </div>
 
             <h1 className="max-w-3xl text-[clamp(2.5rem,12vw,4rem)] font-black uppercase leading-[0.95] text-foreground sm:text-6xl lg:text-7xl">
               COLOR.
@@ -47,17 +43,6 @@ export default function Hero() {
               {BRAND.name} delivers painting, color, surface preparation and
               decorative finishing work for spaces that deserve a complete transformation.
             </p>
-
-            <div className="mt-7 flex flex-wrap gap-2 sm:mt-9 sm:gap-3">
-              {highlights.map((item) => (
-                <span
-                  key={item}
-                  className="border border-border bg-surface/80 px-3 py-2 text-[9px] font-bold uppercase tracking-wider text-muted-strong sm:text-[10px]"
-                >
-                  {item}
-                </span>
-              ))}
-            </div>
 
             <div className="mt-8 flex flex-col gap-3 sm:mt-10 sm:flex-row sm:flex-wrap sm:gap-4">
               <a
@@ -75,8 +60,8 @@ export default function Hero() {
             </div>
           </div>
 
-          <div className="relative mx-auto w-full min-w-0 overflow-hidden lg:max-w-[560px]">
-            <section className="relative mx-auto w-full max-w-md lg:max-w-full">
+          <div className="relative mx-auto w-full min-w-0 overflow-hidden lg:max-w-140">
+            <section className="relative mx-auto w-full max-w-md lg:max-w-full px-8 sm:px-6 lg:px-0">
               <SwiperCarousel slides={PROCESS_STEPS} className="relative" componentSize="lg" />
             </section>
           </div>
