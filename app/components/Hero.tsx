@@ -22,9 +22,7 @@ export default function Hero() {
           color: "var(--foreground)",
         }}
       />
-      <div className="pointer-events-none absolute right-0 top-1/4 h-64 w-64 rounded-full bg-rd-red/10 blur-[80px] sm:h-150 sm:w-150 sm:blur-[120px]" />
-      <div className="pointer-events-none absolute bottom-0 left-1/4 h-48 w-48 rounded-full bg-rd-blue/10 blur-[60px] sm:h-100 sm:w-100 sm:blur-[100px]" />
-      <div className="pointer-events-none absolute left-1/2 top-0 h-40 w-40 rounded-full bg-rd-green/10 blur-[60px] sm:h-80 sm:w-80 sm:blur-[100px]" />
+      <div className="pointer-events-none absolute inset-0 opacity-50 [background:radial-gradient(circle_at_90%_30%,color-mix(in_srgb,var(--rd-red)_10%,transparent),transparent_32%),radial-gradient(circle_at_15%_85%,color-mix(in_srgb,var(--rd-blue)_9%,transparent),transparent_28%),radial-gradient(circle_at_55%_0%,color-mix(in_srgb,var(--rd-green)_7%,transparent),transparent_25%)]" />
       <div className="absolute bottom-0 left-0 top-0 w-0.5 bg-rainbow opacity-70 sm:w-1" />
 
       <div className="relative mx-auto flex w-full max-w-7xl items-center px-4 py-10 sm:px-6 sm:py-16 lg:h-full lg:px-8 lg:py-8">

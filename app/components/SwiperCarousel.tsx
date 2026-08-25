@@ -39,26 +39,26 @@ export default function SwiperCarousel({
         grabCursor
         centeredSlides
         slidesPerView={1}
-        spaceBetween={-6}
+        spaceBetween={8}
         effect="coverflow"
         coverflowEffect={{
-          rotate: 12,
+          rotate: 8,
           stretch: 0,
-          depth: 70,
-          modifier: 0.8,
+          depth: 45,
+          modifier: 0.55,
           slideShadows: false,
         }}
         loop={slides.length > 1}
-        speed={450}
-        autoplay={{ delay: 6000, disableOnInteraction: true, pauseOnMouseEnter: true }}
+        speed={350}
+        autoplay={{ delay: 7000, disableOnInteraction: true, pauseOnMouseEnter: true }}
         pagination={{ clickable: true, dynamicBullets: true }}
         modules={[Pagination, Autoplay, EffectCoverflow]}
-        className="overflow-hidden! pb-10!"
+        className="!overflow-hidden !pb-8 [contain:layout_paint]"
       >
         {slides.map((slide, index) => (
           <SwiperSlide
             key={slide.number || index}
-            className="h-100! sm:h-115! md:h-125! lg:h-[min(68svh,540px)]!"
+            className="!h-[360px] sm:!h-[430px] md:!h-[470px] lg:!h-[min(62svh,500px)]"
           >
             <article className="group relative h-full w-full overflow-hidden rounded-xl border border-border bg-surface shadow-xl">
               <Image

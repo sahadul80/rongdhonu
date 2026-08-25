@@ -224,3 +224,22 @@ section {
     -webkit-tap-highlight-color: transparent;
   }
 }
+
+/* Performance: avoid animating decorative text outside the visible viewport. */
+section:not(:first-of-type) .animate-rainbow {
+  animation-play-state: paused;
+}
+
+@supports (animation-timeline: view()) {
+  section:not(:first-of-type) .animate-rainbow {
+    animation-play-state: running;
+    animation-timeline: view();
+    animation-range: entry 0% exit 100%;
+  }
+}
+
+@media (max-width: 1023px) {
+  .animate-rainbow {
+    animation-duration: 12s;
+  }
+}
