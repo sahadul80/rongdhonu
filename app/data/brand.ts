@@ -3,9 +3,9 @@ export const BRAND = {
   shortName: "Rong Dhonu",
   tagline: "COLOR | DESIGN | TRANSFORM",
   phone: "+880 17XXX XXXXXX",
-  email: "info@rongdhonurenovation.com",
-  website: "www.rongdhonurenovation.com",
-  address: "Mirpur Shopping Complex, Lift No. 9, Mirpur-2, Dhaka, Bangladesh",
+  email: "info@rongdhonu.com",
+  website: "www.rongdhonu.com",
+  address: "২৫৬/২, পশ্চিম আগারগাঁও, আগারগাঁও, ঢাকা ১২০৭, বাংলাদেশ",
   assets: {
     logo: "/images/rong-dhonu/logo.png",
     collateral: "/images/rong-dhonu/brand-collateral.jpg",
