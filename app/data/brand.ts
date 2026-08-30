@@ -2,7 +2,7 @@ export const BRAND = {
   name: "Rong Dhonu Renovation Limited",
   shortName: "Rong Dhonu",
   tagline: "COLOR | DESIGN | TRANSFORM",
-  phone: "+880 17XXX XXXXXX",
+  phone: "+880 1886 030025",
   email: "info@rongdhonu.com",
   website: "www.rongdhonu.com",
   address: "২৫৬/২, পশ্চিম আগারগাঁও, আগারগাঁও, ঢাকা ১২০৭, বাংলাদেশ",
