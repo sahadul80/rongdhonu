@@ -49,20 +49,11 @@ export default function Hero() {
           <div className="absolute inset-0 opacity-[.13] [background-image:linear-gradient(rgba(255,255,255,.35)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.35)_1px,transparent_1px)] [background-size:42px_42px]" />
 
           <div className="relative z-10 flex min-h-[inherit] flex-col justify-between p-6 sm:p-9 lg:p-12 xl:p-16">
-            <div className="flex items-start justify-between gap-4">
-              <div className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-black/25 px-3 py-2 text-[9px] font-black uppercase tracking-[.22em] text-white/90 backdrop-blur-md sm:text-[10px]">
-                <Sparkles className="h-3.5 w-3.5" />
-                {eyebrow}
-              </div>
-              <div className="hidden rounded-full border border-white/20 bg-black/25 px-4 py-2 text-xs font-bold text-white/80 backdrop-blur-md sm:block">
-                {BRAND.name}
-              </div>
-            </div>
+            
 
             <div className="max-w-5xl py-10 lg:py-16">
-              <p className="mb-4 text-xs font-black uppercase tracking-[.28em] text-white/70 sm:text-sm">{language === "bn" ? "রং • ডিজাইন • ফিনিশিং" : "COLOR • DESIGN • FINISH"}</p>
               <h1 className="max-w-5xl text-[clamp(3rem,7.5vw,7.4rem)] font-black leading-[.86] tracking-[-.055em] text-white">
-                {language === "bn" ? (<>রং। ডিজাইন। <span className="hero-transform-gradient">রূপান্তর।</span></>) : (<>COLOR. DESIGN. <span className="hero-transform-gradient">TRANSFORM.</span></>)}
+                {language === "bn" ? (<><p>আপনার বাড়ি</p><span className="hero-transform-gradient">রূপান্তর।</span></>) : (<><span className="hero-transform-gradient">TRANSFORM</span><p>Your Home</p></>)}
               </h1>
               <p className="mt-7 max-w-2xl text-sm leading-7 text-white/80 sm:text-base sm:leading-8 lg:text-lg">
                 {intro}
@@ -88,7 +79,7 @@ export default function Hero() {
                 <p className="mt-1 text-xs leading-5 text-white/65 sm:text-sm">{slideDescription}</p>
               </div>
 
-              <div className="flex items-center gap-2 rounded-full border border-white/15 bg-black/30 p-2 backdrop-blur-xl">
+              <div className="flex items-center justify-around gap-2 rounded-full border border-white/15 bg-black/30 p-2 backdrop-blur-xl">
                 {PROCESS_STEPS.map((item, index) => (
                   <button key={item.number} type="button" onClick={() => setActive(index)} aria-label={language === "bn" ? `ধাপ ${index + 1}` : `Step ${index + 1}`} aria-current={active === index ? "step" : undefined} className={`h-9 rounded-full px-3 text-[10px] font-black transition ${active === index ? "bg-white text-black" : "text-white/60 hover:bg-white/10 hover:text-white"}`}>
                     {language === "bn" ? `০${index + 1}` : `0${index + 1}`}

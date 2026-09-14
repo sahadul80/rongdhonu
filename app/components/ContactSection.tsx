@@ -26,13 +26,10 @@ export default function ContactSection() {
               <a href={`mailto:${BRAND.email}`} className="btn-primary px-5 py-3 text-[10px] font-black uppercase tracking-widest">{t("emailUs")}</a>
               <a href={`tel:${BRAND.phone.replace(/[^0-9+]/g, "")}`} className="btn-outline-primary px-5 py-3 text-[10px] font-black uppercase tracking-widest">{t("callUs")}</a>
             </div>
-            <div className="mt-6 rounded-2xl border border-border bg-background/70 p-4 sm:p-5">
-              <p className="text-[10px] font-black uppercase tracking-[0.2em] text-primary">{language === "bn" ? "আপনার পরবর্তী ধাপ" : "Your next step"}</p>
-              <p className="mt-2 text-sm leading-relaxed text-muted-strong">
-                {language === "bn"
-                  ? "আপনার স্পেস ও কাজের ধরন জানালে আমরা উপযুক্ত ফিনিশিং ও পরবর্তী পদক্ষেপ নিয়ে আলোচনা করতে পারি।"
-                  : "Tell us about your space and the work you need, and we can discuss the right finish and next steps."}
-              </p>
+
+            <div className="swatch-card overflow-hidden bg-background p-2">
+              <iframe title={`${BRAND.name} — location on Google Maps`} src={`https://www.google.com/maps?q=${encodeURIComponent(BRAND.mapQuery)}&output=embed`} width="100%" height="220" style={{ border: 0 }} loading="lazy" referrerPolicy="no-referrer-when-downgrade" className="rounded-lg" />
+              <a href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(BRAND.mapQuery)}`} target="_blank" rel="noopener noreferrer" className="mt-2 block px-2 pb-1 text-center text-[9px] font-black uppercase tracking-widest text-primary hover:underline sm:text-[10px]">{t("openMaps")}</a>
             </div>
           </div>
           <div className="flex h-full flex-col gap-3">
@@ -53,10 +50,15 @@ export default function ContactSection() {
                 <span className="text-[9px] font-black uppercase tracking-widest text-muted">{t("coreOffering")}</span>
                 <p className="mt-2 text-sm font-bold text-foreground">{language === "bn" ? "পেইন্টিং · কালার স্কিম · স্কিম কোট · মার্বেল · অ্যামব্রোস · টেক্সচার" : "Painting · Color Schemes · Skim Coat · Marble · Ambrose · Texture"}</p>
               </div>
+
+            <div className="mt-6 rounded-2xl border border-border bg-background/70 p-4 sm:p-5">
+              <p className="text-[10px] font-black uppercase tracking-[0.2em] text-primary">{language === "bn" ? "আপনার পরবর্তী ধাপ" : "Your next step"}</p>
+              <p className="mt-2 text-sm leading-relaxed text-muted-strong">
+                {language === "bn"
+                  ? "আপনার স্পেস ও কাজের ধরন জানালে আমরা উপযুক্ত ফিনিশিং ও পরবর্তী পদক্ষেপ নিয়ে আলোচনা করতে পারি।"
+                  : "Tell us about your space and the work you need, and we can discuss the right finish and next steps."}
+              </p>
             </div>
-            <div className="swatch-card overflow-hidden bg-background p-2">
-              <iframe title={`${BRAND.name} — location on Google Maps`} src={`https://www.google.com/maps?q=${encodeURIComponent(BRAND.mapQuery)}&output=embed`} width="100%" height="220" style={{ border: 0 }} loading="lazy" referrerPolicy="no-referrer-when-downgrade" className="rounded-lg" />
-              <a href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(BRAND.mapQuery)}`} target="_blank" rel="noopener noreferrer" className="mt-2 block px-2 pb-1 text-center text-[9px] font-black uppercase tracking-widest text-primary hover:underline sm:text-[10px]">{t("openMaps")}</a>
             </div>
           </div>
         </div>
