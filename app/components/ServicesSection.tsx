@@ -3,15 +3,18 @@
 import { useMemo, useState } from "react";
 import { SERVICES } from "@/app/data/services";
 import type { ServiceAccent } from "@/app/types/rong-dhonu";
+import { useLanguage } from "./LanguageContext";
 
-const CATEGORIES = [
-  "All",
-  "Painting",
-  "Color & Design",
-  "Surface Preparation",
-  "Decorative Finish",
-  "Texture & Feature Walls",
-];
+const CATEGORIES = ["All", "Painting", "Color & Design", "Surface Preparation", "Decorative Finish", "Texture & Feature Walls"] as const;
+
+const CATEGORY_LABELS: Record<(typeof CATEGORIES)[number], { en: string; bn: string }> = {
+  "All": { en: "All", bn: "সব" },
+  "Painting": { en: "Painting", bn: "পেইন্টিং" },
+  "Color & Design": { en: "Color & Design", bn: "রং ও ডিজাইন" },
+  "Surface Preparation": { en: "Surface Preparation", bn: "সারফেস প্রস্তুতি" },
+  "Decorative Finish": { en: "Decorative Finish", bn: "ডেকোরেটিভ ফিনিশ" },
+  "Texture & Feature Walls": { en: "Texture & Feature Walls", bn: "টেক্সচার ও ফিচার ওয়াল" },
+};
 
 // Static (non-interpolated) class names so Tailwind can pick them up at build time.
 const ACCENT_STYLES: Record<ServiceAccent, { border: string; bar: string; text: string }> = {
@@ -27,6 +30,7 @@ const ACCENT_STYLES: Record<ServiceAccent, { border: string; bar: string; text: 
 
 export default function ServicesSection() {
   const [category, setCategory] = useState("All");
+  const { t, language } = useLanguage();
 
   const services = useMemo(
     () => SERVICES.filter((service) => category === "All" || service.category === category),
@@ -34,71 +38,67 @@ export default function ServicesSection() {
   );
 
   return (
-    <section id="services" className="bg-background py-14 sm:py-24">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="mb-8 max-w-3xl sm:mb-12">
+    <section id="services" className="bg-background py-7 sm:py-10">
+      <div className="mx-auto max-w-7xl px-4 sm:px-5 lg:px-6">
+        <div className="mb-7 max-w-3xl sm:mb-7">
           <div className="mb-3 flex items-center gap-2 sm:mb-4 sm:gap-3">
             <div className="h-px w-8 bg-rainbow sm:w-12" />
-            <span className="text-[10px] font-black uppercase tracking-[0.22em] text-rd-red sm:text-xs sm:tracking-[0.4em]">
-              Our Services
+            <span className="text-[10px] font-black uppercase tracking-[0.22em] text-primary sm:text-xs sm:tracking-[0.4em]">
+              {t("ourServices")}
             </span>
           </div>
-          <h2 className="text-3xl font-black uppercase leading-tight text-foreground sm:text-5xl">
-            FINISHES THAT <span className="text-rainbow animate-rainbow">TRANSFORM</span>
+          <h2 className="h2-fluid title-scroll-fx font-black uppercase leading-[1.05] text-foreground">
+            {t("finishesTransform")}
           </h2>
           <p className="mt-3 text-sm leading-relaxed text-muted sm:mt-4 sm:text-base">
-            From general painting to decorative marble, Ambrose and texture work, we
-            transform surfaces through color, preparation and finish.
+            {t("servicesIntro")}
           </p>
         </div>
 
-        <div className="mb-7 flex gap-2 overflow-x-auto pb-2 sm:mb-10 sm:flex-wrap sm:overflow-visible">
+        <div className="mb-5 flex gap-2 overflow-x-auto pb-2 sm:mb-7 sm:flex-wrap sm:overflow-visible">
           {CATEGORIES.map((item) => (
             <button
               key={item}
               type="button"
               onClick={() => setCategory(item)}
-              className={`shrink-0 rounded-sm border px-3 py-2 text-[9px] font-black uppercase tracking-wider transition-colors sm:px-4 sm:text-xs ${
+              className={`chip flex min-h-11 shrink-0 items-center border px-3.5 py-2 text-[9px] font-black uppercase tracking-wider transition-colors sm:px-4 sm:text-xs ${
                 category === item
-                  ? "border-rd-red bg-rd-red text-white"
-                  : "border-border text-muted hover:border-rd-amber hover:text-rd-amber"
+                  ? "border-primary bg-primary text-primary-foreground"
+                  : "border-border text-muted hover:border-primary hover:text-primary"
               }`}
             >
-              {item}
+              {CATEGORY_LABELS[item][language]}
             </button>
           ))}
         </div>
 
         <div className="grid gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3">
-          {services.map((service, index) => {
+          {services.map((service) => {
             const accent = ACCENT_STYLES[service.accent];
 
             return (
               <article
                 key={service.id}
-                className={`group relative overflow-hidden rounded-sm border bg-surface p-4 transition-all duration-300 sm:p-6 ${accent.border}`}
+                className={`swatch-card group relative overflow-hidden p-4 sm:p-5 ${accent.border}`}
               >
-                <div className={`absolute left-0 top-0 h-0.5 w-full ${accent.bar}`} />
-                <div className="mb-5 flex items-start justify-between gap-3">
-                  <span className={`text-xs font-black tracking-widest ${accent.text}`}>
-                    {String(index + 1).padStart(2, "0")}
-                  </span>
+                <div className={`absolute left-0 top-0 h-1 w-full rounded-t-[1.25rem] ${accent.bar}`} />
+                <div className="mb-4 flex items-start justify-between gap-3">
                   <span className="rounded-sm border border-border px-2 py-1 text-[8px] font-bold uppercase tracking-wider text-muted">
-                    {service.category}
+                    {service.category === "Painting" ? t("painting") : service.category === "Color & Design" ? t("colorDesign") : service.category === "Surface Preparation" ? t("surfacePreparation") : service.category === "Decorative Finish" ? t("decorativeFinish") : t("textureWalls")}
                   </span>
                 </div>
                 <h3 className="text-lg font-black leading-tight text-foreground sm:text-xl">
-                  {service.name}
+                  {language === "bn" ? ({ "general-painting": "সাধারণ পেইন্টিং কাজ", "wall-paint-color": "বিভিন্ন দেয়াল রং ও কালার স্কিম", "skim-coat": "স্কিম কোট কাজ", "marble-painting": "মার্বেল পেইন্টিং", "ambrose-painting": "অ্যামব্রোস পেইন্টিং", "texture-work": "টেক্সচার কাজ" } as Record<string, string>)[service.id] : service.name}
                 </h3>
-                <p className="mt-3 text-xs leading-relaxed text-muted sm:text-sm">
-                  {service.description}
+                <p className="mt-2 text-xs leading-relaxed text-muted sm:text-sm">
+                  {language === "bn" ? ({ "general-painting": "আবাসিক, বাণিজ্যিক ও রেনোভেশন প্রজেক্টের জন্য পেশাদার পেইন্টিং।", "wall-paint-color": "স্পেসের বৈশিষ্ট্য অনুযায়ী দেয়ালের রং ও সমন্বিত কালার স্কিম।", "skim-coat": "চূড়ান্ত ডেকোরেটিভ ফিনিশের আগে মসৃণ সারফেস প্রস্তুতি।", "marble-painting": "স্বতন্ত্র প্রিমিয়াম ফিনিশের জন্য ডেকোরেটিভ মার্বেল-ইফেক্ট পেইন্টিং।", "ambrose-painting": "ডেকোরেটিভ সারফেস ও কাস্টমাইজড ইন্টেরিয়র ট্রিটমেন্টের জন্য অ্যামব্রোস পেইন্টিং।", "texture-work": "দেয়াল ও নির্বাচিত সারফেসে গভীরতা ও ভিজ্যুয়াল বৈচিত্র্য যোগ করার টেক্সচার ফিনিশ।" } as Record<string, string>)[service.id] : service.description}
                 </p>
-                <div className="mt-5 border-t border-border pt-4">
+                <div className="mt-4 border-t border-border pt-3">
                   <span className="text-[8px] font-black uppercase tracking-widest text-muted sm:text-[9px]">
-                    Best for
+                    {language === "bn" ? "যাদের জন্য উপযুক্ত" : "Best for"}
                   </span>
                   <p className="mt-1 text-xs font-bold text-muted-strong">
-                    {service.bestFor}
+                    {language === "bn" ? ({ "general-painting": "সম্পূর্ণ স্পেস ও প্রপার্টি রিফ্রেশ", "wall-paint-color": "বাড়ি, অফিস ও ফিচার স্পেস", "skim-coat": "অসমান বা ত্রুটিপূর্ণ দেয়াল", "marble-painting": "ফিচার ওয়াল ও স্টেটমেন্ট ইন্টেরিয়র", "ambrose-painting": "ডেকোরেটিভ ও প্রিমিয়াম সারফেস", "texture-work": "ফিচার ওয়াল ও অ্যাকসেন্ট এরিয়া" } as Record<string, string>)[service.id] : service.bestFor}
                   </p>
                 </div>
               </article>

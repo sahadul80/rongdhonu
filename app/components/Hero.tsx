@@ -1,69 +1,101 @@
-import { BRAND } from "@/app/data/brand";
-import SwiperCarousel from "./SwiperCarousel";
-import { PROCESS_STEPS } from "../data/content";
+"use client";
 
-const highlights = [
-  "General painting",
-  "Wall color schemes",
-  "Skim coat work",
-  "Decorative finishes",
-  "Texture work",
-];
+import { ArrowDown, ArrowRight, Sparkles } from "lucide-react";
+import Image from "next/image";
+import { BRAND } from "@/app/data/brand";
+import { PROCESS_STEPS } from "../data/content";
+import { useLanguage } from "./LanguageContext";
+import { useEffect, useState } from "react";
 
 export default function Hero() {
+  const { t, language } = useLanguage();
+  const [active, setActive] = useState(0);
+
+  useEffect(() => {
+    const timer = window.setInterval(() => setActive((value) => (value + 1) % PROCESS_STEPS.length), 5000);
+    return () => window.clearInterval(timer);
+  }, []);
+
+  const slide = PROCESS_STEPS[active];
+  const title = language === "bn" ? "রং। ডিজাইন। রূপান্তর।" : "COLOR. DESIGN. TRANSFORM.";
+  const eyebrow = language === "bn" ? "স্পেস রূপান্তরের কারিগর" : "CRAFTING BETTER SPACES";
+  const intro = language === "bn"
+    ? `${BRAND.name} পেইন্টিং, রং, সারফেস প্রস্তুতি ও ডেকোরেটিভ ফিনিশিংয়ের মাধ্যমে আপনার স্পেসকে নতুন রূপ দেয়।`
+    : `${BRAND.name} transforms spaces through painting, color, surface preparation and distinctive decorative finishes.`;
+  const slideTitle = language === "bn"
+    ? ["পরামর্শ", "রং ও ফিনিশ পরিকল্পনা", "সারফেস প্রস্তুতি", "কাজ সম্পাদন", "চূড়ান্ত পর্যালোচনা"][active]
+    : slide.title;
+  const slideDescription = language === "bn"
+    ? [
+        "আপনার স্পেস, প্রয়োজন ও পছন্দের ফিনিশ বুঝে নেওয়া।",
+        "উপযুক্ত রং, সারফেস ট্রিটমেন্ট ও ফিনিশের পরিকল্পনা।",
+        "ফিনিশিংয়ের আগে কাজের সারফেস সঠিকভাবে প্রস্তুত করা।",
+        "পেইন্টিং ও ডেকোরেটিভ কাজ নির্ভুলভাবে সম্পন্ন করা।",
+        "চূড়ান্ত কাজ পরিদর্শন করে ফলাফল নিশ্চিত করা।",
+      ][active]
+    : slide.description;
+
   return (
-    <section className="relative flex min-h-svh items-center overflow-hidden bg-background lg:min-h-[calc(100svh-4rem)] lg:h-[calc(100svh-4rem)]">
-      <div
-        className="absolute inset-0 opacity-[0.04] dark:opacity-[0.06]"
-        style={{
-          backgroundImage:
-            "linear-gradient(currentColor 1px, transparent 1px), linear-gradient(90deg, currentColor 1px, transparent 1px)",
-          backgroundSize: "40px 40px",
-          color: "var(--foreground)",
-        }}
-      />
-      <div className="pointer-events-none absolute right-0 top-1/4 h-64 w-64 rounded-full bg-rd-red/10 blur-[80px] sm:h-150 sm:w-150 sm:blur-[120px]" />
-      <div className="pointer-events-none absolute bottom-0 left-1/4 h-48 w-48 rounded-full bg-rd-blue/10 blur-[60px] sm:h-100 sm:w-100 sm:blur-[100px]" />
-      <div className="pointer-events-none absolute left-1/2 top-0 h-40 w-40 rounded-full bg-rd-green/10 blur-[60px] sm:h-80 sm:w-80 sm:blur-[100px]" />
-      <div className="absolute bottom-0 left-0 top-0 w-0.5 bg-rainbow opacity-70 sm:w-1" />
-
-      <div className="relative mx-auto flex w-full max-w-7xl items-center gap-10 px-6 py-16 lg:gap-8 lg:px-8 lg:py-20 xl:gap-12">
-        <div className="grid w-full items-center gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:gap-8 xl:gap-12">
-          <div>
-
-            <h1 className="max-w-3xl text-[clamp(2.5rem,12vw,4rem)] font-black uppercase leading-[0.95] text-foreground sm:text-6xl lg:text-7xl">
-              COLOR.
-              <br />
-              DESIGN.
-              <br />
-              <span className="text-rainbow animate-rainbow">TRANSFORM.</span>
-            </h1>
-
-            <p className="mt-5 max-w-2xl text-sm leading-relaxed text-muted sm:mt-7 sm:text-base lg:text-lg">
-              {BRAND.name} delivers painting, color, surface preparation and
-              decorative finishing work for spaces that deserve a complete transformation.
-            </p>
-
-            <div className="mt-8 flex flex-col gap-3 sm:mt-10 sm:flex-row sm:flex-wrap sm:gap-4">
-              <a
-                href="#services"
-                className="w-full text-center rounded-sm bg-rd-red px-5 py-3 sm:w-auto text-[10px] font-black uppercase tracking-widest text-white transition-colors hover:bg-rd-pink sm:px-7 sm:py-4 sm:text-xs"
-              >
-                Explore Services
-              </a>
-              <a
-                href="#contact"
-                className="w-full text-center rounded-sm border border-border px-5 py-3 sm:w-auto text-[10px] font-black uppercase tracking-widest text-foreground transition-colors hover:border-rd-amber hover:text-rd-amber sm:px-7 sm:py-4 sm:text-xs"
-              >
-                Request a Consultation
-              </a>
+    <section id="home" className="relative isolate overflow-hidden bg-background">
+      <div className="relative mx-auto max-w-[1600px] px-3 py-3 sm:px-5 lg:px-7 lg:py-5">
+        <div className="relative min-h-[540px] sm:min-h-[570px] overflow-hidden rounded-[2rem] border border-white/15 bg-black shadow-2xl lg:min-h-[600px]">
+          {PROCESS_STEPS.map((item, index) => (
+            <div key={item.number} className={`absolute inset-0 transition-opacity duration-1000 ${index === active ? "opacity-100" : "opacity-0"}`} aria-hidden={index !== active}>
+              <Image src={item.image || "/images/placeholder.jpg"} alt="" fill priority={index === 0} className="object-cover scale-105" sizes="100vw" />
             </div>
-          </div>
+          ))}
+          <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(0,0,0,.82)_0%,rgba(0,0,0,.62)_42%,rgba(0,0,0,.18)_78%,rgba(0,0,0,.42)_100%)]" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_75%_30%,rgba(255,255,255,.14),transparent_28%),linear-gradient(135deg,rgba(255,50,50,.10),transparent_30%,rgba(0,170,255,.12))]" />
+          <div className="absolute inset-0 opacity-[.13] [background-image:linear-gradient(rgba(255,255,255,.35)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.35)_1px,transparent_1px)] [background-size:42px_42px]" />
 
-          <div className="relative mx-auto w-full min-w-0 overflow-hidden lg:max-w-140">
-            <section className="relative mx-auto w-full max-w-md lg:max-w-full px-8 sm:px-6 lg:px-0">
-              <SwiperCarousel slides={PROCESS_STEPS} className="relative" componentSize="lg" />
-            </section>
+          <div className="relative z-10 flex min-h-[inherit] flex-col justify-between p-6 sm:p-9 lg:p-12 xl:p-16">
+            <div className="flex items-start justify-between gap-4">
+              <div className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-black/25 px-3 py-2 text-[9px] font-black uppercase tracking-[.22em] text-white/90 backdrop-blur-md sm:text-[10px]">
+                <Sparkles className="h-3.5 w-3.5" />
+                {eyebrow}
+              </div>
+              <div className="hidden rounded-full border border-white/20 bg-black/25 px-4 py-2 text-xs font-bold text-white/80 backdrop-blur-md sm:block">
+                {BRAND.name}
+              </div>
+            </div>
+
+            <div className="max-w-5xl py-10 lg:py-16">
+              <p className="mb-4 text-xs font-black uppercase tracking-[.28em] text-white/70 sm:text-sm">{language === "bn" ? "রং • ডিজাইন • ফিনিশিং" : "COLOR • DESIGN • FINISH"}</p>
+              <h1 className="max-w-5xl text-[clamp(3rem,7.5vw,7.4rem)] font-black leading-[.86] tracking-[-.055em] text-white">
+                {language === "bn" ? (<>রং। ডিজাইন। <span className="hero-transform-gradient">রূপান্তর।</span></>) : (<>COLOR. DESIGN. <span className="hero-transform-gradient">TRANSFORM.</span></>)}
+              </h1>
+              <p className="mt-7 max-w-2xl text-sm leading-7 text-white/80 sm:text-base sm:leading-8 lg:text-lg">
+                {intro}
+              </p>
+              <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+                <a href="#services" className="btn-primary inline-flex items-center justify-center gap-2 px-6 py-3.5 text-[10px] font-black uppercase tracking-widest sm:text-xs">
+                  {t("ourServices")} <ArrowDown className="h-4 w-4" />
+                </a>
+                <a href="#contact" className="inline-flex items-center justify-center gap-2 rounded-full border border-white/30 bg-white/10 px-6 py-3.5 text-[10px] font-black uppercase tracking-widest text-white backdrop-blur-md transition hover:bg-white/20 sm:text-xs">
+                  {t("requestConsultation")} <ArrowRight className="h-4 w-4" />
+                </a>
+              </div>
+            </div>
+
+            <div className="grid gap-4 lg:grid-cols-[1fr_auto] lg:items-end">
+              <div className="max-w-xl rounded-2xl border border-white/15 bg-black/30 p-4 backdrop-blur-xl sm:p-5">
+                <div className="flex items-center gap-3">
+                  <span className="text-2xl font-black text-white/90">{language === "bn" ? `০${active + 1}` : `0${active + 1}`}</span>
+                  <div className="h-px flex-1 bg-white/20" />
+                  <span className="text-[9px] font-black uppercase tracking-[.2em] text-white/60">{language === "bn" ? "কাজের ধাপ" : "PROCESS"}</span>
+                </div>
+                <h2 className="mt-3 text-base font-black text-white sm:text-lg">{slideTitle}</h2>
+                <p className="mt-1 text-xs leading-5 text-white/65 sm:text-sm">{slideDescription}</p>
+              </div>
+
+              <div className="flex items-center gap-2 rounded-full border border-white/15 bg-black/30 p-2 backdrop-blur-xl">
+                {PROCESS_STEPS.map((item, index) => (
+                  <button key={item.number} type="button" onClick={() => setActive(index)} aria-label={language === "bn" ? `ধাপ ${index + 1}` : `Step ${index + 1}`} aria-current={active === index ? "step" : undefined} className={`h-9 rounded-full px-3 text-[10px] font-black transition ${active === index ? "bg-white text-black" : "text-white/60 hover:bg-white/10 hover:text-white"}`}>
+                    {language === "bn" ? `০${index + 1}` : `0${index + 1}`}
+                  </button>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
       </div>

@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import ThemeProvider from "./components/ThemeProvider";
 import FloatingSupport from "./components/FloatingSupport";
+import { LanguageProvider } from "./components/LanguageContext";
 
 export const metadata: Metadata = {
   title: "Rong Dhonu Renovation Limited",
@@ -34,24 +35,24 @@ export const metadata: Metadata = {
     siteName: "Rong Dhonu Renovation Limited",
     title: "Rong Dhonu Renovation Limited",
     description: "COLOR | DESIGN | TRANSFORM",
-    images: [{ url: "/images/rong-dhonu/logo.jpg", width: 1200, height: 1200, alt: "Rong Dhonu Renovation Limited" }],
+    images: [{ url: "/images/rong-dhonu/social-card.jpg", width: 1200, height: 1200, alt: "Rong Dhonu Renovation Limited" }],
   },
   twitter: {
     card: "summary_large_image",
     title: "Rong Dhonu Renovation Limited",
     description: "COLOR | DESIGN | TRANSFORM",
-    images: ["/images/rong-dhonu/logo.jpg"],
+    images: ["/images/rong-dhonu/social-card.jpg"],
   },
   robots: { index: true, follow: true },
-  icons: { icon: "/images/rong-dhonu/logo.jpg", apple: "/images/rong-dhonu/logo.jpg" },
+  icons: { icon: "/images/rong-dhonu/icon-512.png", apple: "/images/rong-dhonu/icon-512.png" },
 };
 
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
-    { media: "(prefers-color-scheme: dark)", color: "#000000" },
+    { media: "(prefers-color-scheme: light)", color: "#1a5482" },
+    { media: "(prefers-color-scheme: dark)", color: "#0a2338" },
   ],
 };
 
@@ -59,7 +60,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     <html lang="en" suppressHydrationWarning>
       <body>
-        <ThemeProvider>{children}<FloatingSupport /></ThemeProvider>
+        <ThemeProvider><LanguageProvider>{children}<FloatingSupport /></LanguageProvider></ThemeProvider>
       </body>
     </html>
   );

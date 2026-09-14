@@ -16,6 +16,20 @@
   --muted: #57575f;
   --muted-strong: #2b2b31;
 
+  /* --- rongdhonu primary brand color (from profile navy) --- */
+  --primary-50: #eef4f9;
+  --primary-100: #d5e4ef;
+  --primary-200: #aecadf;
+  --primary-300: #7ea9c9;
+  --primary-400: #4c82ac;
+  --primary-500: #1a5482;
+  --primary: #1a5482;
+  --primary-600: #164a72;
+  --primary-700: #123d5f;
+  --primary-800: #0e2f49;
+  --primary-900: #0a2338;
+  --primary-foreground: #ffffff;
+
   /* --- rongdhonu (rainbow) accent palette — stays vivid in both themes --- */
   --rd-red: #ef4444;
   --rd-orange: #f97316;
@@ -53,6 +67,11 @@
   --border-color: #27272a;
   --muted: #a1a1aa;
   --muted-strong: #d4d4d8;
+
+  /* Lift the primary slightly in dark mode so it stays legible on near-black surfaces */
+  --primary: #2f74a8;
+  --primary-600: #4c82ac;
+  --primary-700: #1a5482;
 }
 
 /* Expose the CSS variables above as real Tailwind utilities:
@@ -67,6 +86,19 @@
   --color-muted: var(--muted);
   --color-muted-strong: var(--muted-strong);
 
+  --color-primary-50: var(--primary-50);
+  --color-primary-100: var(--primary-100);
+  --color-primary-200: var(--primary-200);
+  --color-primary-300: var(--primary-300);
+  --color-primary-400: var(--primary-400);
+  --color-primary-500: var(--primary-500);
+  --color-primary: var(--primary);
+  --color-primary-600: var(--primary-600);
+  --color-primary-700: var(--primary-700);
+  --color-primary-800: var(--primary-800);
+  --color-primary-900: var(--primary-900);
+  --color-primary-foreground: var(--primary-foreground);
+
   --color-rd-red: var(--rd-red);
   --color-rd-orange: var(--rd-orange);
   --color-rd-amber: var(--rd-amber);
@@ -77,6 +109,11 @@
   --color-rd-indigo: var(--rd-indigo);
   --color-rd-purple: var(--rd-purple);
   --color-rd-pink: var(--rd-pink);
+}
+
+:root {
+  /* Single source of truth for the fixed nav's height (matches Navbar's h-16). */
+  --nav-h: 4rem;
 }
 
 html {
@@ -100,7 +137,7 @@ body {
 }
 
 ::selection {
-  background: var(--rd-pink);
+  background: var(--primary);
   color: #fff;
 }
 
@@ -192,6 +229,56 @@ body {
   .animate-rainbow { animation: none; }
 }
 
+/* --- Paint-brand inspired surfaces (Asian Paints / Berger style cards & CTAs) --- */
+
+.btn-primary {
+  background-color: var(--primary);
+  color: var(--primary-foreground);
+  border-radius: 999px;
+  transition: background-color 0.18s ease, transform 0.18s ease, box-shadow 0.18s ease;
+  box-shadow: 0 6px 16px -8px rgba(26, 84, 130, 0.4);
+}
+
+.btn-primary:hover {
+  background-color: var(--primary-600);
+  transform: translateY(-1px);
+  box-shadow: 0 9px 20px -8px rgba(26, 84, 130, 0.5);
+}
+
+.btn-outline-primary {
+  border-radius: 999px;
+  border: 1.5px solid var(--primary);
+  color: var(--primary);
+  transition: background-color 0.25s ease, color 0.25s ease, transform 0.2s ease;
+}
+
+.btn-outline-primary:hover {
+  background-color: var(--primary);
+  color: var(--primary-foreground);
+  transform: translateY(-1px);
+}
+
+.swatch-card {
+  border-radius: 1.25rem;
+  border: 1px solid var(--border-color);
+  background: var(--surface);
+  transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+}
+
+.swatch-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 20px 40px -20px rgba(10, 35, 56, 0.35);
+  border-color: var(--primary-300);
+}
+
+.dark .swatch-card:hover {
+  box-shadow: 0 20px 40px -20px rgba(0, 0, 0, 0.6);
+}
+
+.chip {
+  border-radius: 999px;
+}
+
 /* Mobile responsiveness and overflow protection */
 html, body {
   width: 100%;
@@ -203,8 +290,122 @@ img, svg, video, canvas {
   max-width: 100%;
 }
 
+/* Preserve intrinsic image proportions when responsive sizing is applied. */
+img {
+  height: auto;
+}
+
 section {
-  scroll-margin-top: 4.5rem;
+  scroll-margin-top: calc(var(--nav-h) + 0.75rem);
+}
+
+/* --- Fluid type scale for titles ---------------------------------------
+   Sizes ramp smoothly with viewport width (no jarring jump at the `sm`
+   breakpoint) and are capped so they never feel oversized on phones. */
+.h1-fluid {
+  font-size: clamp(1.85rem, 1.35rem + 4.2vw, 3.5rem);
+}
+
+.h2-fluid {
+  font-size: clamp(1.4rem, 1.15rem + 2vw, 2.25rem);
+}
+
+.h3-fluid {
+  font-size: clamp(0.95rem, 0.88rem + 0.55vw, 1.15rem);
+}
+
+/* --- Scroll-driven title shrink/expand ----------------------------------
+   Titles ease in at a slightly smaller scale as they enter the viewport and
+   settle at full size, then ease down again as they leave — a subtle
+   "shrink to expand" effect tied to scroll position rather than time.
+   Pure CSS, so it costs nothing on browsers that don't support it yet, and
+   it's skipped entirely for people who prefer reduced motion. */
+.title-scroll-fx {
+  transform-origin: center left;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: view()) {
+    .title-scroll-fx {
+      animation: title-scroll-scale linear both;
+      animation-timeline: view();
+      animation-range: entry 0% cover 35%;
+    }
+  }
+}
+
+@keyframes title-scroll-scale {
+  0% {
+    transform: scale(0.82);
+    opacity: 0.5;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* --- Process section: step-by-step transitions -------------------------- */
+@keyframes step-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.step-fade-in {
+  animation: step-fade-in 0.45s ease both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .step-fade-in {
+    animation: none;
+  }
+}
+
+@keyframes step-progress {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+.step-progress-bar {
+  animation: step-progress 4s linear forwards;
+}
+
+/* --- Usability: comfortable tap targets ---------------------------------
+   Every tappable control gets at least a 44x44px hit area, per mobile
+   usability guidance (Apple HIG / Nielsen Norman touch-target research),
+   even where its visible size looks smaller. */
+.tap-target {
+  min-height: 44px;
+  min-width: 44px;
+}
+
+.btn-primary,
+.btn-outline-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+}
+
+/* Usability: iOS Safari auto-zooms the page when a focused input's font
+   size is under 16px. Force 16px on small screens so focusing the
+   newsletter/contact fields never triggers an unexpected zoom. */
+@media (max-width: 639px) {
+  input,
+  select,
+  textarea {
+    font-size: 16px;
+  }
 }
 
 .swiper {
@@ -242,4 +443,38 @@ section:not(:first-of-type) .animate-rainbow {
   .animate-rainbow {
     animation-duration: 12s;
   }
+}
+
+
+/* Usability: keep interaction feedback obvious without moving controls around. */
+:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+@media (hover: none) {
+  .swatch-card:hover {
+    transform: none;
+  }
+}
+
+
+/* Hero TRANSFORM / রূপান্তর color sweep */
+.hero-transform-gradient {
+  display: inline-block;
+  background: linear-gradient(110deg, #ff3b30 0%, #ffb000 22%, #ffe600 38%, #20d98a 58%, #19a7ff 78%, #b44cff 100%);
+  background-size: 220% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: heroColorSweep 5s ease-in-out infinite;
+}
+
+@keyframes heroColorSweep {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-transform-gradient { animation: none; }
 }

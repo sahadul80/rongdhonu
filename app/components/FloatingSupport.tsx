@@ -14,6 +14,7 @@ import {
   X,
 } from "lucide-react";
 import { BRAND } from "../data/brand";
+import { useLanguage } from "./LanguageContext";
 
 type Source = { title: string; url: string };
 type Message = {
@@ -25,17 +26,17 @@ type Message = {
   webSearch?: boolean;
 };
 
-const QUICK_REPLIES = [
-  "What services do you offer?",
-  "How can I get a quotation?",
-  "How long does a project take?",
-];
+const QUICK_REPLIES = {
+  en: ["What services do you offer?", "How can I get a quotation?", "How long does a project take?"],
+  bn: ["আপনারা কী কী সেবা দেন?", "আমি কীভাবে কোটেশন পাব?", "একটি প্রজেক্ট কত সময় নেয়?"],
+} as const;
 
-const initialMessage = (): Message => ({
+const initialMessage = (language: "en" | "bn"): Message => ({
   id: "welcome",
   from: "bot",
-  text:
-    "Hi! 👋 I’m the Rong Dhonu assistant. I can answer questions about our services, finishes, process and project enquiries. If something isn’t covered on this website, I can also look it up on the web for you.",
+  text: language === "bn"
+    ? "হ্যালো! 👋 আমি রংধনু অ্যাসিস্ট্যান্ট। আমাদের সেবা, ফিনিশিং, কাজের প্রক্রিয়া ও প্রজেক্ট সম্পর্কে আপনার প্রশ্নের উত্তর দিতে পারি। এই ওয়েবসাইটে তথ্য না থাকলে প্রয়োজনে ওয়েবে খুঁজেও আপনাকে সাহায্য করব।"
+    : "Hi! 👋 I’m the Rong Dhonu assistant. I can answer questions about our services, finishes, process and project enquiries. If something isn’t covered on this website, I can also look it up on the web for you.",
   time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
 });
 
@@ -43,7 +44,8 @@ export default function FloatingSupport() {
   const [open, setOpen] = useState(false);
   const [input, setInput] = useState("");
   const [typing, setTyping] = useState(false);
-  const [messages, setMessages] = useState<Message[]>([initialMessage()]);
+  const [messages, setMessages] = useState<Message[]>([initialMessage("en")]);
+  const { t, language } = useLanguage();
   const bottomRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -55,9 +57,15 @@ export default function FloatingSupport() {
     if (open) window.setTimeout(() => inputRef.current?.focus(), 120);
   }, [open]);
 
+  useEffect(() => {
+    setMessages((current) => current.map((message, index) =>
+      index === 0 && message.id === "welcome" ? initialMessage(language) : message
+    ));
+  }, [language]);
+
   const resetChat = () => {
     setTyping(false);
-    setMessages([initialMessage()]);
+    setMessages([initialMessage(language)]);
   };
 
   const send = async (forcedText?: string) => {
@@ -85,6 +93,7 @@ export default function FloatingSupport() {
           history: [...messages, userMessage]
             .slice(-8)
             .map(({ from, text: value }) => ({ role: from, content: value })),
+          language,
         }),
       });
 
@@ -110,8 +119,9 @@ export default function FloatingSupport() {
         {
           id: `${Date.now()}-error`,
           from: "bot",
-          text:
-            "I’m sorry — I couldn’t reach my answer service just now. You can try again, or call our team directly and we’ll help you.",
+          text: language === "bn"
+            ? "দুঃখিত—এই মুহূর্তে উত্তর সেবায় সংযোগ করা যাচ্ছে না। আবার চেষ্টা করুন, অথবা সরাসরি আমাদের টিমে কল করুন; আমরা আপনাকে সাহায্য করব।"
+            : "I’m sorry — I couldn’t reach my answer service just now. You can try again, or call our team directly and we’ll help you.",
           time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
         },
       ]);
@@ -143,10 +153,10 @@ export default function FloatingSupport() {
                   <Bot size={20} />
                 </div>
                 <div className="min-w-0">
-                  <p className="truncate font-semibold">Rong Dhonu Assistant</p>
+                  <p className="truncate font-semibold">{language === "bn" ? "রংধনু অ্যাসিস্ট্যান্ট" : "Rong Dhonu Assistant"}</p>
                   <div className="flex items-center gap-1.5 text-[11px] text-white/85">
                     <span className="h-1.5 w-1.5 rounded-full bg-green-300 shadow-[0_0_8px_rgba(134,239,172,.9)]" />
-                    <span>Online • website + web answers</span>
+                    <span>{language === "bn" ? "অনলাইন • ওয়েবসাইট + ওয়েব উত্তর" : "Online • website + web answers"}</span>
                   </div>
                 </div>
               </div>
@@ -154,8 +164,8 @@ export default function FloatingSupport() {
                 <button
                   type="button"
                   onClick={resetChat}
-                  aria-label="Reset chat"
-                  title="Start a new chat"
+                  aria-label={language === "bn" ? "চ্যাট রিসেট করুন" : "Reset chat"}
+                  title={language === "bn" ? "নতুন চ্যাট শুরু করুন" : "Start a new chat"}
                   className="rounded-full p-2 transition hover:bg-white/15 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
                 >
                   <RotateCcw size={16} />
@@ -163,7 +173,7 @@ export default function FloatingSupport() {
                 <button
                   type="button"
                   onClick={() => setOpen(false)}
-                  aria-label="Close chat"
+                  aria-label={language === "bn" ? "চ্যাট বন্ধ করুন" : "Close chat"}
                   className="rounded-full p-2 transition hover:bg-white/15 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
                 >
                   <X size={18} />
@@ -175,7 +185,7 @@ export default function FloatingSupport() {
           <div className="flex h-[390px] flex-col overflow-y-auto bg-surface/80 p-4 sm:h-[410px]">
             <div className="mb-3 flex items-center gap-2 rounded-xl border border-border bg-background/70 px-3 py-2 text-[11px] text-muted">
               <Sparkles size={13} className="shrink-0 text-rd-purple" />
-              <span>I’ll check our website information first, then search the web when useful.</span>
+              <span>{language === "bn" ? "আগে আমাদের ওয়েবসাইটের তথ্য দেখব, প্রয়োজনে ওয়েব সার্চ করব।" : "I’ll check our website information first, then search the web when useful."}</span>
             </div>
 
             <div className="space-y-3">
@@ -199,7 +209,7 @@ export default function FloatingSupport() {
                     {message.webSearch && (
                       <div className="mt-2 flex items-center gap-1.5 border-t border-border/70 pt-2 text-[10px] font-medium text-muted">
                         <Globe2 size={12} />
-                        <span>Web search used for this answer</span>
+                        <span>{language === "bn" ? "এই উত্তরের জন্য ওয়েব সার্চ ব্যবহার করা হয়েছে" : "Web search used for this answer"}</span>
                       </div>
                     )}
 
@@ -254,7 +264,7 @@ export default function FloatingSupport() {
 
           <div className="border-t border-border bg-background p-3">
             <div className="mb-2 flex gap-1.5 overflow-x-auto pb-1">
-              {QUICK_REPLIES.map((reply) => (
+              {QUICK_REPLIES[language].map((reply) => (
                 <button
                   key={reply}
                   type="button"
@@ -272,14 +282,14 @@ export default function FloatingSupport() {
                 ref={inputRef}
                 value={input}
                 onChange={(event) => setInput(event.target.value)}
-                placeholder="Ask about your project..."
+                placeholder={language === "bn" ? "আপনার প্রজেক্ট সম্পর্কে প্রশ্ন করুন..." : "Ask about your project..."}
                 autoComplete="off"
                 className="min-w-0 flex-1 rounded-xl border border-border bg-surface px-3.5 py-2.5 text-sm text-foreground outline-none transition placeholder:text-muted focus:border-rd-purple focus:ring-2 focus:ring-rd-purple/20"
               />
               <button
                 type="submit"
                 disabled={!input.trim() || typing}
-                aria-label="Send message"
+                aria-label={language === "bn" ? "বার্তা পাঠান" : "Send message"}
                 className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-rainbow text-white shadow-md transition hover:scale-[1.03] disabled:cursor-not-allowed disabled:opacity-40"
               >
                 <Send size={18} />
@@ -292,8 +302,8 @@ export default function FloatingSupport() {
       <div className="flex items-center gap-3">
         <a
           href={`tel:${phone}`}
-          aria-label="Call Rong Dhonu"
-          title="Call Rong Dhonu"
+          aria-label={language === "bn" ? "রংধনুকে কল করুন" : "Call Rong Dhonu"}
+          title={language === "bn" ? "রংধনুকে কল করুন" : "Call Rong Dhonu"}
           className="group relative flex h-14 w-14 items-center justify-center rounded-full bg-background text-foreground shadow-xl transition hover:scale-105 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rd-green"
         >
           <span className="absolute inset-0 rounded-full bg-rainbow opacity-20 blur-[3px] transition group-hover:opacity-35" />
@@ -305,8 +315,8 @@ export default function FloatingSupport() {
         <button
           type="button"
           onClick={() => setOpen((value) => !value)}
-          aria-label={open ? "Close chat" : "Open chat"}
-          title={open ? "Close chat" : "Chat with Rong Dhonu"}
+          aria-label={open ? (language === "bn" ? "চ্যাট বন্ধ করুন" : "Close chat") : (language === "bn" ? "চ্যাট খুলুন" : "Open chat")}
+          title={open ? (language === "bn" ? "চ্যাট বন্ধ করুন" : "Close chat") : (language === "bn" ? "রংধনুর সাথে চ্যাট করুন" : "Chat with Rong Dhonu")}
           className={`group relative flex h-14 w-14 items-center justify-center rounded-full shadow-xl transition hover:scale-105 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rd-purple ${
             open ? "bg-foreground text-background" : "bg-rainbow text-white"
           }`}
