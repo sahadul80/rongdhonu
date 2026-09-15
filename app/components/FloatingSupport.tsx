@@ -138,14 +138,14 @@ export default function FloatingSupport() {
   const phone = BRAND.phone.replace(/[^0-9+]/g, "");
 
   return (
-    <div className="fixed bottom-4 right-4 z-[70] flex flex-col items-end gap-3 sm:bottom-6 sm:right-6">
+    <div className="fixed bottom-4 right-4 z-70 flex flex-col items-end gap-3 sm:bottom-6 sm:right-6">
       {open && (
         <section
           aria-label="Rong Dhonu chat support"
-          className="support-chat rainbow-ring w-[calc(100vw-2rem)] overflow-hidden rounded-[1.35rem] border border-border bg-background/95 shadow-2xl backdrop-blur-xl sm:w-[400px]"
+          className="support-chat rainbow-ring w-[calc(100vw-2rem)] overflow-hidden rounded-[1.35rem] border border-border bg-background/95 shadow-2xl backdrop-blur-xl sm:w-100"
         >
           <div className="relative overflow-hidden px-4 py-3.5 text-white">
-            <div className="absolute inset-0 bg-rainbow animate-rainbow" />
+            <div className="absolute inset-0 bg-primary animate-primary" />
             <div className="absolute inset-0 bg-black/20" />
             <div className="relative flex items-center justify-between gap-3">
               <div className="flex min-w-0 items-center gap-3">
@@ -182,7 +182,7 @@ export default function FloatingSupport() {
             </div>
           </div>
 
-          <div className="flex h-[390px] flex-col overflow-y-auto bg-surface/80 p-4 sm:h-[410px]">
+          <div className="flex h-97.5 flex-col overflow-y-auto bg-surface/80 p-4 sm:h-102.5">
             <div className="mb-3 flex items-center gap-2 rounded-xl border border-border bg-background/70 px-3 py-2 text-[11px] text-muted">
               <Sparkles size={13} className="shrink-0 text-rd-purple" />
               <span>{language === "bn" ? "আগে আমাদের ওয়েবসাইটের তথ্য দেখব, প্রয়োজনে ওয়েব সার্চ করব।" : "I’ll check our website information first, then search the web when useful."}</span>
@@ -290,7 +290,7 @@ export default function FloatingSupport() {
                 type="submit"
                 disabled={!input.trim() || typing}
                 aria-label={language === "bn" ? "বার্তা পাঠান" : "Send message"}
-                className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-rainbow text-white shadow-md transition hover:scale-[1.03] disabled:cursor-not-allowed disabled:opacity-40"
+                className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-green-900 text-white shadow-md transition hover:scale-[1.03] disabled:cursor-not-allowed disabled:opacity-40"
               >
                 <Send size={18} />
               </button>
@@ -306,7 +306,7 @@ export default function FloatingSupport() {
           title={language === "bn" ? "রংধনুকে কল করুন" : "Call Rong Dhonu"}
           className="group relative flex h-14 w-14 items-center justify-center rounded-full bg-background text-foreground shadow-xl transition hover:scale-105 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rd-green"
         >
-          <span className="absolute inset-0 rounded-full bg-rainbow opacity-20 blur-[3px] transition group-hover:opacity-35" />
+          <span className="absolute inset-0 rounded-full bg-rainbow opacity-50 blur-[3px] transition group-hover:opacity-35" />
           <span className="relative flex h-11 w-11 items-center justify-center rounded-full border border-border bg-surface">
             <Phone size={21} className="text-rd-green transition-transform group-hover:rotate-[-8deg]" />
           </span>
@@ -318,7 +318,7 @@ export default function FloatingSupport() {
           aria-label={open ? (language === "bn" ? "চ্যাট বন্ধ করুন" : "Close chat") : (language === "bn" ? "চ্যাট খুলুন" : "Open chat")}
           title={open ? (language === "bn" ? "চ্যাট বন্ধ করুন" : "Close chat") : (language === "bn" ? "রংধনুর সাথে চ্যাট করুন" : "Chat with Rong Dhonu")}
           className={`group relative flex h-14 w-14 items-center justify-center rounded-full shadow-xl transition hover:scale-105 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rd-purple ${
-            open ? "bg-foreground text-background" : "bg-rainbow text-white"
+            open ? "bg-foreground text-background" : "bg-primary text-white"
           }`}
         >
           <span className="absolute -right-0.5 -top-0.5 h-3.5 w-3.5 rounded-full border-2 border-background bg-green-400" />

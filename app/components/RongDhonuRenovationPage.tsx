@@ -15,7 +15,7 @@ export default function RongDhonuRenovationPage() {
       <Navbar />
       {/* pt-[--nav-h] keeps every section clear of the fixed nav so the
           first title on the page is never cropped underneath it. */}
-      <main className="pt-[var(--nav-h)]">
+      <main className="pt-(--nav-h)">
         <Hero />
         <ServicesSection />
         <ProcessSection />

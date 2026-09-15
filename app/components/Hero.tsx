@@ -37,8 +37,8 @@ export default function Hero() {
 
   return (
     <section id="home" className="relative isolate overflow-hidden bg-background">
-      <div className="relative mx-auto max-w-[1600px] px-3 py-3 sm:px-5 lg:px-7 lg:py-5">
-        <div className="relative min-h-[540px] sm:min-h-[570px] overflow-hidden rounded-[2rem] border border-white/15 bg-black shadow-2xl lg:min-h-[600px]">
+      <div className="relative mx-auto max-w-400 px-3 py-3 sm:px-5 lg:px-7 lg:py-5">
+        <div className="relative min-h-135 sm:min-h-142.5 overflow-hidden rounded-4xl border border-white/15 bg-black shadow-2xl lg:min-h-150">
           {PROCESS_STEPS.map((item, index) => (
             <div key={item.number} className={`absolute inset-0 transition-opacity duration-1000 ${index === active ? "opacity-100" : "opacity-0"}`} aria-hidden={index !== active}>
               <Image src={item.image || "/images/placeholder.jpg"} alt="" fill priority={index === 0} className="object-cover scale-105" sizes="100vw" />
@@ -46,7 +46,7 @@ export default function Hero() {
           ))}
           <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(0,0,0,.82)_0%,rgba(0,0,0,.62)_42%,rgba(0,0,0,.18)_78%,rgba(0,0,0,.42)_100%)]" />
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_75%_30%,rgba(255,255,255,.14),transparent_28%),linear-gradient(135deg,rgba(255,50,50,.10),transparent_30%,rgba(0,170,255,.12))]" />
-          <div className="absolute inset-0 opacity-[.13] [background-image:linear-gradient(rgba(255,255,255,.35)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.35)_1px,transparent_1px)] [background-size:42px_42px]" />
+          <div className="absolute inset-0 opacity-[.13] bg-[linear-gradient(rgba(255,255,255,.35)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.35)_1px,transparent_1px)] bg-size-[42px_42px]" />
 
           <div className="relative z-10 flex min-h-[inherit] flex-col justify-between p-6 sm:p-9 lg:p-12 xl:p-16">
             
