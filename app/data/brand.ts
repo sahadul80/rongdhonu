@@ -1,11 +1,11 @@
 export const BRAND = {
-  name: "Rong Dhonu Renovation Limited",
+  name: "Rong Dhonu Limited",
   shortName: "Rong Dhonu",
   tagline: "COLOR | DESIGN | TRANSFORM",
   phone: "+880 1886 030025",
   email: "info@rongdhonu.com",
   website: "www.rongdhonu.com",
-  address: "২৫৬/২, পশ্চিম আগারগাঁও, আগারগাঁও, ঢাকা ১২০৭, বাংলাদেশ",
+  address: "256/2, West Agargaon, Agargaon, Dhaka 1207, Bangladesh",
   mapQuery: "256/2, Paschim Agargaon, Agargaon, Dhaka 1207, Bangladesh",
   assets: {
     logo: "/images/rong-dhonu/logo-light.png",
