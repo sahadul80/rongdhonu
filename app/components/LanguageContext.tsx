@@ -8,8 +8,18 @@ type Dictionary = Record<string, { en: string; bn: string }>;
 
 export const DICTIONARY: Dictionary = {
   services: { en: "Services", bn: "সেবাসমূহ" },
+  work: { en: "Our Work", bn: "আমাদের কাজ" },
+  viewProfile: { en: "View profile", bn: "প্রোফাইল দেখুন" },
+  selectedWork: { en: "Selected Work", bn: "নির্বাচিত কাজ" },
+  workIntro: { en: "Browse published projects. Select a project to view the full details and related client reviews.", bn: "প্রকাশিত প্রজেক্টগুলো দেখুন। বিস্তারিত তথ্য ও সংশ্লিষ্ট ক্লায়েন্টের মতামত দেখতে একটি প্রজেক্ট নির্বাচন করুন।" },
+  viewDetails: { en: "View details", bn: "বিস্তারিত দেখুন" },
+  relatedReviews: { en: "Related client reviews", bn: "সংশ্লিষ্ট ক্লায়েন্টের মতামত" },
+  noRelatedReviews: { en: "No related reviews.", bn: "কোনও সংশ্লিষ্ট মতামত নেই।" },
+  viewRoadMap: { en: "View road map", bn: "রোডম্যাপ দেখুন" },
+
   process: { en: "Process", bn: "প্রক্রিয়া" },
   about: { en: "About", bn: "আমাদের সম্পর্কে" },
+  aboutUs: { en: "About Us", bn: "আমাদের সম্পর্কে" },
   contact: { en: "Contact", bn: "যোগাযোগ" },
   getInTouch: { en: "Get in Touch", bn: "যোগাযোগ করুন" },
   requestConsultation: { en: "Request Consultation", bn: "পরামর্শের জন্য যোগাযোগ করুন" },
@@ -52,33 +62,122 @@ export const DICTIONARY: Dictionary = {
   reviews: { en: "Customer Reviews", bn: "গ্রাহকের মতামত" },
   reviewTitle: { en: "WHAT OUR CLIENTS SAY", bn: "আমাদের ক্লায়েন্টরা কী বলেন" },
   reviewIntro: { en: "Real experiences from clients who trusted us with their spaces.", bn: "যেসব ক্লায়েন্ট তাদের স্পেসের দায়িত্ব আমাদের দিয়েছেন, তাদের অভিজ্ঞতা।" },
+  team: { en: "Our Team", bn: "আমাদের দল" },
+  teamTitle: { en: "THE PEOPLE BEHIND THE FINISH", bn: "ফিনিশের পেছনের মানুষগুলো" },
+  teamIntro: { en: "Meet the people who plan, prepare and finish every project.", bn: "যাঁরা প্রতিটি প্রজেক্টের পরিকল্পনা, প্রস্তুতি ও ফিনিশিং করেন, তাঁদের সঙ্গে পরিচিত হোন।" },
   language: { en: "Language", bn: "ভাষা" },
   menu: { en: "Menu", bn: "মেনু" },
   address: { en: "Address", bn: "ঠিকানা" },
   phone: { en: "Phone", bn: "ফোন" },
   email: { en: "Email", bn: "ইমেইল" },
   website: { en: "Website", bn: "ওয়েবসাইট" },
+
+  // ── Navigation / accessibility labels
+  primaryNav: { en: "Primary navigation", bn: "প্রধান নেভিগেশন" },
+  sectionLinks: { en: "Section links", bn: "সেকশন লিংক" },
+  mobileNav: { en: "Mobile navigation", bn: "মোবাইল নেভিগেশন" },
+  openMenu: { en: "Open navigation menu", bn: "নেভিগেশন মেনু খুলুন" },
+  closeMenu: { en: "Close navigation menu", bn: "নেভিগেশন মেনু বন্ধ করুন" },
+  closeMenuShort: { en: "Close menu", bn: "মেনু বন্ধ করুন" },
+  homeAria: { en: "home", bn: "হোম" },
+  switchToLight: { en: "Switch to light mode", bn: "লাইট মোডে যান" },
+  switchToDark: { en: "Switch to dark mode", bn: "ডার্ক মোডে যান" },
+  toggleTheme: { en: "Toggle theme", bn: "থিম পরিবর্তন করুন" },
+  themeSystem: { en: "Following system appearance", bn: "সিস্টেমের থিম অনুসরণ করছে" },
+  themeDark: { en: "Dark mode", bn: "ডার্ক মোড" },
+  themeLight: { en: "Light mode", bn: "লাইট মোড" },
+  loadingSite: { en: "Loading", bn: "লোড হচ্ছে" },
+  bannerLabel: { en: "promotional banner", bn: "প্রচারমূলক ব্যানার" },
+
+  // ── Services / process / reviews
+  bestFor: { en: "Best for", bn: "যাদের জন্য উপযুক্ত" },
+  processSteps: { en: "Process steps", bn: "কাজের ধাপসমূহ" },
+  processStepAlt: { en: "Process step", bn: "প্রক্রিয়ার ধাপ" },
+  fiveStars: { en: "5 stars", bn: "৫ স্টার" },
+  clientRole: { en: "Client", bn: "ক্লায়েন্ট" },
+
+  // ── Contact section
+  dhaka: { en: "Dhaka", bn: "ঢাকা" },
+  officeLocation: { en: "Office location", bn: "অফিসের অবস্থান" },
+  mapTitle: { en: "location on Google Maps", bn: "গুগল ম্যাপে অবস্থান" },
+  coreOfferingList: { en: "Painting · Color Schemes · Skim Coat · Marble · Ambrose · Texture", bn: "পেইন্টিং · কালার স্কিম · স্কিম কোট · মার্বেল · অ্যামব্রোস · টেক্সচার" },
+  nextStep: { en: "Your next step", bn: "আপনার পরবর্তী ধাপ" },
+  nextStepText: { en: "Tell us about your space and the work you need, and we can discuss the right finish and next steps.", bn: "আপনার স্পেস ও কাজের ধরন জানালে আমরা উপযুক্ত ফিনিশিং ও পরবর্তী পদক্ষেপ নিয়ে আলোচনা করতে পারি।" },
+
+  // ── Enquiry form
+  formName: { en: "Your name", bn: "আপনার নাম" },
+  formEmail: { en: "your@email.com", bn: "আপনার ইমেইল" },
+  formPhone: { en: "Phone (optional)", bn: "ফোন (ঐচ্ছিক)" },
+  formService: { en: "Service you're interested in (optional)", bn: "আপনি কোন সেবায় আগ্রহী (ঐচ্ছিক)" },
+  formMessage: { en: "Tell us about your space and what you need…", bn: "আপনার স্পেস ও কী প্রয়োজন তা জানান…" },
+  formSending: { en: "Sending…", bn: "পাঠানো হচ্ছে…" },
+  errRequired: { en: "Please fill in your name, email and a short message.", bn: "অনুগ্রহ করে আপনার নাম, ইমেইল ও একটি সংক্ষিপ্ত বার্তা লিখুন।" },
+  errInvalidEmail: { en: "Enter a valid email address.", bn: "সঠিক ইমেইল ঠিকানা লিখুন।" },
+  errGeneric: { en: "Something went wrong. Please try again.", bn: "কিছু একটা ভুল হয়েছে। অনুগ্রহ করে আবার চেষ্টা করুন।" },
+  errNetwork: { en: "Could not reach the server. Please try again.", bn: "সার্ভারের সাথে সংযোগ করা যায়নি। অনুগ্রহ করে আবার চেষ্টা করুন।" },
+
+  // ── Footer
+  builtBy: { en: "by", bn: "নির্মাণে" },
 };
+
+const BENGALI_DIGITS = ["০", "১", "২", "৩", "৪", "৫", "৬", "৭", "৮", "৯"] as const;
+
+/** 2026 → ২০২৬ (only in Bangla; returns plain digits for English). */
+export function formatDigits(value: number | string, language: Language): string {
+  const text = String(value);
+  return language === "bn" ? text.replace(/[0-9]/g, (digit) => BENGALI_DIGITS[Number(digit)]) : text;
+}
+
+const STORAGE_KEY = "rd_language";
 
 type LanguageContextValue = {
   language: Language;
   setLanguage: (language: Language) => void;
   t: (key: keyof typeof DICTIONARY) => string;
+  /** Picks the text for the current language. */
+  pick: (en: string, bn: string | null | undefined) => string;
+  /** Digits in the current language's numerals. */
+  n: (value: number | string) => string;
+  /** BCP-47 locale for Date/Number formatting. */
+  locale: string;
 };
 
 const LanguageContext = createContext<LanguageContextValue | null>(null);
 
 export function LanguageProvider({ children }: { children: React.ReactNode }) {
-  const [language, setLanguage] = useState<Language>("en");
+  const [language, setLanguageState] = useState<Language>("en");
+
+  // Restore the visitor's last choice after hydration (reading storage during the first
+  // render would make server and client HTML differ).
+  useEffect(() => {
+    try {
+      const saved = window.localStorage.getItem(STORAGE_KEY);
+      if (saved === "bn" || saved === "en") setLanguageState(saved);
+    } catch {
+      // Storage can be blocked (private mode) — the default language is fine.
+    }
+  }, []);
+
   useEffect(() => {
     document.documentElement.lang = language === "bn" ? "bn" : "en";
   }, [language]);
 
-  const value = useMemo(() => ({
+  const value = useMemo<LanguageContextValue>(() => ({
     language,
-    setLanguage,
+    setLanguage: (next: Language) => {
+      setLanguageState(next);
+      try {
+        window.localStorage.setItem(STORAGE_KEY, next);
+      } catch {
+        // ignore
+      }
+    },
     t: (key: keyof typeof DICTIONARY) => DICTIONARY[key][language],
+    pick: (en: string, bn: string | null | undefined) => (language === "bn" && bn ? bn : en),
+    n: (input: number | string) => formatDigits(input, language),
+    locale: language === "bn" ? "bn-BD" : "en-US",
   }), [language]);
+
   return <LanguageContext.Provider value={value}>{children}</LanguageContext.Provider>;
 }
 

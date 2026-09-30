@@ -1,7 +1,5 @@
 import { NextResponse } from "next/server";
-import { BRAND } from "../../data/brand";
-import { SERVICES } from "../../data/services";
-import { PROCESS_STEPS } from "../../data/content";
+import { getActiveServices, getBusinessProfile } from "@/lib/content";
 
 type ChatHistoryItem = { role?: "user" | "bot"; content?: string };
 type Source = { title: string; url: string };
@@ -9,80 +7,59 @@ type Source = { title: string; url: string };
 const normalize = (value: string) =>
   value.toLowerCase().replace(/[^\p{L}\p{N}\s]/gu, " ").replace(/\s+/g, " ").trim();
 
-const websiteKnowledge = [
-  {
-    patterns: ["service", "services", "offer", "do", "work", "সেবা", "সেবাসমূহ", "কাজ"],
-    en: `We currently offer ${SERVICES.map((service) => service.name).join(", ")}. We work across residential, commercial and renovation projects. If you tell me what you want to change, I can point you toward the most suitable service.`,
-    bn: `আমরা বর্তমানে ${SERVICES.map((service) => service.name).join(", ")} সেবা দিচ্ছি। আমরা আবাসিক, বাণিজ্যিক ও রেনোভেশন প্রজেক্টে কাজ করি। আপনি কী পরিবর্তন করতে চান জানালে আপনার জন্য উপযুক্ত সেবাটি বেছে নিতে সাহায্য করতে পারি।`,
-  },
-  {
-    patterns: ["price", "pricing", "cost", "budget", "quote", "quotation", "estimate", "দাম", "মূল্য", "খরচ", "বাজেট", "কোটেশন"],
-    en: "We provide tailored quotations because the price depends on the service, surface condition, area and finish. If you share the type of space, approximate area and the work you have in mind, our team can assess the requirement.",
-    bn: "আমরা কাজের ধরন অনুযায়ী কাস্টম কোটেশন দিই। মূল্য নির্ভর করে সেবা, সারফেসের অবস্থা, কাজের এলাকা ও ফিনিশের ওপর। আপনার স্পেসের ধরন, আনুমানিক আয়তন এবং কী ধরনের কাজ চান তা জানালে আমাদের টিম প্রয়োজনটি মূল্যায়ন করতে পারবে।",
-  },
-  {
-    patterns: ["process", "procedure", "steps", "how", "start", "begin", "প্রক্রিয়া", "ধাপ", "শুরু"],
-    en: `Our published process is ${PROCESS_STEPS.map((step) => step.title).join(" → ")}. It starts with understanding the space and requirements, followed by planning, preparation, execution and a final review.`,
-    bn: "আমাদের কাজের প্রক্রিয়ার ধাপগুলো হলো: পরামর্শ → রং ও ফিনিশ পরিকল্পনা → সারফেস প্রস্তুতি → কাজ সম্পাদন → চূড়ান্ত পর্যালোচনা। প্রথমে আপনার প্রয়োজন ও স্পেস বোঝা হয়, এরপর পরিকল্পনা, প্রস্তুতি, কাজ সম্পাদন এবং শেষে চূড়ান্ত পর্যালোচনা করা হয়।",
-  },
-  {
-    patterns: ["painting", "paint", "wall paint", "পেইন্ট", "রং", "দেয়াল"],
-    en: "Yes. General painting is one of our services, and we also offer coordinated wall colour schemes. If you describe the room, surface and the look you want, I can help narrow down the right direction.",
-    bn: "হ্যাঁ। জেনারেল পেইন্টিং আমাদের অন্যতম প্রধান সেবা। আমরা সমন্বিত দেয়ালের রং ও কালার স্কিমও দিই। ঘরের ধরন, সারফেস এবং আপনি কেমন লুক চান তা জানালে উপযুক্ত দিকনির্দেশনা দিতে পারি।",
-  },
-  {
-    patterns: ["colour", "color", "scheme", "design", "কালার", "রং", "স্কিম", "ডিজাইন"],
-    en: "We help with wall colour selection and coordinated colour schemes designed around the character of the space. Tell me whether it is a home, office, shop or another space and what mood you want.",
-    bn: "আমরা স্পেসের বৈশিষ্ট্য অনুযায়ী দেয়ালের রং নির্বাচন ও সমন্বিত কালার স্কিমে সহায়তা করি। এটি বাড়ি, অফিস, দোকান নাকি অন্য কোনো স্পেস এবং আপনি কেমন পরিবেশ চান তা জানালে পরামর্শ দিতে পারি।",
-  },
-  {
-    patterns: ["skim", "coat", "surface", "uneven", "wall preparation", "স্কিম", "কোট", "সারফেস", "প্রস্তুতি"],
-    en: "Skim coat work is available for smoother surface preparation before the final decorative finish, particularly where walls are uneven or imperfect.",
-    bn: "চূড়ান্ত ফিনিশিংয়ের আগে দেয়াল মসৃণ করতে স্কিম কোটের কাজ করা হয়, বিশেষ করে যেখানে দেয়াল অসমান বা ত্রুটিপূর্ণ।",
-  },
-  {
-    patterns: ["marble", "মার্বেল"],
-    en: "Marble painting is available as a decorative, premium-style finish for feature walls and statement interiors.",
-    bn: "ফিচার ওয়াল ও বিশেষ ইন্টেরিয়রের জন্য প্রিমিয়াম ডেকোরেটিভ ফিনিশ হিসেবে মার্বেল পেইন্টিং করা হয়।",
-  },
-  {
-    patterns: ["ambrose", "অ্যামব্রোস"],
-    en: "Ambrose painting is one of our decorative finishing services for customized interior treatments and premium surfaces.",
-    bn: "অ্যামব্রোস পেইন্টিং আমাদের ডেকোরেটিভ ফিনিশিং সেবার একটি অংশ, যা কাস্টমাইজড ইন্টেরিয়র ট্রিটমেন্ট ও প্রিমিয়াম সারফেসের জন্য উপযোগী।",
-  },
-  {
-    patterns: ["texture", "feature wall", "feature walls", "টেক্সচার", "ফিচার ওয়াল"],
-    en: "We offer texture work to add depth and visual interest to walls and selected surfaces, especially feature or accent areas.",
-    bn: "দেয়াল ও নির্বাচিত সারফেসে গভীরতা ও ভিজ্যুয়াল আকর্ষণ যোগ করতে আমরা টেক্সচার কাজ করি, বিশেষ করে ফিচার বা অ্যাকসেন্ট এরিয়ায়।",
-  },
-  {
-    patterns: ["address", "location", "office", "where", "ঠিকানা", "লোকেশন", "অফিস", "কোথায়"],
-    en: `Our listed address is ${BRAND.address}.`,
-    bn: `আমাদের তালিকাভুক্ত ঠিকানা হলো ${BRAND.address}।`,
-  },
-  {
-    patterns: ["phone", "call", "contact", "number", "ফোন", "কল", "যোগাযোগ", "নম্বর"],
-    en: `You can use the call button in the chat widget to contact ${BRAND.shortName}. The website currently lists ${BRAND.phone}.`,
-    bn: `চ্যাট উইজেটের কল বাটন ব্যবহার করে ${BRAND.shortName}-এর সাথে যোগাযোগ করতে পারেন। ওয়েবসাইটে দেওয়া ফোন নম্বর হলো ${BRAND.phone}।`,
-  },
-  {
-    patterns: ["email", "mail", "ইমেইল", "মেইল"],
-    en: `The listed contact email is ${BRAND.email}.`,
-    bn: `যোগাযোগের জন্য দেওয়া ইমেইল হলো ${BRAND.email}।`,
-  },
-  {
-    patterns: ["hello", "hi", "hey", "assalam", "good morning", "good afternoon", "good evening", "হ্যালো", "হাই", "আসসালাম"],
-    en: "Hello! 👋 Nice to meet you. What are you planning to renovate, paint or transform? I can help you work through the options.",
-    bn: "হ্যালো! 👋 আপনাকে স্বাগতম। আপনি কী রেনোভেট, পেইন্ট বা রূপান্তর করতে চান? আপনার প্রয়োজন অনুযায়ী অপশনগুলো বুঝে নিতে আমি সাহায্য করতে পারি।",
-  },
-] as const;
+function buildWebsiteKnowledge(business: Awaited<ReturnType<typeof getBusinessProfile>>, services: Awaited<ReturnType<typeof getActiveServices>>) {
+  const serviceNames = services.map((service) => service.name).filter(Boolean);
+  const serviceNamesBn = services.map((service) => service.nameBn || service.name).filter(Boolean);
+  return [
+    {
+      patterns: ["service", "services", "offer", "do", "work", "সেবা", "সেবাসমূহ", "কাজ"],
+      en: serviceNames.length
+        ? `Current published services include ${serviceNames.join(", ")}. Tell me what you want to change and I can help narrow the direction.`
+        : "No service catalogue is currently published. Please contact the team for current availability.",
+      bn: serviceNamesBn.length
+        ? `বর্তমানে প্রকাশিত সেবাগুলোর মধ্যে রয়েছে ${serviceNamesBn.join(", ")}। আপনি কী পরিবর্তন করতে চান জানালে আমি দিকনির্দেশনা দিতে পারি।`
+        : "এই মুহূর্তে কোনো সেবা তালিকা প্রকাশিত নেই। বর্তমান সেবা জানতে টিমের সঙ্গে যোগাযোগ করুন।",
+    },
+    {
+      patterns: ["price", "pricing", "cost", "budget", "quote", "quotation", "estimate", "দাম", "মূল্য", "খরচ", "বাজেট", "কোটেশন"],
+      en: "We provide tailored quotations because the price depends on the service, surface condition, area and finish. Share the type of space, approximate area and the work you have in mind for a more useful discussion.",
+      bn: "আমরা কাজের ধরন অনুযায়ী কাস্টম কোটেশন দিই। মূল্য নির্ভর করে সেবা, সারফেসের অবস্থা, কাজের এলাকা ও ফিনিশের ওপর। স্পেসের ধরন, আনুমানিক আয়তন এবং কাজের ধরন জানালে আরও নির্দিষ্টভাবে আলোচনা করা যাবে।",
+    },
+    {
+      patterns: ["process", "procedure", "steps", "how", "start", "begin", "প্রক্রিয়া", "ধাপ", "শুরু"],
+      en: "The published process is managed from the website content system. Please review the visible process section or contact the team for the current sequence.",
+      bn: "ওয়েবসাইটের কনটেন্ট সিস্টেমে প্রকাশিত প্রক্রিয়ার ধাপগুলো পরিচালিত হয়। বর্তমান ধাপ দেখতে প্রকাশিত প্রসেস সেকশন দেখুন বা টিমের সঙ্গে যোগাযোগ করুন।",
+    },
+    {
+      patterns: ["address", "location", "office", "where", "ঠিকানা", "লোকেশন", "অফিস", "কোথায়"],
+      en: business?.address ? `The listed address is ${business.address}.` : "The business address is not currently published.",
+      bn: business?.addressBn ? `তালিকাভুক্ত ঠিকানা হলো ${business.addressBn}।` : business?.address ? `তালিকাভুক্ত ঠিকানা হলো ${business.address}।` : "ব্যবসার ঠিকানা বর্তমানে প্রকাশিত নেই।",
+    },
+    {
+      patterns: ["phone", "call", "contact", "number", "ফোন", "কল", "যোগাযোগ", "নম্বর"],
+      en: business?.phone ? `You can use the call option to contact the business at ${business.phone}.` : "A public phone number is not currently published.",
+      bn: business?.phone ? `যোগাযোগের জন্য প্রকাশিত ফোন নম্বর হলো ${business.phone}।` : "প্রকাশিত ফোন নম্বর বর্তমানে নেই।",
+    },
+    {
+      patterns: ["email", "mail", "ইমেইল", "মেইল"],
+      en: business?.email ? `The listed contact email is ${business.email}.` : "A public contact email is not currently published.",
+      bn: business?.email ? `যোগাযোগের জন্য প্রকাশিত ইমেইল হলো ${business.email}।` : "প্রকাশিত যোগাযোগের ইমেইল বর্তমানে নেই।",
+    },
+    {
+      patterns: ["hello", "hi", "hey", "assalam", "good morning", "good afternoon", "good evening", "হ্যালো", "হাই", "আসসালাম"],
+      en: "Hello! How can I help you with your project?",
+      bn: "হ্যালো! আপনার প্রজেক্ট সম্পর্কে কী জানতে চান?",
+    },
+  ] as const;
+}
 
-function getWebsiteAnswer(message: string, language: "en" | "bn") {
+
+function getWebsiteAnswer(message: string, language: "en" | "bn", knowledge: ReturnType<typeof buildWebsiteKnowledge>) {
   const q = normalize(message);
   if (!q) return null;
 
   let best: { score: number; answer: string } | null = null;
-  for (const item of websiteKnowledge) {
+  for (const item of knowledge) {
     const score = item.patterns.reduce((total, pattern) => {
       const p = normalize(pattern);
       return total + (q.includes(p) ? (p.length > 5 ? 2 : 1) : 0);
@@ -96,9 +73,9 @@ function getWebsiteAnswer(message: string, language: "en" | "bn") {
   return best?.answer ?? null;
 }
 
-async function searchWeb(query: string): Promise<{ answer: string; sources: Source[] } | null> {
+async function searchWeb(query: string, language: "en" | "bn"): Promise<{ answer: string; sources: Source[] } | null> {
   const url = new URL("https://api.duckduckgo.com/");
-  url.searchParams.set("q", `${query} ${BRAND.name}`);
+  url.searchParams.set("q", query);
   url.searchParams.set("format", "json");
   url.searchParams.set("no_html", "1");
   url.searchParams.set("no_redirect", "1");
@@ -115,7 +92,7 @@ async function searchWeb(query: string): Promise<{ answer: string; sources: Sour
   const sources: Source[] = [];
 
   if (data.AbstractURL && data.AbstractText) {
-    sources.push({ title: data.Heading || "Web result", url: data.AbstractURL });
+    sources.push({ title: data.Heading || (language === "bn" ? "ওয়েব ফলাফল" : "Web result"), url: data.AbstractURL });
   }
 
   for (const topic of Array.isArray(data.RelatedTopics) ? data.RelatedTopics : []) {
@@ -139,7 +116,9 @@ async function searchWeb(query: string): Promise<{ answer: string; sources: Sour
   return {
     answer:
       answer ||
-      "I found a few web results related to your question. The most relevant links are shown below.",
+      (language === "bn"
+        ? "আপনার প্রশ্নের সাথে সম্পর্কিত কিছু ওয়েব ফলাফল পেয়েছি। সবচেয়ে প্রাসঙ্গিক লিংকগুলো নিচে দেওয়া হলো।"
+        : "I found a few web results related to your question. The most relevant links are shown below."),
     sources,
   };
 }
@@ -187,7 +166,11 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: language === "bn" ? "বার্তা প্রয়োজন।" : "Message is required." }, { status: 400 });
     }
 
-    const websiteAnswer = getWebsiteAnswer(message, language);
+    const [business, services] = await Promise.all([
+      getBusinessProfile().catch(() => null),
+      getActiveServices().catch(() => []),
+    ]);
+    const websiteAnswer = getWebsiteAnswer(message, language, buildWebsiteKnowledge(business, services));
     if (websiteAnswer) {
       return NextResponse.json({
         answer: websiteAnswer,
@@ -207,7 +190,7 @@ export async function POST(request: Request) {
       : message;
 
     try {
-      const webResult = await searchWeb(contextualQuery);
+      const webResult = await searchWeb(contextualQuery, language);
       if (webResult) {
         const webAnswer = language === "bn"
           ? await translateToBengali(webResult.answer)

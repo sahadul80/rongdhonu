@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useTheme } from "next-themes";
 import { Moon, Sun } from "lucide-react";
+import { useLanguage } from "./LanguageContext";
 
 interface ThemeToggleProps {
   className?: string;
@@ -10,6 +11,7 @@ interface ThemeToggleProps {
 
 export default function ThemeToggle({ className = "" }: ThemeToggleProps) {
   const { theme, resolvedTheme, setTheme } = useTheme();
+  const { t } = useLanguage();
   const [mounted, setMounted] = useState(false);
 
   // Avoid a hydration mismatch: the resolved theme is only known on the client.
@@ -27,9 +29,9 @@ export default function ThemeToggle({ className = "" }: ThemeToggleProps) {
     <button
       type="button"
       onClick={toggle}
-      aria-label={mounted ? `Switch to ${isDark ? "light" : "dark"} mode` : "Toggle theme"}
-      title={mounted ? (theme === "system" ? "Following system appearance" : isDark ? "Dark mode" : "Light mode") : undefined}
-      className={`tap-target relative flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-full border border-border bg-surface text-foreground transition-colors hover:border-rd-purple focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rd-purple ${className}`}
+      aria-label={mounted ? t(isDark ? "switchToLight" : "switchToDark") : t("toggleTheme")}
+      title={mounted ? (theme === "system" ? t("themeSystem") : isDark ? t("themeDark") : t("themeLight")) : undefined}
+      className={`glass-toggle tap-target relative flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-full border border-border/70 bg-background/55 backdrop-blur-xl text-foreground transition-colors hover:border-rd-purple focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rd-purple ${className}`}
     >
       {mounted && (
         <>

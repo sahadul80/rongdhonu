@@ -1,59 +1,35 @@
-export interface Service {
+import type { Service } from "@/app/types/rong-dhonu";
+
+/**
+ * Empty fallback only. Live service data comes from the CMS database.
+ * Keeping the array typed preserves the existing imports without shipping fallback records.
+ */
+export const SERVICES: Service[] = [];
+
+interface LocalizableService {
   id: string;
   name: string;
+  nameBn?: string | null;
   category: string;
+  categoryBn?: string | null;
   description: string;
+  descriptionBn?: string | null;
   bestFor: string;
-  accent: "red" | "orange" | "amber" | "green" | "teal" | "blue" | "purple" | "pink";
+  bestForBn?: string | null;
 }
 
-export const SERVICES: Service[] = [
-  {
-    id: "general-painting",
-    name: "General Painting Work",
-    category: "Painting",
-    description: "Professional painting work for residential, commercial and renovation projects.",
-    bestFor: "Complete spaces and property refresh",
-    accent: "red",
-  },
-  {
-    id: "wall-paint-color",
-    name: "Various Wall Paint & Color Schemes",
-    category: "Color & Design",
-    description: "Wall paint application and coordinated color schemes designed around the character of your space.",
-    bestFor: "Homes, offices and feature spaces",
-    accent: "orange",
-  },
-  {
-    id: "skim-coat",
-    name: "Skim Coat Work",
-    category: "Surface Preparation",
-    description: "Smooth surface preparation using skim coat work before the final decorative finish.",
-    bestFor: "Uneven or imperfect wall surfaces",
-    accent: "amber",
-  },
-  {
-    id: "marble-painting",
-    name: "Marble Painting",
-    category: "Decorative Finish",
-    description: "Decorative marble-effect painting for spaces that need a distinctive premium finish.",
-    bestFor: "Feature walls and statement interiors",
-    accent: "green",
-  },
-  {
-    id: "ambrose-painting",
-    name: "Ambrose Painting",
-    category: "Decorative Finish",
-    description: "Ambrose painting work for decorative surfaces and customized interior treatments.",
-    bestFor: "Decorative and premium surfaces",
-    accent: "teal",
-  },
-  {
-    id: "texture-work",
-    name: "Texture Work",
-    category: "Texture & Feature Walls",
-    description: "Texture finishes that add depth, character and visual interest to walls and selected surfaces.",
-    bestFor: "Feature walls and accent areas",
-    accent: "blue",
-  },
-];
+export function categoryBnFor(_category: string): string | undefined {
+  return undefined;
+}
+
+export function localizeService(service: LocalizableService, language: "en" | "bn") {
+  if (language === "en") {
+    return { name: service.name, category: service.category, description: service.description, bestFor: service.bestFor };
+  }
+  return {
+    name: service.nameBn || service.name,
+    category: service.categoryBn || service.category,
+    description: service.descriptionBn || service.description,
+    bestFor: service.bestForBn || service.bestFor,
+  };
+}

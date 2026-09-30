@@ -1,6 +1,7 @@
 "use client";
 
 import { FormEvent, useEffect, useRef, useState } from "react";
+import { usePathname } from "next/navigation";
 import {
   Bot,
   CheckCheck,
@@ -13,7 +14,6 @@ import {
   UserRound,
   X,
 } from "lucide-react";
-import { BRAND } from "../data/brand";
 import { useLanguage } from "./LanguageContext";
 
 type Source = { title: string; url: string };
@@ -31,16 +31,20 @@ const QUICK_REPLIES = {
   bn: ["আপনারা কী কী সেবা দেন?", "আমি কীভাবে কোটেশন পাব?", "একটি প্রজেক্ট কত সময় নেয়?"],
 } as const;
 
+const timeLabel = (language: "en" | "bn", date = new Date()) =>
+  date.toLocaleTimeString(language === "bn" ? "bn-BD" : "en-US", { hour: "2-digit", minute: "2-digit" });
+
 const initialMessage = (language: "en" | "bn"): Message => ({
   id: "welcome",
   from: "bot",
   text: language === "bn"
     ? "হ্যালো! 👋 আমি রংধনু অ্যাসিস্ট্যান্ট। আমাদের সেবা, ফিনিশিং, কাজের প্রক্রিয়া ও প্রজেক্ট সম্পর্কে আপনার প্রশ্নের উত্তর দিতে পারি। এই ওয়েবসাইটে তথ্য না থাকলে প্রয়োজনে ওয়েবে খুঁজেও আপনাকে সাহায্য করব।"
     : "Hi! 👋 I’m the Rong Dhonu assistant. I can answer questions about our services, finishes, process and project enquiries. If something isn’t covered on this website, I can also look it up on the web for you.",
-  time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+  time: timeLabel(language),
 });
 
 export default function FloatingSupport() {
+  const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const [input, setInput] = useState("");
   const [typing, setTyping] = useState(false);
@@ -63,6 +67,8 @@ export default function FloatingSupport() {
     ));
   }, [language]);
 
+  if (!pathname || pathname.startsWith("/admin")) return null;
+
   const resetChat = () => {
     setTyping(false);
     setMessages([initialMessage(language)]);
@@ -77,7 +83,7 @@ export default function FloatingSupport() {
       id: `${Date.now()}-user`,
       from: "user",
       text,
-      time: now.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+      time: timeLabel(language, now),
     };
 
     setMessages((prev) => [...prev, userMessage]);
@@ -107,7 +113,7 @@ export default function FloatingSupport() {
         id: `${Date.now()}-bot`,
         from: "bot",
         text: data.answer,
-        time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+        time: timeLabel(language),
         sources: data.sources,
         webSearch: data.webSearch,
       };
@@ -122,7 +128,7 @@ export default function FloatingSupport() {
           text: language === "bn"
             ? "দুঃখিত—এই মুহূর্তে উত্তর সেবায় সংযোগ করা যাচ্ছে না। আবার চেষ্টা করুন, অথবা সরাসরি আমাদের টিমে কল করুন; আমরা আপনাকে সাহায্য করব।"
             : "I’m sorry — I couldn’t reach my answer service just now. You can try again, or call our team directly and we’ll help you.",
-          time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+          time: timeLabel(language),
         },
       ]);
     } finally {
@@ -135,13 +141,11 @@ export default function FloatingSupport() {
     void send();
   };
 
-  const phone = BRAND.phone.replace(/[^0-9+]/g, "");
-
   return (
     <div className="fixed bottom-4 right-4 z-70 flex flex-col items-end gap-3 sm:bottom-6 sm:right-6">
       {open && (
         <section
-          aria-label="Rong Dhonu chat support"
+          aria-label={language === "bn" ? "রংধনু চ্যাট সহায়তা" : "Rong Dhonu chat support"}
           className="support-chat rainbow-ring w-[calc(100vw-2rem)] overflow-hidden rounded-[1.35rem] border border-border bg-background/95 shadow-2xl backdrop-blur-xl sm:w-100"
         >
           <div className="relative overflow-hidden px-4 py-3.5 text-white">
@@ -301,9 +305,9 @@ export default function FloatingSupport() {
 
       <div className="flex items-center gap-3">
         <a
-          href={`tel:${phone}`}
-          aria-label={language === "bn" ? "রংধনুকে কল করুন" : "Call Rong Dhonu"}
-          title={language === "bn" ? "রংধনুকে কল করুন" : "Call Rong Dhonu"}
+          href="/contact"
+          aria-label={language === "bn" ? "রংধনুর সাথে যোগাযোগ করুন" : "Contact Rong Dhonu"}
+          title={language === "bn" ? "রংধনুর সাথে যোগাযোগ করুন" : "Contact Rong Dhonu"}
           className="group relative flex h-14 w-14 items-center justify-center rounded-full bg-background text-foreground shadow-xl transition hover:scale-105 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rd-green"
         >
           <span className="absolute inset-0 rounded-full bg-rainbow opacity-50 blur-[3px] transition group-hover:opacity-35" />

@@ -1,8 +1,17 @@
 import type { Metadata, Viewport } from "next";
+import { Noto_Sans_Bengali } from "next/font/google";
 import "./globals.css";
 import ThemeProvider from "./components/ThemeProvider";
 import FloatingSupport from "./components/FloatingSupport";
 import { LanguageProvider } from "./components/LanguageContext";
+
+// Arial has no Bangla glyphs, so Bangla text would otherwise fall back to whatever font the
+// visitor's device happens to have. This loads a proper Bangla face (latin glyphs still use Arial).
+const bengaliFont = Noto_Sans_Bengali({
+  subsets: ["bengali"],
+  display: "swap",
+  variable: "--font-bengali",
+});
 
 export const metadata: Metadata = {
   title: "Rong Dhonu Renovation Limited",
@@ -59,7 +68,7 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body>
+      <body className={bengaliFont.variable}>
         <ThemeProvider><LanguageProvider>{children}<FloatingSupport /></LanguageProvider></ThemeProvider>
       </body>
     </html>

@@ -11,9 +11,13 @@ export type ServiceAccent =
 export interface Service {
   id: string;
   name: string;
+  nameBn?: string | null;
   category: string;
+  categoryBn?: string | null;
   description: string;
+  descriptionBn?: string | null;
   bestFor: string;
+  bestForBn?: string | null;
   accent: ServiceAccent;
 }
 

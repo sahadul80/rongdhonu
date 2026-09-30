@@ -11,9 +11,9 @@ const strengths = [
 ] as const;
 
 export default function AboutSection() {
-  const { t, language } = useLanguage();
+  const { t, language, pick } = useLanguage();
   return (
-    <section id="about" className="bg-background py-7 sm:py-10">
+    <section className="bg-background py-7 sm:py-10">
       <div className="mx-auto max-w-7xl px-4 sm:px-5 lg:px-6">
         <div className="grid items-start gap-8 lg:grid-cols-2 lg:gap-12">
           <div>
@@ -27,7 +27,7 @@ export default function AboutSection() {
               {t("partnerSpace")}
             </h2>
             <p className="mt-3 text-sm leading-relaxed text-muted sm:text-base">
-              {BRAND.name} {t("aboutText")}
+              {pick(BRAND.name, BRAND.nameBn)} {t("aboutText")}
             </p>
             <div className="mt-5 border-l-2 border-primary pl-4 sm:mt-7 sm:pl-5">
               <p className="text-sm font-bold leading-relaxed text-muted-strong sm:text-base">
@@ -36,9 +36,9 @@ export default function AboutSection() {
             </div>
           </div>
 
-          <div className="grid gap-3 sm:grid-cols-2 sm:gap-4">
+          <div className="mobile-swipe-rail sm:grid sm:grid-cols-2 sm:gap-4 sm:overflow-visible">
             {strengths.map(([title, description, accent]) => (
-              <article key={title} className="swatch-card p-4 sm:p-5">
+              <article key={title} className="glass-card swatch-card p-4 sm:p-5">
                 <h3 className="mt-3 text-sm font-black uppercase text-foreground sm:text-base">{language === "bn" ? (title === "Color Planning" ? "রং পরিকল্পনা" : title === "Surface Preparation" ? "সারফেস প্রস্তুতি" : title === "Decorative Finishes" ? "ডেকোরেটিভ ফিনিশ" : "রূপান্তর") : title}</h3>
                 <p className="mt-2 text-xs leading-relaxed text-muted sm:text-sm">{language === "bn" ? (title === "Color Planning" ? t("colorPlanningDesc") : title === "Surface Preparation" ? t("prepDesc") : title === "Decorative Finishes" ? t("decorativeDesc") : t("transformationDesc")) : description}</p>
               </article>
