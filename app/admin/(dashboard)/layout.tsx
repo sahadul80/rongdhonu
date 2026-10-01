@@ -38,8 +38,8 @@ export default async function DashboardLayout({ children }: { children: React.Re
       </main>
 
       <div className="sticky bottom-0 border-border bg-secondary min-w-full z-30 backdrop-blur text-center justify-around text-xs text-foreground font-extrabold p-auto">
-        <Link href="https://scarletlabs.tech" target="_blank" type="button">
-          by Scarlet Labs
+        <Link href="https://thebizaid.com" target="_blank" type="button">
+          by Business Aid
         </Link>
       </div>
     </div>
