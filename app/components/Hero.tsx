@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowDown, ArrowRight, Sparkles } from "lucide-react";
+import { ArrowDown, ArrowRight } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
 import { BRAND, localizedTagline } from "@/app/data/brand";
@@ -14,7 +14,7 @@ interface HeroProps {
 }
 
 export default function Hero({ business, initialHero }: HeroProps) {
-  const { t, language, n, pick } = useLanguage();
+  const { t, language, n } = useLanguage();
   const initial = initialHero ? [initialHero] : [];
   const [slides, setSlides] = useState<CmsHeroImage[]>(initial);
   const [active, setActive] = useState(0);
@@ -70,7 +70,6 @@ export default function Hero({ business, initialHero }: HeroProps) {
   }), [t]);
   const displaySlides = slides.length ? slides : [fallbackSlide];
   const slide = displaySlides[active] || displaySlides[0];
-  const name = pick(business?.name || BRAND.name, BRAND.nameBn);
   const intro = localizedTagline(business?.tagline || BRAND.tagline, language);
   const slideTitle = slide ? localizedProcessLabel(slide.slot, slide.label, language, active) : t("process");
 
