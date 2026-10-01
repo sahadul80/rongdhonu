@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { withAdmin } from "@/lib/apiGuard";
-import { query } from "@/lib/db";
+import { query, queryOne } from "@/lib/db";
 import { validateReviewForm, validateSortOrder, parseSortOrder } from "@/lib/formValidation";
 
 export const PUT = withAdmin(async (request: Request, context: { params: Promise<{ id: string }> }) => {
@@ -24,7 +24,7 @@ export const PUT = withAdmin(async (request: Request, context: { params: Promise
 
   const result = await query(
     `UPDATE reviews SET name = $1, role = $2, role_bn = $3, text_en = $4, text_bn = $5, work_id = $6, active = $7, sort_order = $8, updated_at = now()
-     WHERE id = $8 RETURNING id`,
+     WHERE id = $9 RETURNING id`,
     [name, role, roleBn, textEn, textBn, Number.isFinite(workId) ? workId : null, active, sortOrder, id]
   );
   if (result.length === 0) return NextResponse.json({ error: "Review not found." }, { status: 404 });

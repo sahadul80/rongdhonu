@@ -32,6 +32,10 @@ function createPool(): Pool {
   return new Pool({
     connectionString,
     max: 10,
+    // Neon computes auto-suspend; a cold start plus TLS can take well over 3.5s.
+    connectionTimeoutMillis: 20000,
+    idleTimeoutMillis: 30000,
+    keepAlive: true,
   });
 }
 
