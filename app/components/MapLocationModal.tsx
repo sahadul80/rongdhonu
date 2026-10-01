@@ -36,7 +36,7 @@ export default function MapLocationModal({ open, onClose, title, query, address 
   const directionsUrl = buildDirectionsUrl(query);
 
   return createPortal(
-    <div className="modal-layer fixed inset-0 z-1100 isolate flex items-center justify-center overscroll-none bg-black/65 p-3 backdrop-blur-md sm:p-5 pb-[calc(0.75rem+env(safe-area-inset-bottom))]" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) onClose(); }}>
+    <div className="modal-layer map-modal-layer fixed inset-0 isolate flex items-center justify-center overscroll-none bg-black/65 p-3 backdrop-blur-md sm:p-5 pb-[calc(0.75rem+env(safe-area-inset-bottom))]" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) onClose(); }}>
       <section className="flex max-h-[92dvh] w-full max-w-5xl min-h-0 flex-col overflow-hidden rounded-2xl border border-white/20 bg-background/95 shadow-2xl backdrop-blur-2xl sm:rounded-3xl" role="dialog" aria-modal="true" aria-labelledby="office-map-modal-title" onMouseDown={(event) => event.stopPropagation()}>
         <header className="flex shrink-0 items-center justify-between gap-3 border-b border-border/70 bg-background/70 px-4 py-3 sm:px-5">
           <div className="min-w-0">

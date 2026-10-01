@@ -95,7 +95,7 @@ export default function ServicesEditorPage() {
   if (loading) return <AdminLoadingSkeleton title="Loading services" variant="editor" rows={6} />;
 
   return (
-    <div className="admin-page h-full min-h-0 overflow-hidden">
+    <div className="admin-page">
       <div className="flex flex-row items-center justify-between">
         <div className="min-w-0">
           <span className="flex flex-row items-center gap-2"><FileText className="h-auto w-auto text-primary" aria-hidden="true" />Services</span><p className="admin-page-subtitle hidden sm:inline">Compact catalogue management. Empty Bangla fields fall back to English on the public site.</p>

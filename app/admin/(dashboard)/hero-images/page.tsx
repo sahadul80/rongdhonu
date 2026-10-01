@@ -68,7 +68,7 @@ export default function HeroImagesEditorPage() {
   if (loading) return <AdminLoadingSkeleton title="Loading picture slots" variant="gallery" rows={5} />;
 
   return (
-    <div className="admin-page h-full min-h-0 overflow-hidden">
+    <div className="admin-page">
       <div className="flex flex-row items-center justify-between">
         <div className="min-w-0">
           <span className="flex flex-row items-center gap-2"><ImageIcon className="h-auto w-auto text-primary" aria-hidden="true" /><p className="admin-page-title">Pictures</p></span>

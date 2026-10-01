@@ -28,9 +28,9 @@ export default function MobileMenu({ isOpen, activeSection, onClose, business }:
   ] as const;
 
   return (
-    <div className="fixed inset-0 z-10 flex items-start justify-end overflow-hidden">
-      <button type="button" aria-label={t("closeMenu")} className="fixed inset-0 z-40 cursor-default bg-black/45" onClick={onClose} />
-      <aside aria-label={t("mobileNav")} className="fixed right-0 top-0 z-50 h-dvh w-[min(20rem,88vw)] overflow-y-auto border-l border-border bg-surface px-4 py-4 shadow-2xl">
+    <div className="mobile-menu-layer fixed inset-0 flex items-start justify-end overflow-hidden">
+      <button type="button" aria-label={t("closeMenu")} className="mobile-menu-backdrop fixed inset-0 cursor-default bg-black/45" onClick={onClose} />
+      <aside aria-label={t("mobileNav")} className="mobile-menu-panel fixed right-0 top-0 h-dvh w-[min(22rem,92vw)] overflow-y-auto bg-surface px-4 py-4 pb-[calc(1rem+env(safe-area-inset-bottom))] shadow-2xl overscroll-contain">
         <div className="absolute inset-y-0 left-0 w-px bg-rainbow" />
         <div className="flex h-10 items-center justify-between">
           <span className="text-[10px] font-black uppercase tracking-[0.16em] text-muted">{t("menu")}</span>

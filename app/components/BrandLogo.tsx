@@ -49,7 +49,9 @@ export default function BrandLogo({
         alt={name}
         width={width}
         height={height}
-        className="object-contain"
+        sizes="(max-width: 639px) 148px, (max-width: 1023px) 174px, 192px"
+        className="h-auto max-w-full object-contain select-none"
+        draggable={false}
         priority
         unoptimized={src.startsWith("data:")}
       />

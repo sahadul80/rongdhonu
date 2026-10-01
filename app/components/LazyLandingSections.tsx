@@ -48,7 +48,7 @@ export default function LazyLandingSections({ business }: { business: BusinessPu
       <ViewportLoader anchorId="services" fallback={<PublicSectionSkeleton variant="services" />}><ServicesSection /></ViewportLoader>
       <ViewportLoader anchorId="process" fallback={<PublicSectionSkeleton variant="process" />}><ProcessSection /></ViewportLoader>
       <ViewportLoader anchorId="about" fallback={<PublicSectionSkeleton variant="about" />}><AboutSection /></ViewportLoader>
-      <ViewportLoader anchorId={business?.workSlug || "our-work"} fallback={<PublicSectionSkeleton variant="work" />}><WorkSection workSlug={business?.workSlug || "our-work"} /></ViewportLoader>
+      <ViewportLoader anchorId={business?.workSlug || "our-work"} fallback={<PublicSectionSkeleton variant="work" />}><WorkSection /></ViewportLoader>
       <ViewportLoader anchorId="reviews" fallback={<PublicSectionSkeleton variant="reviews" />}><ReviewsSection /></ViewportLoader>
       <ViewportLoader anchorId={business?.teamSlug || "our-team"} fallback={<PublicSectionSkeleton variant="team" />}><ContactTeamSection business={business} /></ViewportLoader>
       <ViewportLoader anchorId="contact" fallback={<PublicSectionSkeleton variant="contact" />}><ContactSection /></ViewportLoader>

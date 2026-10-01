@@ -18,7 +18,7 @@ export default function WorkEditorPage() {
   async function remove(id:number){const r=await fetch(`/api/admin/work/${id}`,{method:"DELETE"});if(r.ok){setWork(x=>x.filter(i=>i.id!==id));setDeleting(null);setMessage({ok:true,text:"Work removed."});}}
   if(loading)return <AdminLoadingSkeleton title="Loading work" variant="editor" rows={6}/>;
   return (
-    <div className="admin-page h-full min-h-0 overflow-hidden">
+    <div className="admin-page">
       <div className="flex flex-row items-center justify-between">
         <div className="min-w-0">
           <span className="flex flex-row items-center gap-2"><Briefcase className="h-auto w-auto text-primary" aria-hidden="true" /><p className="admin-page-title">Our Work</p></span>

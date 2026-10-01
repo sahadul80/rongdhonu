@@ -77,6 +77,7 @@ export interface CmsWork {
 }
 
 export interface CmsHeroImage {
+  description: string;
   slot: string;
   label: string;
   imageUrl: string | null;

@@ -1,6 +1,6 @@
 "use client";
 
-import { Link } from "lucide-react";
+import Link from "next/link";
 
 interface AdminLoadingSkeletonProps {
   title?: string;
@@ -37,11 +37,6 @@ export default function AdminLoadingSkeleton({
 }: AdminLoadingSkeletonProps) {
   return (
     <div className="admin-page" aria-busy="true" aria-live="polite">
-      <p className="mb-3 text-xs text-muted-foreground">
-        <Link href="https://scarletlabs.tech" target="_blank" className="text-xs text-muted-foreground hover:text-foreground">
-          by Scarlet Labs
-        </Link>
-      </p>
       <div className="admin-page-header">
         <div className="min-w-0 space-y-2">
           <Bar className="h-2.5 w-28" />

@@ -26,23 +26,24 @@ export default function AboutSection() {
             <h2 className="h2-fluid title-scroll-fx font-black uppercase leading-[1.05] text-foreground">
               {t("partnerSpace")}
             </h2>
-            <p className="mt-3 text-sm leading-relaxed text-muted sm:text-base">
+            <p className="text-sm leading-relaxed text-muted sm:text-base">
               {pick(BRAND.name, BRAND.nameBn)} {t("aboutText")}
             </p>
+          </div>
+          <div className="grid gap-4 sm:gap-5 lg:gap-6">
             <div className="mt-5 border-l-2 border-primary pl-4 sm:mt-7 sm:pl-5">
               <p className="text-sm font-bold leading-relaxed text-muted-strong sm:text-base">
                 {t("aboutGoal")}
               </p>
             </div>
-          </div>
-
-          <div className="mobile-swipe-rail sm:grid sm:grid-cols-2 sm:gap-4 sm:overflow-visible">
+            <div className="mobile-swipe-rail sm:grid sm:grid-cols-2 sm:gap-4 sm:overflow-visible">
             {strengths.map(([title, description, accent]) => (
               <article key={title} className="glass-card swatch-card p-4 sm:p-5">
                 <h3 className="mt-3 text-sm font-black uppercase text-foreground sm:text-base">{language === "bn" ? (title === "Color Planning" ? "রং পরিকল্পনা" : title === "Surface Preparation" ? "সারফেস প্রস্তুতি" : title === "Decorative Finishes" ? "ডেকোরেটিভ ফিনিশ" : "রূপান্তর") : title}</h3>
                 <p className="mt-2 text-xs leading-relaxed text-muted sm:text-sm">{language === "bn" ? (title === "Color Planning" ? t("colorPlanningDesc") : title === "Surface Preparation" ? t("prepDesc") : title === "Decorative Finishes" ? t("decorativeDesc") : t("transformationDesc")) : description}</p>
               </article>
             ))}
+          </div>
           </div>
         </div>
       </div>

@@ -96,12 +96,11 @@ export default function Navbar({ business }: NavbarProps) {
     <>
       <nav
         aria-label={t("primaryNav")}
-        className={`fixed inset-x-0 top-0 z-80 ${
+        className={`public-navbar fixed inset-x-0 top-0 ${
           scrolled ? "bg-background/92 backdrop-blur-xl" : "bg-background/72 backdrop-blur-lg"
         }`}
       >
         <div className="pointer-events-none absolute inset-x-0 -bottom-px h-4 bg-linear-to-t from-primary/8 via-primary/3 to-transparent blur-[5px]" aria-hidden="true" />
-        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-px bg-rainbow opacity-45" aria-hidden="true" />
         <div className="relative mx-auto flex h-16 w-full max-w-7xl items-center justify-between px-4 sm:px-5 lg:px-6">
           <Link href="/" aria-label={`${business?.name || BRAND.name} — ${t("homeAria")}`} className="shrink-0 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary">
             <BrandLogo size={39} className="sm:hidden" />

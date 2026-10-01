@@ -52,7 +52,7 @@ export default function SubmissionsPage() {
   if (loading) return <AdminLoadingSkeleton title="Loading enquiries" variant="table" rows={7} />;
 
   return (
-    <div className="admin-page h-full min-h-0 overflow-hidden">
+    <div className="admin-page">
       <div className="flex flex-row items-center justify-between">
         <div className="min-w-0">
           <span className="flex flex-row items-center gap-2"><Inbox className="h-auto w-auto text-primary" aria-hidden="true" />Enquiries</span><p className="admin-page-subtitle hidden sm:inline">Incoming contact requests with compact status indicators and a scroll-only content area.</p>

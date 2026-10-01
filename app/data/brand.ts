@@ -11,7 +11,7 @@ export const BRAND = {
   addressBn: "২৫৬/২, পশ্চিম আগারগাঁও, আগারগাঁও, ঢাকা ১২০৭, বাংলাদেশ",
   mapQuery: "Rong Dhonu Renovation Limited, 256/2, West Agargaon, Agargaon, Dhaka 1207, Bangladesh",
   assets: {
-    logo: "/images/rong-dhonu/logo-light.png",
+    logo: "/images/rong-dhonu/logo.png",
     logoReversed: "/images/rong-dhonu/logo-reversed.png",
     banner: "/images/rong-dhonu/banner.jpg",
     socialCard: "/images/rong-dhonu/social-card.jpg",

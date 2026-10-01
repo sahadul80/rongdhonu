@@ -91,7 +91,7 @@ export default function ReviewsEditorPage() {
   if (loading) return <AdminLoadingSkeleton title="Loading reviews" variant="table" rows={5} />;
 
   return (
-    <div className="admin-page h-full min-h-0 overflow-hidden">
+    <div className="admin-page">
       <div className="flex flex-row items-center justify-between">
         <div className="min-w-0">
           <span className="flex flex-row items-center gap-2"><MessageSquareQuote className="h-auto w-auto text-primary" aria-hidden="true" /><p className="admin-page-title">Reviews</p></span>

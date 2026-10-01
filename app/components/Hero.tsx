@@ -87,9 +87,8 @@ export default function Hero({ business, initialHero }: HeroProps) {
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_75%_30%,rgba(255,255,255,.14),transparent_28%),linear-gradient(135deg,rgba(255,50,50,.10),transparent_30%,rgba(0,170,255,.12))]" />
           <div className="absolute inset-0 opacity-[.13] bg-[linear-gradient(rgba(255,255,255,.35)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.35)_1px,transparent_1px)] bg-size-[42px_42px]" />
 
-          <div className="relative z-10 flex min-h-[inherit] flex-col justify-between p-6 sm:p-9 lg:p-12 xl:p-16">
+          <div className="content-layer relative flex min-h-[inherit] flex-col justify-between p-6 sm:p-9 lg:p-12 xl:p-16">
             <div className="max-w-5xl py-8 lg:py-14">
-              <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3 py-1.5 text-[9px] font-black uppercase tracking-[0.2em] text-white/80 backdrop-blur-xl"><Sparkles className="h-3.5 w-3.5" aria-hidden="true" />{name}</div>
               <h1 className="max-w-5xl text-[clamp(3rem,7.5vw,7.4rem)] font-black leading-[.86] tracking-[-.055em] text-white">
                 {language === "bn" ? <><span className="block">আপনার স্পেস</span><span className="hero-transform-gradient">রূপান্তর।</span></> : <><span className="hero-transform-gradient">TRANSFORM</span><span className="block">Your Space</span></>}
               </h1>
