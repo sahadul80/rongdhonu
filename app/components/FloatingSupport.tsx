@@ -186,7 +186,7 @@ export default function FloatingSupport() {
             </div>
           </div>
 
-          <div className="flex h-97.5 flex-col overflow-y-auto bg-surface/80 p-4 sm:h-102.5">
+          <div className="flex h-97.5 flex-col overflow-y-auto overscroll-contain bg-surface/80 p-4 sm:h-102.5">
             <div className="mb-3 flex items-center gap-2 rounded-xl border border-border bg-background/70 px-3 py-2 text-[11px] text-muted">
               <Sparkles size={13} className="shrink-0 text-rd-purple" />
               <span>{language === "bn" ? "আগে আমাদের ওয়েবসাইটের তথ্য দেখব, প্রয়োজনে ওয়েব সার্চ করব।" : "I’ll check our website information first, then search the web when useful."}</span>

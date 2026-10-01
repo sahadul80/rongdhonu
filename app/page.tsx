@@ -7,7 +7,7 @@ export const dynamic = "force-dynamic";
 
 export default function Page() {
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-dvh bg-background">
       <Suspense fallback={<AnimatedLogoLoader />}>
         <CriticalHero />
       </Suspense>

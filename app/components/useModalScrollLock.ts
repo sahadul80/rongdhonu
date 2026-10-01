@@ -20,10 +20,10 @@ export function useModalScrollLock(open: boolean) {
       const scrollbarWidth = Math.max(0, window.innerWidth - html.clientWidth);
       html.dataset.modalScrollLocked = "true";
       html.style.overflow = "hidden";
+      html.style.overscrollBehavior = "none";
       html.style.scrollBehavior = "auto";
       body.style.overflow = "hidden";
       body.style.paddingRight = scrollbarWidth > 0 ? `${scrollbarWidth}px` : savedScrollbarCompensation;
-      body.style.touchAction = "none";
     }
 
     lockCount += 1;
@@ -34,11 +34,12 @@ export function useModalScrollLock(open: boolean) {
 
       html.removeAttribute("data-modal-scroll-locked");
       html.style.overflow = "";
-      html.style.scrollBehavior = "";
+      html.style.overscrollBehavior = "";
       body.style.overflow = "";
       body.style.paddingRight = savedScrollbarCompensation;
-      body.style.touchAction = "";
-      window.scrollTo({ top: lockedScrollY, behavior: "auto" });
+      // html still has scroll-behavior:auto inline here, so the restore is instant, not a smooth animation.
+      window.scrollTo(0, lockedScrollY);
+      html.style.scrollBehavior = "";
     };
   }, [open]);
 }

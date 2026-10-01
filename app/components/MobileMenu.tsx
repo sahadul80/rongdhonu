@@ -3,6 +3,7 @@
 import ThemeToggle from "./ThemeToggle";
 import LanguageToggle from "./LanguageToggle";
 import { useLanguage } from "./LanguageContext";
+import { useModalScrollLock } from "./useModalScrollLock";
 import type { BusinessPublicSummary } from "@/app/types/public-cms";
 
 interface MobileMenuProps {
@@ -14,6 +15,7 @@ interface MobileMenuProps {
 
 export default function MobileMenu({ isOpen, activeSection, onClose, business }: MobileMenuProps) {
   const { t } = useLanguage();
+  useModalScrollLock(isOpen);
   if (!isOpen) return null;
 
   const teamSlug = business?.teamSlug || "our-team";

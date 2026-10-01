@@ -349,7 +349,6 @@ export default function WorkSection() {
                         absolute
                         left-3
                         top-3
-                        z-10
                         rounded-full
                         bg-background/90
                         px-2.5
