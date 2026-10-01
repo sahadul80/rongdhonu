@@ -305,7 +305,7 @@ export default function FloatingSupport() {
 
       <div className="flex items-center gap-3">
         <a
-          href="/contact"
+          href="tel:+8801712345678"
           aria-label={language === "bn" ? "রংধনুর সাথে যোগাযোগ করুন" : "Contact Rong Dhonu"}
           title={language === "bn" ? "রংধনুর সাথে যোগাযোগ করুন" : "Contact Rong Dhonu"}
           className="group relative flex h-14 w-14 items-center justify-center rounded-full bg-background text-foreground shadow-xl transition hover:scale-105 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rd-green"
