@@ -129,8 +129,6 @@ export default function ContentDetailModal({
             border-b
             border-border
             bg-surface/95
-            px-4
-            py-3
             backdrop-blur-xl
             sm:px-6
           "
