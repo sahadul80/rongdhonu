@@ -1,5 +1,5 @@
 import "server-only";
-import { createSign, randomBytes, timingSafeEqual, createPublicKey, verify as verifySignature } from "node:crypto";
+import { type JsonWebKey, createSign, randomBytes, timingSafeEqual, createPublicKey, verify as verifySignature } from "node:crypto";
 import { cookies } from "next/headers";
 import { setPublicProfileCookie, type PublicProfile } from "./publicProfile";
 
