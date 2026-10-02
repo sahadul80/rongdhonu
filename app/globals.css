@@ -699,7 +699,7 @@ section:not(:first-of-type) .animate-rainbow {
 .admin-toolbar-search .admin-input { padding-left: 2rem; }
 .admin-toolbar-filter {
   flex: 0 0 auto;
-  min-width: 8rem;
+  min-width: 6rem;
 }
 .admin-toolbar-meta {
   flex: 0 0 auto;
@@ -758,8 +758,9 @@ section:not(:first-of-type) .animate-rainbow {
 
   .admin-toolbar-filter {
     flex: 0 0 auto;
-    min-width: 7.5rem;
-    max-width: 13rem;
+    min-width: 0;
+    max-width: 12rem;
+    font-size: .65rem;
   }
 
   .admin-toolbar-tabs {
@@ -1082,7 +1083,8 @@ section:not(:first-of-type) .animate-rainbow {
 .admin-input,
 .admin-textarea,
 .admin-select {
-  width: 100%;
+  max-width: 100%;
+  min-width: 0;
   border: 1px solid var(--border-color);
   border-radius: 0.7rem;
   background: var(--background);
@@ -1095,7 +1097,7 @@ section:not(:first-of-type) .animate-rainbow {
 .admin-select {
   min-height: 40px;
   padding: 0.55rem 0.7rem;
-  font-size: 0.8rem;
+  font-size: 0.72rem;
 }
 
 .admin-textarea {
@@ -2883,7 +2885,7 @@ section:not(:first-of-type) .animate-rainbow {
   .admin-main > .admin-content-width { padding-inline: .5rem !important; padding-block: .5rem !important; }
   .admin-page { gap: .5rem; }
   .admin-panel, .team-create-panel, .admin-list-panel { border-radius: .72rem; }
-  .admin-input, .admin-select { min-height: 36px; height: 36px; padding: .4rem .55rem; font-size: .74rem; }
+  .admin-input, .admin-select { min-height: 36px; height: 36px; padding: .4rem .55rem; font-size: .72rem; }
   .admin-textarea { min-height: 68px; padding: .5rem .55rem; font-size: .74rem; }
   .admin-label { gap: .22rem; font-size: .63rem; }
   .admin-action { min-height: 36px; border-radius: .6rem; padding: .4rem .58rem; font-size: .66rem; }

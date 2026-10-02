@@ -41,10 +41,6 @@ export default function AdminPageHeader({
     };
   }, [hasSearch, searchOpen]);
 
-  /*
-   * Search cannot stay open when a page does
-   * not support search.
-   */
   useEffect(() => {
     if (!hasSearch) {
       setSearchOpen(false);

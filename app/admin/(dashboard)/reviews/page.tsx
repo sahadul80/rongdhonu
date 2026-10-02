@@ -158,15 +158,15 @@ export default function ReviewsPage() {
       actions={tab === "admin" ? <AdminActionButton type="button" onClick={() => { setCreating((v) => !v); setMessage(null); }} className="admin-action bg-primary text-primary-foreground" icon={creating ? <X className="h-4 w-4" /> : <Plus className="h-4 w-4" />}>{creating ? "Cancel" : "Add admin review"}</AdminActionButton> : undefined}
     >
       <div className="admin-toolbar-tabs" role="tablist" aria-label="Review sources">
-        <button type="button" role="tab" aria-selected={tab === "admin"} onClick={() => setTab("admin")} className={tab === "admin" ? "bg-background text-foreground shadow-sm" : "text-muted hover:text-foreground"}><MessageSquareQuote className="mr-1.5 inline h-3.5 w-3.5" /><p className="hidden sm:inline">Admin</p><span className="admin-status bg-primary/10 text-primary">{adminReviews.length}</span></button>
-        <button type="button" role="tab" aria-selected={tab === "user"} onClick={() => setTab("user")} className={tab === "user" ? "bg-background text-foreground shadow-sm" : "text-muted hover:text-foreground"}><Users className="mr-1.5 inline h-3.5 w-3.5" /><p className="hidden sm:inline">Website</p><span className="admin-status bg-primary/10 text-primary bg-warning">{userReviews.filter((r) => r.status === "pending").length}</span></button>
+        <button type="button" role="tab" aria-selected={tab === "admin"} onClick={() => setTab("admin")} className={tab === "admin" ? "bg-background text-foreground shadow-sm" : "text-muted hover:text-foreground"}><MessageSquareQuote className="inline h-4 w-4" /><p className="hidden sm:inline">Admin</p></button>
+        <button type="button" role="tab" aria-selected={tab === "user"} onClick={() => setTab("user")} className={tab === "user" ? "bg-background text-foreground shadow-sm" : "text-muted hover:text-foreground"}><Users className="inline h-4 w-4" /><p className="hidden sm:inline">Website</p>{userReviews.filter((r) => r.status === "pending").length > 0 ? <span className="grid max-h-4 max-w-4 rounded-full bg-rd-red text-[8px] font-black text-white ring-2 ring-background">{userReviews.filter((r) => r.status === "pending").length}</span> : null}</button>
       </div>
       <div className="admin-toolbar-search">
         <Search className="pointer-events-none absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted" aria-hidden="true" />
         <input className="admin-input" value={search} onChange={(e) => setSearch(e.target.value)} placeholder={tab === "admin" ? "Search reviewer, slug, role or review…" : "Search reviewer, email, work or text…"} aria-label="Search reviews" />
       </div>
       <select className="admin-select admin-toolbar-filter" value={filter} onChange={(e) => setFilter(e.target.value)} aria-label="Filter reviews">
-        {tab === "admin" ? <><option value="all">All visibility</option><option value="visible">Visible</option><option value="hidden">Hidden</option></> : <><option value="all">All statuses</option><option value="pending">Pending</option><option value="visible">Visible</option><option value="hidden">Hidden</option></>}
+        {tab === "admin" ? <><option value="all">All Visibility</option><option value="visible">Visible</option><option value="hidden">Hidden</option></> : <><option value="all">All Visibility</option><option value="pending">Pending</option><option value="visible">Visible</option><option value="hidden">Hidden</option></>}
       </select>
       <span className="admin-toolbar-meta">{tab === "admin" ? filteredAdminReviews.length : filteredUserReviews.length} shown</span>
     </AdminPageHeader>
