@@ -2,9 +2,12 @@
 
 import AdminLoadingSkeleton from "../AdminLoadingSkeleton";
 import { useEffect, useMemo, useState } from "react";
-import { ImageIcon, RefreshCw } from "lucide-react";
+import { ImageIcon, RefreshCw, Search } from "lucide-react";
 import ImageUploadInput from "../ImageUploadInput";
 import { isValidImageDataUri } from "@/lib/formValidation";
+import AdminActionButton from "../AdminActionButton";
+import AdminActionFeedback from "../AdminActionFeedback";
+import AdminPageHeader from "../AdminPageHeader";
 
 interface HeroImageRow {
   slot: string;
@@ -17,25 +20,30 @@ export default function HeroImagesEditorPage() {
   const [images, setImages] = useState<HeroImageRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [savingSlot, setSavingSlot] = useState<string | null>(null);
-  const [message, setMessage] = useState<string | null>(null);
+  const [message, setMessage] = useState<{ ok: boolean; text: string } | null>(null);
+  const [refreshing, setRefreshing] = useState(false);
+  const [slotFilter, setSlotFilter] = useState<"all" | "banner" | "process">("all");
 
-  function load() {
-    setLoading(true);
-    fetch("/api/admin/hero-images")
-      .then(async (response) => {
-        const data = await response.json().catch(() => ({}));
-        if (!response.ok) throw new Error(data.error || "Could not load picture slots.");
-        setImages(Array.isArray(data.heroImages) ? data.heroImages : []);
-      })
-      .catch((error) => setMessage(error instanceof Error ? error.message : "Could not load picture slots."))
-      .finally(() => setLoading(false));
+  async function load(isRefresh = false, silent = false) {
+    if (isRefresh && !silent) setRefreshing(true); else if (!silent) setLoading(true);
+    try {
+      const response = await fetch("/api/admin/hero-images", { cache: "no-store" });
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(data.error || "Could not load picture slots.");
+      setImages(Array.isArray(data.heroImages) ? data.heroImages : []);
+      if (isRefresh && !silent) setMessage({ ok: true, text: "Picture slots refreshed." });
+    } catch (error) {
+      setMessage({ ok: false, text: error instanceof Error ? error.message : "Could not load picture slots." });
+    } finally {
+      if (isRefresh && !silent) setRefreshing(false); else if (!silent) setLoading(false);
+    }
   }
 
-  useEffect(load, []);
+  useEffect(() => { void load(false); }, []);
 
   async function handleUpdate(image: HeroImageRow, imageUrl: string | null) {
     if (!isValidImageDataUri(imageUrl)) {
-      setMessage(`${image.label} must be a supported base64 image.`);
+      setMessage({ ok: false, text: `${image.label} must be a supported base64 image.` });
       return;
     }
     setMessage(null);
@@ -49,37 +57,41 @@ export default function HeroImagesEditorPage() {
       });
       const data = await response.json().catch(() => ({}));
       if (!response.ok) {
-        setMessage(data.error || `Could not save ${image.label}.`);
-        load();
+        await load(true, true);
+        throw new Error(data.error || `Could not save ${image.label}.`);
       }
-    } catch {
-      setMessage(`Could not save ${image.label}.`);
-      load();
+      setMessage({ ok: true, text: `“${image.label}” saved successfully.` });
+    } catch (error) {
+      setMessage({ ok: false, text: error instanceof Error ? error.message : `Could not save ${image.label}.` });
     } finally {
       setSavingSlot(null);
     }
   }
 
+  const filteredImages = useMemo(() => images.filter((item) => {
+    const matchesSlot = slotFilter === "all" || (slotFilter === "banner" ? item.slot === "banner" : false) || (slotFilter === "process" ? item.slot !== "banner" : false);
+    return matchesSlot;
+  }), [images, slotFilter]);
+
   const groups = useMemo(() => [
-    { key: "banner", title: "Hero / banner", description: "The primary visual at the top of the public site.", items: images.filter((item) => item.slot === "banner") },
-    { key: "process", title: "Process gallery", description: "Step visuals grouped together so uploads remain easy to scan on desktop and mobile.", items: images.filter((item) => item.slot !== "banner") },
-  ], [images]);
+    { key: "banner", title: "Hero / banner", description: "The primary visual at the top of the public site.", items: filteredImages.filter((item) => item.slot === "banner") },
+    { key: "process", title: "Process gallery", description: "Step visuals grouped together so uploads remain easy to scan on desktop and mobile.", items: filteredImages.filter((item) => item.slot !== "banner") },
+  ], [filteredImages]);
 
   if (loading) return <AdminLoadingSkeleton title="Loading picture slots" variant="gallery" rows={5} />;
 
   return (
     <div className="admin-page">
-      <div className="flex flex-row items-center justify-between">
-        <div className="min-w-0">
-          <span className="flex flex-row items-center gap-2"><ImageIcon className="h-auto w-auto text-primary" aria-hidden="true" /><p className="admin-page-title">Pictures</p></span>
-          <p className="admin-page-subtitle hidden sm:inline">Upload images by category. Each preview shows the live CMS value; images are stored as base64, never as an upload path.</p>
-        </div>
-        <div>
-          <button type="button" onClick={load} className="admin-action border border-border bg-background text-muted-strong hover:bg-surface-2"><RefreshCw className="h-4 w-4" aria-hidden="true" />Refresh</button>
-        </div>
-      </div>
-
-      {message && <p role="alert" className="rounded-lg bg-rd-red/10 px-3 py-2 text-xs font-semibold text-rd-red">{message}</p>}
+      <AdminPageHeader
+        icon={<ImageIcon className="h-4 w-4" />}
+        title="Pictures"
+        subtitle="Manage hero and process imagery with compact previews and per-slot save status."
+        actions={<AdminActionButton type="button" onClick={() => void load(true)} loading={refreshing} loadingLabel="Refreshing…" icon={<RefreshCw className="h-4 w-4" aria-hidden="true" />} className="admin-action border border-border bg-background text-muted-strong hover:bg-surface-2">Refresh</AdminActionButton>}
+      >
+        <select className="admin-select admin-toolbar-filter" value={slotFilter} onChange={(e) => setSlotFilter(e.target.value as typeof slotFilter)} aria-label="Filter image configuration"><option value="all">All slots</option><option value="banner">Banner</option><option value="process">Process</option></select>
+        <span className="admin-toolbar-meta">{filteredImages.length} / {images.length}</span>
+      </AdminPageHeader>
+      <div className="admin-sticky-feedback"><AdminActionFeedback message={message} /></div>
 
       <div className="admin-scroll-panel min-h-0 flex-1 pr-1">
         {groups.map((group) => (

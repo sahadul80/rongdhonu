@@ -1,8 +1,10 @@
-import { isValidImageDataUri, parseSortOrder, validateSortOrder } from "./formValidation";
+import { isValidImageDataUri, isValidSlug, parseSortOrder, validateSortOrder } from "./formValidation";
+import { slugify } from "./slug";
 
 const ACCENTS = new Set(["red", "orange", "amber", "green", "teal", "blue", "purple", "pink"]);
 
 export interface ServiceInput {
+  slug: string;
   name: string;
   name_bn: string | null;
   category: string;
@@ -23,9 +25,11 @@ export function parseServiceInput(body: Record<string, unknown>): { ok: true; va
   };
 
   const name = text(body.name, 200);
+  const slug = slugify(text(body.slug, 80), "service").slice(0, 80);
   const category = text(body.category, 100);
   const description = text(body.description, 1000);
   if (!name || !category || !description) return { ok: false, error: "Name, category and description are required." };
+  if (!isValidSlug(slug)) return { ok: false, error: "Service slug must use lowercase letters, numbers and single hyphens." };
 
   const sortOrder = validateSortOrder(body.sortOrder);
   if (!sortOrder.ok) return { ok: false, error: sortOrder.message };
@@ -36,6 +40,7 @@ export function parseServiceInput(body: Record<string, unknown>): { ok: true; va
   return {
     ok: true,
     value: {
+      slug,
       name,
       name_bn: optional(body.nameBn, 200),
       category,

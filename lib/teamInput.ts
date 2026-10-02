@@ -1,4 +1,5 @@
 import { isValidImageDataUri, isValidSlug, parseSortOrder, validateSortOrder, type ValidationResult } from "./formValidation";
+import { slugify } from "./slug";
 
 export interface TeamInput {
   slug: string; name: string; name_bn: string | null; role: string; role_bn: string | null; bio: string | null; bio_bn: string | null; photo_url: string | null;
@@ -6,8 +7,8 @@ export interface TeamInput {
 
 export function parseTeamInput(body: unknown): { ok: true; value: TeamInput } | { ok: false; error: string } {
   const record = typeof body === "object" && body !== null ? body as Record<string, unknown> : {};
-  const slug = String(record.slug ?? "").trim().slice(0, 80);
   const name = String(record.name ?? "").trim().slice(0, 160);
+  const slug = slugify(String(record.slug ?? ""), "team").slice(0, 80);
   const role = String(record.role ?? "").trim().slice(0, 120);
   const nameBn = record.nameBn ? String(record.nameBn).trim().slice(0, 160) : null;
   const roleBn = record.roleBn ? String(record.roleBn).trim().slice(0, 120) : null;

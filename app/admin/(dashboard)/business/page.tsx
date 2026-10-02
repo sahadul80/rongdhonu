@@ -4,6 +4,10 @@ import AdminLoadingSkeleton from "../AdminLoadingSkeleton";
 import { useEffect, useState } from "react";
 import { BriefcaseBusiness, Save, ShieldCheck } from "lucide-react";
 import ImageUploadInput from "../ImageUploadInput";
+import SuggestionInput from "../SuggestionInput";
+import AdminActionButton from "../AdminActionButton";
+import AdminActionFeedback from "../AdminActionFeedback";
+import AdminPageHeader from "../AdminPageHeader";
 import { validateBusinessForm, type BusinessFormValue } from "@/lib/formValidation";
 
 interface Business extends BusinessFormValue {}
@@ -67,20 +71,13 @@ export default function BusinessEditorPage() {
 
   return (
     <div className="admin-page">
-      <div className="flex flex-row items-center justify-between">
-        <div className="min-w-0">
-          <span className="flex flex-row items-center gap-2"><BriefcaseBusiness className="h-auto w-auto text-primary" aria-hidden="true" /><p className="admin-page-title">Business profile</p></span>
-          <p className="admin-page-subtitle sm:inline hidden">Compact identity, contact and visual asset controls. Empty optional values fall back safely on the public site.</p>
-        </div>
-        <div>
-          {status && <span className={`hidden max-w-xs truncate text-xs font-semibold sm:inline ${status.ok ? "text-rd-green" : "text-rd-red"}`}>{status.text}</span>}
-          <button type="button" onClick={handleSave} disabled={saving} className="admin-action bg-primary text-primary-foreground hover:bg-primary-600 disabled:opacity-60">
-            <Save className="h-4 w-4" aria-hidden="true" />
-            {saving ? "Saving…" : "Save"}
-          </button>
-        </div>
-      </div>
-      {status && <p className={`shrink-0 rounded-lg px-3 py-2 text-xs font-semibold sm:hidden ${status.ok ? "bg-rd-green/10 text-rd-green" : "bg-rd-red/10 text-rd-red"}`} role={status.ok ? "status" : "alert"}>{status.text}</p>}
+      <AdminPageHeader
+        icon={<BriefcaseBusiness className="h-4 w-4" />}
+        title="Business profile"
+        subtitle="Manage identity, contact details and brand assets from one compact workspace."
+        actions={<AdminActionButton type="button" onClick={handleSave} loading={saving} loadingLabel="Saving…" icon={<Save className="h-4 w-4" aria-hidden="true" />} className="admin-action bg-primary text-primary-foreground hover:bg-primary-600">Save</AdminActionButton>}
+      />
+      <div className="admin-sticky-feedback"><AdminActionFeedback message={status} /></div>
 
       <div className="admin-scroll-panel min-h-0 flex-1 pr-1">
         <div className="grid min-h-full content-start gap-3 pb-1 xl:grid-cols-[1.35fr_0.65fr]">
@@ -95,16 +92,16 @@ export default function BusinessEditorPage() {
           <div className="grid gap-3 sm:grid-cols-2">
             <Field label="Business name" value={form.name} onChange={(value) => update("name", value)} />
             <Field label="Short name" value={form.shortName} onChange={(value) => update("shortName", value)} />
-            <Field label="Tagline" value={form.tagline} onChange={(value) => update("tagline", value)} />
+            <SuggestionInput label="Tagline" value={form.tagline} collection="business" field="tagline" onChange={(value) => update("tagline", value)} />
             <Field label="Phone" value={form.phone} onChange={(value) => update("phone", value)} inputMode="tel" />
             <Field label="Email" value={form.email} onChange={(value) => update("email", value)} inputMode="email" />
             <Field label="Website" value={form.website} onChange={(value) => update("website", value)} />
-            <Field label="Map search text" value={form.mapQuery} onChange={(value) => update("mapQuery", value)} />
+            <SuggestionInput label="Map search text" value={form.mapQuery} collection="business" field="mapQuery" onChange={(value) => update("mapQuery", value)} />
             <Field label="Our Team slug" value={form.teamSlug} onChange={(value) => update("teamSlug", value)} hint="Used as the public Our Team section anchor ID." />
             <Field label="Our Work slug" value={form.workSlug} onChange={(value) => update("workSlug", value)} hint="Used as the public Our Work section anchor ID." />
-            <Field label="Address" value={form.address} onChange={(value) => update("address", value)} multiline />
+            <SuggestionInput label="Address" value={form.address} collection="business" field="address" onChange={(value) => update("address", value)} />
             <div className="sm:col-span-2">
-              <Field label="Address in Bangla" value={form.addressBn ?? ""} onChange={(value) => update("addressBn", value || null)} multiline hint="Optional. Public Bangla view falls back to the English address when empty." />
+              <SuggestionInput label="Address in Bangla" value={form.addressBn ?? ""} collection="business" field="addressBn" onChange={(value) => update("addressBn", value || null)} />
             </div>
           </div>
         </section>

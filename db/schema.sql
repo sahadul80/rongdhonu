@@ -45,6 +45,7 @@ CREATE TABLE IF NOT EXISTS business_profile (
 -- *_bn columns are optional; the site falls back to the English text when empty.
 CREATE TABLE IF NOT EXISTS services (
   id             TEXT PRIMARY KEY,
+  slug           TEXT UNIQUE,
   name           TEXT NOT NULL,
   name_bn        TEXT,
   category       TEXT NOT NULL,
@@ -98,13 +99,16 @@ CREATE TABLE IF NOT EXISTS work_items (
 -- ── Client reviews ───────────────────────────────────────────────────────────
 CREATE TABLE IF NOT EXISTS reviews (
   id         SERIAL PRIMARY KEY,
+  slug       TEXT UNIQUE,
   name       TEXT NOT NULL,
   role       TEXT,
   role_bn    TEXT,
   text_en    TEXT NOT NULL,
   text_bn    TEXT,
+  rating     NUMERIC(2,1),
   work_id    INTEGER REFERENCES work_items(id) ON DELETE SET NULL,
   sort_order INTEGER NOT NULL DEFAULT 0,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   active     BOOLEAN NOT NULL DEFAULT true,
   updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
@@ -127,11 +131,63 @@ CREATE TABLE IF NOT EXISTS contact_submissions (
   service_interest TEXT,
   message          TEXT NOT NULL,
   status           TEXT NOT NULL DEFAULT 'new' CHECK (status IN ('new', 'read', 'archived')),
+  consent_version  TEXT,
+  consent_at       TIMESTAMPTZ,
   created_at       TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
+
+-- ── Website-submitted work reviews (separate from editorial/admin reviews) ────
+CREATE TABLE IF NOT EXISTS user_reviews (
+  id                BIGSERIAL PRIMARY KEY,
+  work_id           INTEGER NOT NULL REFERENCES work_items(id) ON DELETE CASCADE,
+  name              TEXT NOT NULL,
+  email             TEXT NOT NULL,
+  rating            SMALLINT NOT NULL CHECK (rating BETWEEN 1 AND 5),
+  review_text       TEXT NOT NULL,
+  owner_token_hash  TEXT NOT NULL,
+  status            TEXT NOT NULL DEFAULT 'pending' CHECK (status IN ('pending', 'visible', 'hidden')),
+  identity_provider TEXT,
+  identity_subject  TEXT,
+  consent_version   TEXT,
+  consent_at        TIMESTAMPTZ,
+  created_at        TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at        TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+CREATE INDEX IF NOT EXISTS idx_user_reviews_work_status
+  ON user_reviews(work_id, status, created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_user_reviews_created_at
+  ON user_reviews(created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_user_reviews_consent
+  ON user_reviews(consent_at DESC);
+-- Existing deployments may already have these tables without the newer fields.
+ALTER TABLE contact_submissions ADD COLUMN IF NOT EXISTS consent_version TEXT;
+ALTER TABLE contact_submissions ADD COLUMN IF NOT EXISTS consent_at TIMESTAMPTZ;
+
+ALTER TABLE user_reviews ADD COLUMN IF NOT EXISTS owner_token_hash TEXT;
+ALTER TABLE user_reviews ADD COLUMN IF NOT EXISTS identity_provider TEXT;
+ALTER TABLE user_reviews ADD COLUMN IF NOT EXISTS identity_subject TEXT;
+ALTER TABLE user_reviews ADD COLUMN IF NOT EXISTS consent_version TEXT;
+ALTER TABLE user_reviews ADD COLUMN IF NOT EXISTS consent_at TIMESTAMPTZ;
+
+UPDATE user_reviews
+SET owner_token_hash = md5(id::text || ':' || email)
+WHERE owner_token_hash IS NULL OR trim(owner_token_hash) = '';
+
+CREATE INDEX IF NOT EXISTS idx_contact_submissions_consent
+  ON contact_submissions(consent_at DESC);
+CREATE INDEX IF NOT EXISTS idx_user_reviews_consent
+  ON user_reviews(consent_at DESC);
+CREATE INDEX IF NOT EXISTS idx_user_reviews_identity
+  ON user_reviews(work_id, identity_provider, identity_subject);
+
 -- ── Upgrade path for databases created before the Bangla columns existed ─────
 ALTER TABLE business_profile ADD COLUMN IF NOT EXISTS address_bn     TEXT;
+ALTER TABLE services         ADD COLUMN IF NOT EXISTS slug           TEXT;
+ALTER TABLE reviews          ADD COLUMN IF NOT EXISTS slug           TEXT;
+ALTER TABLE reviews          ADD COLUMN IF NOT EXISTS rating         NUMERIC(2,1);
+ALTER TABLE reviews          ADD COLUMN IF NOT EXISTS created_at     TIMESTAMPTZ NOT NULL DEFAULT now();
 ALTER TABLE business_profile ADD COLUMN IF NOT EXISTS team_slug      TEXT NOT NULL DEFAULT 'our-team';
 ALTER TABLE business_profile ADD COLUMN IF NOT EXISTS work_slug      TEXT NOT NULL DEFAULT 'our-work';
 ALTER TABLE team_members ADD COLUMN IF NOT EXISTS slug TEXT;
@@ -158,6 +214,86 @@ DO $$ BEGIN
   END IF;
 END $$;
 
+-- Stable collection slugs for public detail pages. Existing service IDs were already
+-- slug-like, so use them as the initial service slugs. Review slugs are generated
+-- from the reviewer name with the numeric ID as a collision-safe suffix.
+UPDATE services
+SET slug = regexp_replace(lower(trim(id)), '[^a-z0-9]+', '-', 'g')
+WHERE slug IS NULL OR trim(slug) = '';
+UPDATE services
+SET slug = regexp_replace(slug, '-+', '-', 'g')
+WHERE slug IS NOT NULL;
+UPDATE services
+SET slug = regexp_replace(slug, '(^-|-$)', '', 'g')
+WHERE slug IS NOT NULL;
+UPDATE services s
+SET slug = COALESCE(NULLIF(s.slug, ''), 'service-' || s.id)
+WHERE s.slug IS NULL OR trim(s.slug) = '';
+
+UPDATE reviews r
+SET slug = regexp_replace(lower(trim(r.name)), '[^a-z0-9]+', '-', 'g') || '-' || r.id
+WHERE r.slug IS NULL OR trim(r.slug) = '';
+UPDATE reviews
+SET slug = regexp_replace(slug, '-+', '-', 'g')
+WHERE slug IS NOT NULL;
+UPDATE reviews
+SET slug = regexp_replace(slug, '(^-|-$)', '', 'g')
+WHERE slug IS NOT NULL;
+
+DO $$ BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'services_slug_key') THEN
+    ALTER TABLE services ADD CONSTRAINT services_slug_key UNIQUE (slug);
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'reviews_slug_key') THEN
+    ALTER TABLE reviews ADD CONSTRAINT reviews_slug_key UNIQUE (slug);
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'reviews_rating_range') THEN
+    ALTER TABLE reviews ADD CONSTRAINT reviews_rating_range CHECK (rating IS NULL OR (rating >= 0 AND rating <= 5));
+  END IF;
+END $$;
+
+-- ── First-party visitor analytics ────────────────────────────────────────────
+CREATE TABLE IF NOT EXISTS site_visitors (
+  visitor_id           TEXT PRIMARY KEY,
+  first_seen_at        TIMESTAMPTZ NOT NULL DEFAULT now(),
+  last_seen_at         TIMESTAMPTZ NOT NULL DEFAULT now(),
+  visit_count          INTEGER NOT NULL DEFAULT 0,
+  session_count        INTEGER NOT NULL DEFAULT 0,
+  ip_hash              TEXT,
+  ip_masked            TEXT,
+  user_agent           TEXT,
+  browser              TEXT,
+  operating_system     TEXT,
+  device_type          TEXT,
+  language             TEXT,
+  languages            TEXT,
+  timezone             TEXT,
+  platform             TEXT,
+  screen_width         INTEGER,
+  screen_height        INTEGER,
+  viewport_width       INTEGER,
+  viewport_height      INTEGER,
+  cookies_enabled      BOOLEAN,
+  country              TEXT,
+  region               TEXT,
+  city                 TEXT,
+  referrer             TEXT,
+  landing_path         TEXT,
+  last_path            TEXT,
+  updated_at           TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+CREATE TABLE IF NOT EXISTS site_visit_events (
+  id                   BIGSERIAL PRIMARY KEY,
+  visitor_id           TEXT NOT NULL REFERENCES site_visitors(visitor_id) ON DELETE CASCADE,
+  session_id           TEXT NOT NULL,
+  visited_at           TIMESTAMPTZ NOT NULL DEFAULT now(),
+  path                 TEXT NOT NULL,
+  page_title           TEXT,
+  referrer             TEXT,
+  event_name           TEXT NOT NULL DEFAULT 'page_view'
+);
+
 -- ── Indexes ──────────────────────────────────────────────────────────────────
 CREATE INDEX IF NOT EXISTS idx_contact_submissions_status ON contact_submissions (status, created_at DESC);
 CREATE INDEX IF NOT EXISTS idx_services_sort              ON services (sort_order);
@@ -166,6 +302,16 @@ CREATE INDEX IF NOT EXISTS idx_team_members_sort          ON team_members (sort_
 CREATE INDEX IF NOT EXISTS idx_work_items_sort            ON work_items (sort_order);
 CREATE INDEX IF NOT EXISTS idx_work_items_active          ON work_items (active, sort_order);
 CREATE INDEX IF NOT EXISTS idx_reviews_work              ON reviews (work_id, sort_order);
+CREATE INDEX IF NOT EXISTS idx_services_slug              ON services (slug);
+CREATE INDEX IF NOT EXISTS idx_reviews_slug               ON reviews (slug);
+CREATE INDEX IF NOT EXISTS idx_reviews_created_at         ON reviews (created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_site_visitors_last_seen    ON site_visitors (last_seen_at DESC);
+CREATE INDEX IF NOT EXISTS idx_site_visitors_device       ON site_visitors (device_type);
+CREATE INDEX IF NOT EXISTS idx_site_visitors_country      ON site_visitors (country);
+CREATE INDEX IF NOT EXISTS idx_site_visitors_last_path    ON site_visitors (last_path);
+CREATE INDEX IF NOT EXISTS idx_site_visit_events_time     ON site_visit_events (visited_at DESC);
+CREATE INDEX IF NOT EXISTS idx_site_visit_events_visitor  ON site_visit_events (visitor_id, visited_at DESC);
+CREATE INDEX IF NOT EXISTS idx_site_visit_events_session  ON site_visit_events (session_id);
 
 -- ── Picture slots (structure only — no images). Needed so the admin's
 --    "Hero & Process Pictures" page has something to edit. ────────────────────

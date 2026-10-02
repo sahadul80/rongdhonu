@@ -2,12 +2,13 @@ import { NextResponse } from "next/server";
 import { getAdminSession } from "@/lib/auth";
 import { getDashboardSummary } from "@/lib/dashboard";
 
-export async function GET() {
+export async function GET(request: Request) {
   const session = await getAdminSession();
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   try {
-    const summary = await getDashboardSummary();
+    const days = Number(new URL(request.url).searchParams.get("days") || 30);
+    const summary = await getDashboardSummary(days);
     return NextResponse.json(summary, {
       headers: { "Cache-Control": "private, no-store" },
     });

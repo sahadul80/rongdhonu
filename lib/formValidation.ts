@@ -195,6 +195,7 @@ export function validateBusinessForm(
 }
 
 export interface ServiceFormValue {
+  slug: string;
   name: string;
   nameBn: string;
   category: string;
@@ -210,6 +211,10 @@ export interface ServiceFormValue {
 export function validateServiceForm(
   value: ServiceFormValue,
 ): ValidationResult {
+  if (!isValidSlug(value.slug)) {
+    return { ok: false, message: "Service slug must use lowercase letters, numbers and single hyphens." };
+  }
+
   if (!text(value.name)) {
     return {
       ok: false,
@@ -323,16 +328,33 @@ export function validateTeamForm(
 }
 
 export interface ReviewFormValue {
+  slug: string;
   name: string;
   role: string;
   roleBn: string;
   textEn: string;
   textBn: string;
+  rating?: number | null;
+  workId?: string | number | null;
 }
 
 export function validateReviewForm(
   value: ReviewFormValue,
 ): ValidationResult {
+  if (!isValidSlug(value.slug)) {
+    return { ok: false, message: "Review slug must use lowercase letters, numbers and single hyphens." };
+  }
+
+  if (value.rating != null) {
+    const rating = Number(value.rating);
+    if (!Number.isFinite(rating) || rating < 0 || rating > 5) {
+      return { ok: false, message: "Rating must be between 0 and 5." };
+    }
+    if (Math.abs(Math.round(rating * 10) - rating * 10) > 1e-9) {
+      return { ok: false, message: "Rating can have at most one decimal place." };
+    }
+  }
+
   if (!text(value.name)) {
     return {
       ok: false,

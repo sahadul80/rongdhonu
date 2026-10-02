@@ -16,6 +16,7 @@ ALTER TABLE hero_images ENABLE ROW LEVEL SECURITY;
 -- Data API roles, so RLS remains default-deny for the Data API.
 ALTER TABLE admin_users ENABLE ROW LEVEL SECURITY;
 ALTER TABLE contact_submissions ENABLE ROW LEVEL SECURITY;
+ALTER TABLE user_reviews ENABLE ROW LEVEL SECURITY;
 
 DO $$
 BEGIN
@@ -74,11 +75,11 @@ DO $$
 BEGIN
   IF EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'anonymous') THEN
     REVOKE INSERT, UPDATE, DELETE ON business_profile, services, team_members, work_items, reviews, hero_images FROM anonymous;
-    REVOKE ALL ON admin_users, contact_submissions FROM anonymous;
+    REVOKE ALL ON admin_users, contact_submissions, user_reviews FROM anonymous;
   END IF;
   IF EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'authenticated') THEN
     REVOKE INSERT, UPDATE, DELETE ON business_profile, services, team_members, work_items, reviews, hero_images FROM authenticated;
-    REVOKE ALL ON admin_users, contact_submissions FROM authenticated;
+    REVOKE ALL ON admin_users, contact_submissions, user_reviews FROM authenticated;
   END IF;
 END $$;
 

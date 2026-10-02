@@ -23,6 +23,7 @@ export interface BusinessProfile {
 
 export interface ServiceRow {
   id: string;
+  slug: string;
   name: string;
   nameBn: string | null;
   category: string;
@@ -39,14 +40,22 @@ export interface ServiceRow {
 
 export interface ReviewRow {
   id: number;
+  slug: string;
   name: string;
   role: string | null;
   roleBn: string | null;
   textEn: string;
   textBn: string | null;
+  rating: number | null;
   workId: number | null;
+  workSlug: string | null;
+  workTitle: string | null;
+  workTitleBn: string | null;
   sortOrder: number;
   active: boolean;
+  createdAt: string;
+  source?: "admin" | "user";
+  isPublic?: boolean;
 }
 
 export interface TeamMemberRow {
@@ -171,6 +180,7 @@ export async function getActiveServices(): Promise<ServiceRow[]> {
   );
   return rows.map((r) => ({
     id: String(r.id),
+    slug: safe(r.slug) || String(r.id),
     name: safe(r.name),
     nameBn: str(r.name_bn),
     category: safe(r.category),
@@ -187,21 +197,30 @@ export async function getActiveServices(): Promise<ServiceRow[]> {
 }
 
 export async function getActiveReviews(): Promise<ReviewRow[]> {
-  const rows = await publicRows<Record<string, unknown>>(
-    "reviews",
-    { active: "is.true", order: "sort_order.asc", select: "*" },
-    "SELECT * FROM reviews WHERE active = true ORDER BY sort_order ASC",
+  const rows = await query<Record<string, unknown>>(
+    `SELECT * FROM (
+       SELECT r.id::text AS source_id, r.id::bigint AS id, 'admin'::text AS source, r.slug, r.name, r.role, r.role_bn,
+              r.text_en, r.text_bn, r.rating, r.work_id, r.sort_order, r.active, r.created_at, r.updated_at,
+              w.slug AS work_slug, w.title AS work_title, w.title_bn AS work_title_bn
+       FROM reviews r
+       LEFT JOIN work_items w ON w.id = r.work_id
+       WHERE r.active = true
+       UNION ALL
+       SELECT ur.id::text AS source_id, ur.id::bigint AS id, 'user'::text AS source, NULL::text AS slug, ur.name, NULL::text AS role, NULL::text AS role_bn,
+              ur.review_text AS text_en, NULL::text AS text_bn, ur.rating, ur.work_id, 100000::integer + ur.id::integer AS sort_order,
+              true AS active, ur.created_at, ur.updated_at, w.slug AS work_slug, w.title AS work_title, w.title_bn AS work_title_bn
+       FROM user_reviews ur
+       JOIN work_items w ON w.id = ur.work_id
+       WHERE ur.status = 'visible' AND w.active = true
+     ) published_reviews
+     ORDER BY created_at DESC, id DESC`,
   );
   return rows.map((r) => ({
-    id: Number(r.id),
-    name: safe(r.name),
-    role: str(r.role),
-    roleBn: str(r.role_bn),
-    textEn: safe(r.text_en),
-    textBn: str(r.text_bn),
-    workId: r.work_id == null ? null : Number(r.work_id),
-    sortOrder: Number(r.sort_order),
-    active: Boolean(r.active),
+    id: Number(r.id), slug: safe(r.source) === "user" ? `user-review-${Number(r.id)}` : (safe(r.slug) || `review-${Number(r.id)}`),
+    name: safe(r.name), role: str(r.role), roleBn: str(r.role_bn), textEn: safe(r.text_en), textBn: str(r.text_bn),
+    rating: r.rating == null ? null : Number(r.rating), workId: r.work_id == null ? null : Number(r.work_id),
+    workSlug: str(r.work_slug), workTitle: str(r.work_title), workTitleBn: str(r.work_title_bn), sortOrder: Number(r.sort_order),
+    active: Boolean(r.active), createdAt: String(r.created_at ?? r.updated_at ?? ""), source: safe(r.source) as "admin" | "user", isPublic: true,
   }));
 }
 
@@ -283,13 +302,62 @@ export async function getTeamBySlug(slug: string): Promise<TeamMemberRow | null>
 }
 
 export async function getReviewsForWork(workId: number): Promise<ReviewRow[]> {
-  const rows = await publicRows<Record<string, unknown>>(
-    "reviews",
-    { active: "is.true", work_id: `eq.${workId}`, order: "sort_order.asc,id.asc", select: "*" },
-    "SELECT * FROM reviews WHERE active = true AND work_id = $1 ORDER BY sort_order ASC, id ASC",
+  const rows = await query<Record<string, unknown>>(
+    `SELECT * FROM (
+       SELECT r.id::bigint AS id, 'admin'::text AS source, r.slug, r.name, r.role, r.role_bn, r.text_en, r.text_bn, r.rating,
+              r.work_id, r.sort_order, r.active, r.created_at, r.updated_at, w.slug AS work_slug, w.title AS work_title, w.title_bn AS work_title_bn
+       FROM reviews r
+       JOIN work_items w ON w.id = r.work_id
+       WHERE r.active = true AND r.work_id = $1
+       UNION ALL
+       SELECT ur.id::bigint AS id, 'user'::text AS source, NULL::text AS slug, ur.name, NULL::text AS role, NULL::text AS role_bn,
+              ur.review_text AS text_en, NULL::text AS text_bn, ur.rating, ur.work_id, 100000::integer + ur.id::integer AS sort_order, true AS active,
+              ur.created_at, ur.updated_at, w.slug AS work_slug, w.title AS work_title, w.title_bn AS work_title_bn
+       FROM user_reviews ur
+       JOIN work_items w ON w.id = ur.work_id
+       WHERE ur.work_id = $1 AND ur.status = 'visible'
+     ) related_reviews
+     ORDER BY CASE WHEN source = 'admin' THEN 0 ELSE 1 END, created_at DESC, id DESC`,
     [workId],
   );
-  return rows.map((r) => ({ id: Number(r.id), name: safe(r.name), role: str(r.role), roleBn: str(r.role_bn), textEn: safe(r.text_en), textBn: str(r.text_bn), workId: r.work_id == null ? null : Number(r.work_id), sortOrder: Number(r.sort_order), active: Boolean(r.active), }));
+  return rows.map((r) => ({
+    id: Number(r.id), slug: safe(r.slug) || `user-review-${Number(r.id)}`, name: safe(r.name), role: str(r.role), roleBn: str(r.role_bn),
+    textEn: safe(r.text_en), textBn: str(r.text_bn), rating: r.rating == null ? null : Number(r.rating), workId: r.work_id == null ? null : Number(r.work_id),
+    workSlug: str(r.work_slug), workTitle: str(r.work_title), workTitleBn: str(r.work_title_bn), sortOrder: Number(r.sort_order), active: Boolean(r.active),
+    createdAt: String(r.created_at ?? r.updated_at ?? ""), source: safe(r.source) as "admin" | "user", isPublic: true,
+  }));
+}
+
+export async function getServiceBySlug(slug: string): Promise<ServiceRow | null> {
+  const row = await queryOne<Record<string, unknown>>(
+    "SELECT * FROM services WHERE (slug = $1 OR id = $1) AND active = true LIMIT 1",
+    [slug],
+  );
+  if (!row) return null;
+  return {
+    id: String(row.id), slug: safe(row.slug) || String(row.id), name: safe(row.name), nameBn: str(row.name_bn),
+    category: safe(row.category), categoryBn: str(row.category_bn), description: safe(row.description), descriptionBn: str(row.description_bn),
+    bestFor: safe(row.best_for), bestForBn: str(row.best_for_bn), accent: safe(row.accent), imageUrl: str(row.image_url),
+    sortOrder: Number(row.sort_order), active: Boolean(row.active),
+  };
+}
+
+export async function getReviewBySlug(slug: string): Promise<ReviewRow | null> {
+  const row = await queryOne<Record<string, unknown>>(
+    `SELECT r.*, w.slug AS work_slug, w.title AS work_title, w.title_bn AS work_title_bn
+     FROM reviews r
+     LEFT JOIN work_items w ON w.id = r.work_id
+     WHERE (r.slug = $1 OR (r.slug IS NULL AND 'review-' || r.id = $1)) AND r.active = true
+     LIMIT 1`,
+    [slug],
+  );
+  if (!row) return null;
+  return {
+    id: Number(row.id), slug: safe(row.slug) || `review-${Number(row.id)}`, name: safe(row.name), role: str(row.role), roleBn: str(row.role_bn),
+    textEn: safe(row.text_en), textBn: str(row.text_bn), rating: row.rating == null ? null : Number(row.rating),
+    workId: row.work_id == null ? null : Number(row.work_id), workSlug: str(row.work_slug), workTitle: str(row.work_title), workTitleBn: str(row.work_title_bn),
+    sortOrder: Number(row.sort_order), active: Boolean(row.active), createdAt: String(row.created_at ?? row.updated_at ?? ""),
+  };
 }
 
 export async function getHeroImages(): Promise<HeroImageRow[]> {

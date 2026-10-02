@@ -115,6 +115,16 @@ export const DICTIONARY: Dictionary = {
   errInvalidEmail: { en: "Enter a valid email address.", bn: "সঠিক ইমেইল ঠিকানা লিখুন।" },
   errGeneric: { en: "Something went wrong. Please try again.", bn: "কিছু একটা ভুল হয়েছে। অনুগ্রহ করে আবার চেষ্টা করুন।" },
   errNetwork: { en: "Could not reach the server. Please try again.", bn: "সার্ভারের সাথে সংযোগ করা যায়নি। অনুগ্রহ করে আবার চেষ্টা করুন।" },
+  formConsent: { en: "Consent & saved browser details", bn: "সম্মতি ও ব্রাউজারে তথ্য সংরক্ষণ" },
+  formConsentText: { en: "I consent to Rong Dhonu using the information I provide to respond to this form, and to securely save my name, email and phone on this browser for quicker future submissions.", bn: "আমি এই ফর্মের তথ্য ব্যবহার করে যোগাযোগের জন্য রংধনুকে সম্মতি দিচ্ছি এবং ভবিষ্যতে দ্রুত ফর্ম পূরণের জন্য আমার নাম, ইমেইল ও ফোন এই ব্রাউজারে নিরাপদে সংরক্ষণে সম্মতি দিচ্ছি।" },
+  useAccount: { en: "Or use your account", bn: "অথবা আপনার অ্যাকাউন্ট ব্যবহার করুন" },
+  useGoogle: { en: "Use Google", bn: "Google ব্যবহার করুন" },
+  useApple: { en: "Use Apple", bn: "Apple ব্যবহার করুন" },
+  identitySecure: { en: "Provider consent applies.", bn: "প্রোভাইডারের সম্মতি প্রযোজ্য।" },
+  savedBrowserProfile: { en: "Details saved on this browser", bn: "এই ব্রাউজারে তথ্য সংরক্ষিত" },
+  clearSavedProfile: { en: "Clear", bn: "মুছুন" },
+  privacyDataNotice: { en: "Read privacy & form data notice", bn: "গোপনীয়তা ও ফর্ম তথ্যের নোটিশ দেখুন" },
+  profileSavedText: { en: "Your details are saved on this browser for quicker future forms.", bn: "ভবিষ্যতে দ্রুত ফর্ম পূরণের জন্য আপনার তথ্য এই ব্রাউজারে সংরক্ষিত হয়েছে।" },
 
   // ── Footer
   builtBy: { en: "by", bn: "নির্মাণে" },

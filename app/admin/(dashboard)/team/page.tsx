@@ -2,9 +2,14 @@
 
 import AdminLoadingSkeleton from "../AdminLoadingSkeleton";
 import { useEffect, useState } from "react";
-import { Eye, EyeOff, Plus, Save, Trash2, Users, X } from "lucide-react";
+import { Eye, EyeOff, Plus, Save, Search, Trash2, Users, X } from "lucide-react";
 import ImageUploadInput from "../ImageUploadInput";
+import SuggestionInput from "../SuggestionInput";
+import AdminActionButton from "../AdminActionButton";
+import AdminActionFeedback from "../AdminActionFeedback";
+import AdminPageHeader from "../AdminPageHeader";
 import { parseSortOrder, validateSortOrder, validateTeamForm, type TeamFormValue } from "@/lib/formValidation";
+import { slugify } from "@/lib/slug";
 
 interface TeamRow {
   id: number;
@@ -21,7 +26,7 @@ interface TeamRow {
 }
 
 const BLANK: TeamFormValue & { slug: string } = {
-  slug: "team-member",
+  slug: "",
   name: "",
   nameBn: "",
   role: "",
@@ -39,11 +44,15 @@ export default function TeamEditorPage() {
   const [draft, setDraft] = useState(BLANK);
   const [message, setMessage] = useState<{ ok: boolean; text: string } | null>(null);
   const [deletingId, setDeletingId] = useState<number | null>(null);
+  const [actionKey, setActionKey] = useState<string | null>(null);
+  const [search, setSearch] = useState("");
+  const [visibility, setVisibility] = useState<"all" | "visible" | "hidden">("all");
 
-  async function load() {
+  async function load(silent = false) {
+    if (!silent) setActionKey("load");
     setLoading(true);
     try {
-      const response = await fetch("/api/admin/team");
+      const response = await fetch("/api/admin/team", { cache: "no-store" });
       const data = await response.json().catch(() => ({}));
       if (!response.ok) throw new Error(data.error || "Could not load team.");
       setTeam(Array.isArray(data.team) ? data.team : []);
@@ -51,6 +60,7 @@ export default function TeamEditorPage() {
       setMessage({ ok: false, text: error instanceof Error ? error.message : "Could not load team." });
     } finally {
       setLoading(false);
+      if (!silent) setActionKey(null);
     }
   }
 
@@ -60,98 +70,101 @@ export default function TeamEditorPage() {
 
   async function handleCreate(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    const validation = validateTeamForm(draft);
-    if (!validation.ok) return setMessage({ ok: false, text: validation.message });
-    const response = await fetch("/api/admin/team", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(draft),
-    });
-    const data = await response.json().catch(() => ({}));
-    if (!response.ok) return setMessage({ ok: false, text: data.error || "Could not add team member." });
-    setDraft(BLANK);
-    setCreating(false);
-    setMessage({ ok: true, text: "Team member added." });
-    void load();
+    const prepared = { ...draft, slug: draft.slug || slugify(draft.name, "team-member") };
+    const validation = validateTeamForm(prepared);
+    if (!validation.ok) { setMessage({ ok: false, text: validation.message }); return; }
+    setActionKey("create");
+    setMessage(null);
+    try {
+      const response = await fetch("/api/admin/team", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(prepared) });
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(data.error || "Could not add team member.");
+      setDraft(BLANK);
+      setCreating(false);
+      setMessage({ ok: true, text: "Team member added successfully." });
+      await load(true);
+    } catch (error) {
+      setMessage({ ok: false, text: error instanceof Error ? error.message : "Could not add team member." });
+    } finally {
+      setActionKey(null);
+    }
   }
 
   async function saveMember(member: TeamRow) {
-    const validation = validateTeamForm({
-      slug: member.slug,
-      name: member.name,
-      nameBn: member.name_bn ?? "",
-      role: member.role,
-      roleBn: member.role_bn ?? "",
-      bio: member.bio ?? "",
-      bioBn: member.bio_bn ?? "",
-      photoUrl: member.photo_url,
-    });
-    if (!validation.ok) return setMessage({ ok: false, text: validation.message });
+    const validation = validateTeamForm({ slug: member.slug, name: member.name, nameBn: member.name_bn ?? "", role: member.role, roleBn: member.role_bn ?? "", bio: member.bio ?? "", bioBn: member.bio_bn ?? "", photoUrl: member.photo_url });
+    if (!validation.ok) { setMessage({ ok: false, text: validation.message }); return; }
     const order = validateSortOrder(member.sort_order);
-    if (!order.ok) return setMessage({ ok: false, text: order.message });
-    const response = await fetch(`/api/admin/team/${member.id}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        name: member.name,
-        nameBn: member.name_bn,
-        role: member.role,
-        roleBn: member.role_bn,
-        bio: member.bio,
-        bioBn: member.bio_bn,
-        photoUrl: member.photo_url,
-        active: member.active,
-        sortOrder: parseSortOrder(member.sort_order),
-      }),
-    });
-    const data = await response.json().catch(() => ({}));
-    setMessage(response.ok ? { ok: true, text: "Team member saved." } : { ok: false, text: data.error || "Could not save team member." });
-    if (!response.ok) void load();
+    if (!order.ok) { setMessage({ ok: false, text: order.message }); return; }
+    const key = `save:${member.id}`;
+    setActionKey(key);
+    setMessage(null);
+    try {
+      const response = await fetch(`/api/admin/team/${member.id}`, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ slug: member.slug, name: member.name, nameBn: member.name_bn, role: member.role, roleBn: member.role_bn, bio: member.bio, bioBn: member.bio_bn, photoUrl: member.photo_url, active: member.active, sortOrder: parseSortOrder(member.sort_order) }) });
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) { await load(true); throw new Error(data.error || "Could not save team member."); }
+      setMessage({ ok: true, text: `“${member.name || "Team member"}” saved successfully.` });
+    } catch (error) {
+      setMessage({ ok: false, text: error instanceof Error ? error.message : "Could not save team member." });
+    } finally {
+      setActionKey(null);
+    }
   }
 
   async function deleteMember(id: number) {
-    const response = await fetch(`/api/admin/team/${id}`, { method: "DELETE" });
-    if (response.ok) {
+    const member = team.find((item) => item.id === id);
+    const key = `delete:${id}`;
+    setActionKey(key);
+    setMessage(null);
+    try {
+      const response = await fetch(`/api/admin/team/${id}`, { method: "DELETE" });
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(data.error || "Could not remove team member.");
       setTeam((current) => current.filter((member) => member.id !== id));
       setDeletingId(null);
-      setMessage({ ok: true, text: "Team member removed." });
-    } else {
-      setMessage({ ok: false, text: "Could not remove team member." });
+      setMessage({ ok: true, text: `“${member?.name || "Team member"}” removed successfully.` });
+    } catch (error) {
+      setMessage({ ok: false, text: error instanceof Error ? error.message : "Could not remove team member." });
+    } finally {
+      setActionKey(null);
     }
   }
+
+  const filteredTeam = team.filter((member) => {
+    const q = search.trim().toLowerCase();
+    const matchesSearch = !q || [member.name, member.role, member.slug, member.bio ?? ""].some((value) => value.toLowerCase().includes(q));
+    const matchesVisibility = visibility === "all" || (visibility === "visible" ? member.active : !member.active);
+    return matchesSearch && matchesVisibility;
+  });
 
   if (loading) return <AdminLoadingSkeleton title="Loading team" variant="editor" rows={6} />;
 
   return (
     <div className="admin-page admin-team-page">
-      <header className="admin-page-header">
-        <div className="admin-page-heading">
-          <div className="admin-page-heading__icon" aria-hidden="true"><Users className="h-4 w-4" /></div>
-          <div className="min-w-0">
-            <h1 className="admin-page-title">Our Team</h1>
-            <p className="admin-page-subtitle">Manage the people shown on the public “The People Behind the Finish” section.</p>
-          </div>
+      <AdminPageHeader
+        hasSearch
+        icon={<Users className="h-4 w-4" />}
+        title="Our Team"
+        subtitle="Manage the people shown on the public team section."
+        actions={
+          <AdminActionButton type="button" onClick={() => { setCreating((current) => !current); setMessage(null); }} className={`admin-action admin-action--primary ${creating ? "admin-action--neutral" : ""}`} aria-expanded={creating} icon={creating ? <X className="h-4 w-4" aria-hidden="true" /> : <Plus className="h-4 w-4" aria-hidden="true" />}>
+            {creating ? "Close form" : "Add member"}
+          </AdminActionButton>
+        }
+      >
+        <div className="admin-toolbar-search">
+          <Search className="pointer-events-none absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted" aria-hidden="true" />
+          <input className="admin-input" value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search name, role, slug or bio…" aria-label="Search team members" />
         </div>
-        <button
-          type="button"
-          onClick={() => {
-            setCreating((current) => !current);
-            setMessage(null);
-          }}
-          className={`admin-action admin-action--primary ${creating ? "admin-action--neutral" : ""}`}
-          aria-expanded={creating}
-        >
-          {creating ? <X className="h-4 w-4" aria-hidden="true" /> : <Plus className="h-4 w-4" aria-hidden="true" />}
-          {creating ? "Close form" : "Add member"}
-        </button>
-      </header>
-
-      {message && (
-        <div className={`admin-feedback ${message.ok ? "is-success" : "is-error"}`} role={message.ok ? "status" : "alert"}>
-          <span className="admin-feedback__dot" aria-hidden="true" />
-          <span>{message.text}</span>
+        <div>
+          <select className="admin-select admin-toolbar-filter" value={visibility} onChange={(event) => setVisibility(event.target.value as typeof visibility)} aria-label="Filter team visibility">
+            <option value="all">All visibility</option><option value="visible">Visible</option><option value="hidden">Hidden</option>
+          </select>
         </div>
-      )}
+        <div>
+          <span className="admin-toolbar-meta">{filteredTeam.length} / {team.length}</span>
+        </div>
+      </AdminPageHeader>
+      <div className="admin-sticky-feedback"><AdminActionFeedback message={message} /></div>
 
       {creating && (
         <section className="admin-panel team-create-panel" aria-labelledby="new-member-title">
@@ -165,10 +178,7 @@ export default function TeamEditorPage() {
           <form onSubmit={handleCreate} className="team-form">
             <MemberFields value={draft} onChange={setDraft} />
             <div className="admin-action-row admin-action-row--start">
-              <button type="submit" className="admin-action admin-action--primary">
-                <Plus className="h-4 w-4" aria-hidden="true" />
-                Add member
-              </button>
+              <AdminActionButton type="submit" loading={actionKey === "create"} loadingLabel="Adding…" icon={<Plus className="h-4 w-4" aria-hidden="true" />} className="admin-action admin-action--primary">Add member</AdminActionButton>
               <button type="button" className="admin-action admin-action--neutral" onClick={() => setDraft(BLANK)}>
                 <X className="h-4 w-4" aria-hidden="true" />
                 Clear form
@@ -182,14 +192,14 @@ export default function TeamEditorPage() {
         <div className="admin-panel-heading">
           <div>
             <h2 id="saved-members-title">Saved members</h2>
-            <p>{team.length} record{team.length === 1 ? "" : "s"}. Use the controls inside each profile to edit visibility, order, content, or image.</p>
+            <p>{filteredTeam.length} shown of {team.length} record{team.length === 1 ? "" : "s"}. Edit visibility, order, content, or image from each profile.</p>
           </div>
           <span className="admin-count-badge">{team.length}</span>
         </div>
 
         <div className="team-admin-list">
-          {team.length ? (
-            team.map((member) => (
+          {filteredTeam.length ? (
+            filteredTeam.map((member) => (
               <TeamCard
                 key={member.id}
                 member={member}
@@ -197,7 +207,7 @@ export default function TeamEditorPage() {
                 onDeleteRequest={() => setDeletingId(member.id)}
                 onDeleteCancel={() => setDeletingId(null)}
                 onDelete={() => void deleteMember(member.id)}
-                onSave={saveMember}
+                onSave={saveMember} actionKey={actionKey}
                 onChange={(patch) => setTeam((current) => current.map((item) => item.id === member.id ? { ...item, ...patch } : item))}
               />
             ))
@@ -217,10 +227,11 @@ export default function TeamEditorPage() {
 function MemberFields({ value, onChange }: { value: TeamFormValue & { slug: string }; onChange: (value: TeamFormValue & { slug: string }) => void }) {
   return (
     <div className="team-fields">
+      <Field label="Dynamic slug" value={value.slug} onChange={(slug) => onChange({ ...value, slug })} />
       <Field label="Full name" value={value.name} onChange={(name) => onChange({ ...value, name })} />
-      <Field label="Role" value={value.role} onChange={(role) => onChange({ ...value, role })} />
+      <SuggestionInput label="Role" value={value.role} collection="team" field="role" onChange={(role) => onChange({ ...value, role })} />
       <Field label="Name in Bangla" value={value.nameBn} onChange={(nameBn) => onChange({ ...value, nameBn })} />
-      <Field label="Role in Bangla" value={value.roleBn} onChange={(roleBn) => onChange({ ...value, roleBn })} />
+      <SuggestionInput label="Role in Bangla" value={value.roleBn} collection="team" field="roleBn" onChange={(roleBn) => onChange({ ...value, roleBn })} />
       <TextArea label="Short bio" hint="Keep this to 2–4 sentences." value={value.bio} onChange={(bio) => onChange({ ...value, bio })} />
       <TextArea label="Short bio in Bangla" hint="Keep this to 2–4 sentences." value={value.bioBn} onChange={(bioBn) => onChange({ ...value, bioBn })} />
       <div className="team-fields__photo">
@@ -238,6 +249,7 @@ function TeamCard({
   onDeleteCancel,
   onDelete,
   deleting,
+  actionKey,
 }: {
   member: TeamRow;
   onChange: (patch: Partial<TeamRow>) => void;
@@ -246,6 +258,7 @@ function TeamCard({
   onDeleteCancel: () => void;
   onDelete: () => void;
   deleting: boolean;
+  actionKey: string | null;
 }) {
   return (
     <article className={`team-admin-card ${member.active ? "is-active" : "is-hidden"}`}>
@@ -285,7 +298,7 @@ function TeamCard({
         <MemberFields
           value={{
             slug: member.slug,
-            name: member.name,
+        name: member.name,
             nameBn: member.name_bn ?? "",
             role: member.role,
             roleBn: member.role_bn ?? "",
@@ -337,10 +350,7 @@ function TeamCard({
           <div className="admin-delete-confirm">
             <span>Remove this member?</span>
             <div className="admin-action-row">
-              <button type="button" onClick={onDelete} className="admin-action admin-action--danger admin-action--compact">
-                <Trash2 className="h-3.5 w-3.5" aria-hidden="true" />
-                Remove
-              </button>
+              <AdminActionButton type="button" onClick={onDelete} loading={actionKey === `delete:${member.id}`} loadingLabel="Removing…" icon={<Trash2 className="h-3.5 w-3.5" aria-hidden="true" />} className="admin-action admin-action--danger admin-action--compact">Remove</AdminActionButton>
               <button type="button" onClick={onDeleteCancel} className="admin-action admin-action--neutral admin-action--compact">
                 Cancel
               </button>
@@ -352,10 +362,7 @@ function TeamCard({
               <Trash2 className="h-3.5 w-3.5" aria-hidden="true" />
               Delete
             </button>
-            <button type="button" onClick={() => void onSave(member)} className="admin-action admin-action--primary admin-action--compact">
-              <Save className="h-3.5 w-3.5" aria-hidden="true" />
-              Save changes
-            </button>
+            <AdminActionButton type="button" onClick={() => void onSave(member)} loading={actionKey === `save:${member.id}`} loadingLabel="Saving…" icon={<Save className="h-3.5 w-3.5" aria-hidden="true" />} className="admin-action admin-action--primary admin-action--compact">Save changes</AdminActionButton>
           </>
         )}
       </div>

@@ -16,7 +16,7 @@ function TableRows({ rows = 6 }: { rows?: number }) {
   return (
     <div className="divide-y divide-border rounded-xl border border-border bg-background">
       {Array.from({ length: rows }, (_, index) => (
-        <div key={index} className="grid grid-cols-[1.4fr_1fr_.65fr_auto] items-center gap-3 px-3 py-3 sm:px-4">
+        <div key={index} className="grid grid-cols-[1.4fr_1fr_.65fr_auto] items-center gap-3 px-3 py-3 sm:px-4 border border-border">
           <div className="min-w-0 space-y-2">
             <Bar className="h-3.5 w-28 sm:w-40" />
             <Bar className="h-2.5 w-20 sm:w-28" />

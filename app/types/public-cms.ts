@@ -27,6 +27,7 @@ export interface CmsBusiness {
 
 export interface CmsService {
   id: string;
+  slug: string;
   name: string;
   nameBn?: string | null;
   category: string;
@@ -41,12 +42,21 @@ export interface CmsService {
 
 export interface CmsReview {
   id: number;
+  slug: string;
   name: string;
   role: string | null;
   roleBn?: string | null;
   textEn: string;
   textBn: string | null;
+  rating: number | null;
   workId: number | null;
+  workSlug: string | null;
+  workTitle: string | null;
+  workTitleBn: string | null;
+  createdAt: string;
+  source?: "admin" | "user";
+  canManage?: boolean;
+  isPublic?: boolean;
 }
 
 export interface CmsTeamMember {

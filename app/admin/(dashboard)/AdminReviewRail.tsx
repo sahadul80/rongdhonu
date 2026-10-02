@@ -7,6 +7,7 @@ export interface DashboardReview {
   name: string;
   role: string | null;
   text: string;
+  rating: number | null;
   active: boolean;
 }
 
@@ -36,8 +37,8 @@ export default function AdminReviewRail({ reviews }: { reviews: DashboardReview[
                   {review.active ? "Live" : "Hidden"}
                 </span>
               </div>
-              <div className="mt-3 flex gap-0.5" aria-label="5 star review">
-                {Array.from({ length: 5 }, (_, index) => <Star key={index} className="h-3.5 w-3.5 fill-current text-rd-amber" aria-hidden="true" />)}
+              <div className="mt-3 flex items-center gap-1" aria-label={review.rating ? `${review.rating.toFixed(1)} out of 5 stars` : "Not rated"}>
+                {review.rating ? <>{Array.from({ length: 5 }, (_, index) => <Star key={index} className={`h-3.5 w-3.5 ${index + 1 <= Math.round(review.rating as number) ? "fill-current text-rd-amber" : "text-muted/25"}`} aria-hidden="true" />)}<span className="ml-1 text-[9px] font-bold text-muted">{review.rating.toFixed(1)}</span></> : <span className="text-[9px] font-bold uppercase tracking-wider text-muted">Not rated</span>}
               </div>
               <p className="mt-2 line-clamp-4 wrap-break-word text-sm leading-5 text-muted-strong">“{review.text}”</p>
               <div className="mt-3 border-t border-border pt-2">

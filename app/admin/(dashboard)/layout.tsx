@@ -17,13 +17,14 @@ export default async function DashboardLayout({ children }: { children: React.Re
           <div className="flex min-w-0 items-center gap-3">
             <ThemeToggle />
             <div className="min-w-0">
-              <h1 className="truncate text-sm font-bold text-foreground">Content Management System</h1>
+              <h1 className="truncate text-xl font-bold text-foreground hidden sm:inline">Content Management System</h1>
+              <h1 className="truncate text-xl font-bold text-foreground sm:hidden">CMS</h1>
               <p className="truncate text-[10px] text-muted">{session.email}</p>
             </div>
           </div>
-          <div className="flex shrink-0 items-center gap-1.5">
+          <div className="flex shrink-0 items-center gap-2.5">
             <Link href="/" target="_blank" className="admin-icon-button" title="Open website">
-              <Globe className="h-4 w-4" aria-hidden="true" />
+              <Globe className="h-4 w-4 text-green-600" aria-hidden="true" />
               <span className="hidden sm:inline">View site</span>
             </Link>
             <LogoutButton />

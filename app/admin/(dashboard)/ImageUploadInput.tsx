@@ -87,60 +87,58 @@ export default function ImageUploadInput({
   }
 
   return (
-    <div className="space-y-2">
-      <div className="flex items-center justify-between gap-2">
-        <span className="text-xs font-semibold uppercase tracking-[0.12em] text-muted-strong">{label}</span>
-        <span className={`inline-flex items-center gap-1 rounded-full px-2 py-1 text-[10px] font-semibold ${value ? "bg-rd-green/10 text-rd-green" : "bg-surface-2 text-muted"}`}>
-          <span className={`h-1.5 w-1.5 rounded-full ${value ? "bg-rd-green" : "bg-muted"}`} />
-          {value ? "Ready" : "Not set"}
-        </span>
-      </div>
-
-      <div className="overflow-hidden rounded-xl border border-border bg-surface-2/40">
-        <div className="flex min-h-32 items-center justify-center p-3 sm:min-h-36">
+    <div className="rounded-lg border border-border bg-surface/60 p-2">
+      <div className="flex min-w-0 items-center gap-2.5">
+        <div className="relative flex h-16 w-20 shrink-0 items-center justify-center overflow-hidden rounded-md border border-border bg-background">
           {value ? (
-            // eslint-disable-next-line @next/next/no-img-element -- the CMS stores base64 image data URIs.
-            <img src={value} alt={`${label} preview`} className="max-h-32 w-full rounded-lg object-contain sm:max-h-36" />
+            // eslint-disable-next-line @next/next/no-img-element -- CMS image data can be a data URI.
+            <img src={value} alt={`${label} preview`} className="h-full w-full object-contain p-1" />
           ) : (
-            <div className="flex flex-col items-center justify-center text-center text-muted">
-              <ImagePlus className="h-7 w-7" aria-hidden="true" />
-              <p className="mt-2 text-xs font-medium">Preview appears here</p>
-              <p className="mt-0.5 text-[10px]">PNG, JPG or WebP · base64</p>
-            </div>
+            <ImagePlus className="h-5 w-5 text-muted" aria-hidden="true" />
           )}
         </div>
 
-        <div className="flex flex-wrap items-center gap-2 border-t border-border bg-background/80 p-2.5">
-          <input
-            ref={inputRef}
-            type="file"
-            accept="image/png,image/jpeg,image/webp"
-            onChange={(event) => void handleFile(event.target.files?.[0])}
-            className="sr-only"
-          />
-          <button
-            type="button"
-            onClick={() => inputRef.current?.click()}
-            disabled={busy}
-            className="inline-flex min-h-10 items-center gap-2 rounded-lg bg-primary px-3 py-2 text-xs font-semibold text-primary-foreground transition hover:bg-primary-600 disabled:cursor-wait disabled:opacity-60"
-          >
-            {busy ? <RefreshCw className="h-4 w-4 animate-spin" aria-hidden="true" /> : value ? <RefreshCw className="h-4 w-4" aria-hidden="true" /> : <Upload className="h-4 w-4" aria-hidden="true" />}
-            {busy ? "Preparing…" : value ? "Replace image" : "Choose image"}
-          </button>
-          {value && (
+        <div className="min-w-0 flex-1">
+          <div className="flex items-center justify-between gap-2">
+            <span className="truncate text-[10px] font-black uppercase tracking-[0.12em] text-muted-strong">{label}</span>
+            <span className={`shrink-0 rounded-full px-1.5 py-0.5 text-[9px] font-bold ${value ? "bg-rd-green/10 text-rd-green" : "bg-surface-2 text-muted"}`}>
+              {value ? "Ready" : "Empty"}
+            </span>
+          </div>
+          <p className="mt-1 truncate text-[10px] text-muted">
+            {value ? "Preview ready" : "PNG, JPG or WebP"}
+          </p>
+          <div className="mt-2 flex flex-wrap gap-1.5">
+            <input
+              ref={inputRef}
+              type="file"
+              accept="image/png,image/jpeg,image/webp"
+              onChange={(event) => void handleFile(event.target.files?.[0])}
+              className="sr-only"
+            />
             <button
               type="button"
-              onClick={() => { setError(null); onChange(null); }}
-              className="inline-flex min-h-10 items-center gap-2 rounded-lg border border-border px-3 py-2 text-xs font-semibold text-muted-strong transition hover:border-rd-red/40 hover:text-rd-red"
+              onClick={() => inputRef.current?.click()}
+              disabled={busy}
+              className="inline-flex min-h-8 items-center gap-1.5 rounded-md bg-primary px-2.5 py-1.5 text-[10px] font-bold text-primary-foreground transition hover:bg-primary-600 disabled:cursor-wait disabled:opacity-60"
             >
-              <Trash2 className="h-4 w-4" aria-hidden="true" />
-              Remove
+              {busy ? <RefreshCw className="h-3.5 w-3.5 animate-spin" aria-hidden="true" /> : value ? <RefreshCw className="h-3.5 w-3.5" aria-hidden="true" /> : <Upload className="h-3.5 w-3.5" aria-hidden="true" />}
+              {busy ? "Preparing" : value ? "Replace" : "Choose"}
             </button>
-          )}
+            {value ? (
+              <button
+                type="button"
+                onClick={() => { setError(null); onChange(null); }}
+                className="inline-flex min-h-8 items-center gap-1.5 rounded-md border border-border px-2.5 py-1.5 text-[10px] font-bold text-muted-strong transition hover:border-rd-red/40 hover:text-rd-red"
+              >
+                <Trash2 className="h-3.5 w-3.5" aria-hidden="true" />
+                Remove
+              </button>
+            ) : null}
+          </div>
         </div>
       </div>
-
-      {error && <p className="rounded-lg bg-rd-red/10 px-2.5 py-2 text-[11px] font-medium text-rd-red" role="alert">{error}</p>}
+      {error ? <p className="mt-2 rounded-md bg-rd-red/10 px-2 py-1.5 text-[10px] font-semibold text-rd-red" role="alert">{error}</p> : null}
     </div>
   );
 }

@@ -1,8 +1,12 @@
 import { NextResponse } from "next/server";
 import nodemailer from "nodemailer";
 import { query } from "@/lib/db";
+import { isSameOriginRequest } from "@/lib/publicRequest";
+import { CONSENT_VERSION, getPublicProfile, setPublicProfileCookie } from "@/lib/publicProfile";
 
 interface ContactBody {
+  website?: string;
+  consentAccepted?: boolean;
   name?: string;
   email?: string;
   phone?: string;
@@ -47,6 +51,9 @@ async function notifyByEmail(submission: { name: string; email: string; phone: s
 }
 
 export async function POST(request: Request) {
+  if (!isSameOriginRequest(request)) {
+    return NextResponse.json({ error: "This form submission is not allowed." }, { status: 403 });
+  }
   let body: ContactBody;
   try {
     body = await request.json();
@@ -59,6 +66,11 @@ export async function POST(request: Request) {
   const phone = String(body.phone ?? "").trim().slice(0, 40);
   const serviceInterest = String(body.serviceInterest ?? "").trim().slice(0, 160);
   const message = String(body.message ?? "").trim().slice(0, 4000);
+  const honeypot = String(body.website ?? "").trim().slice(0, 120);
+  if (honeypot) return NextResponse.json({ ok: true });
+  if (body.consentAccepted !== true) {
+    return NextResponse.json({ error: "Please accept the form consent before submitting.", code: "consent_required" }, { status: 400 });
+  }
 
   if (!name || !email || !message) {
     return NextResponse.json({ error: "Name, email and message are required.", code: "required" }, { status: 400 });
@@ -68,9 +80,12 @@ export async function POST(request: Request) {
   }
 
   await query(
-    `INSERT INTO contact_submissions (name, email, phone, service_interest, message) VALUES ($1, $2, $3, $4, $5)`,
-    [name, email, phone || null, serviceInterest || null, message]
+    `INSERT INTO contact_submissions (name, email, phone, service_interest, message, consent_version, consent_at) VALUES ($1, $2, $3, $4, $5, $6, now())`,
+    [name, email, phone || null, serviceInterest || null, message, CONSENT_VERSION]
   );
+
+  const browserProfile = await getPublicProfile();
+  await setPublicProfileCookie({ ...browserProfile, name, email, phone, provider: browserProfile?.provider ?? "form", providerSubject: browserProfile?.providerSubject });
 
   await notifyByEmail({ name, email, phone, serviceInterest, message });
 

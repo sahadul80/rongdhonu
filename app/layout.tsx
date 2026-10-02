@@ -4,6 +4,7 @@ import "./globals.css";
 import ThemeProvider from "./components/ThemeProvider";
 import FloatingSupport from "./components/FloatingSupport";
 import { LanguageProvider } from "./components/LanguageContext";
+import AnalyticsTracker from "./components/AnalyticsTracker";
 
 const SITE_URL = "https://www.rongdhonubd.com";
 const SITE_NAME = "Rong Dhonu Renovation Limited";

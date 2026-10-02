@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "next lint",
     "db:migrate": "node --env-file=.env scripts/migrate.mjs",
+    "db:repair-user-reviews": "node --env-file=.env scripts/repair-user-reviews.mjs",
     "db:seed": "node --env-file=.env scripts/seed.mjs"
   },
   "dependencies": {

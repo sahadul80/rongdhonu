@@ -1,5 +1,6 @@
 "use client";
 
+import { LogOut } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
@@ -18,9 +19,10 @@ export default function LogoutButton() {
     <button
       onClick={handleLogout}
       disabled={loading}
-      className="rounded-md border border-border px-3 py-1.5 text-sm font-medium text-muted-strong hover:bg-surface-2 disabled:opacity-60"
+      className="button button-warning flex flex-row items-center gap-2"
     >
-      {loading ? "Signing out…" : "Sign out"}
+      <LogOut className="h-4 w-4" />
+      <p className="hidden sm:inline">{loading ? "Signing out…" : "Sign out"}</p>
     </button>
   );
 }

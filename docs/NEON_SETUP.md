@@ -36,3 +36,7 @@ NEXT_PUBLIC_GOOGLE_MAPS_EMBED_API_KEY=...
 Restrict that key by website origin/API before deploying. The contact map uses the business `map_query`; for the exact place pin, set that field in the admin Business settings to the canonical Google Maps place/search text (or later add a verified Google Place ID).
 
 The site also provides Google Maps Search and Directions links from the map modal.
+
+### Public work review uniqueness
+
+Website reviews are limited to one active review per work per reviewer email address. PostgreSQL enforces this with `ux_user_reviews_work_email`; users edit their existing review instead of creating another. Deleting a review removes the active record and permits a new submission later.
