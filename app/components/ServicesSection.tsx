@@ -6,6 +6,7 @@ import { ArrowUpRight, Briefcase } from "lucide-react";
 import { localizeService } from "@/app/data/services";
 import type { ServiceAccent } from "@/app/types/rong-dhonu";
 import { useLanguage } from "./LanguageContext";
+import SectionHeader from "./SectionHeader";
 import { useLazyPublicData } from "./useLazyPublicData";
 import type { CmsService } from "@/app/types/public-cms";
 import ContentDetailModal from "./ContentDetailModal";
@@ -144,31 +145,11 @@ export default function ServicesSection() {
   return (
     <section
       ref={ref}
-      className="bg-background py-7 sm:py-10"
+      className="section-surface section-y pattern-services bg-background"
       aria-labelledby="services-title"
     >
-      <div className="mx-auto max-w-7xl px-4 sm:px-5 lg:px-6">
-        {/* Section heading */}
-        <div className="mb-7 max-w-3xl">
-          <div className="mb-3 flex items-center gap-2 sm:mb-4 sm:gap-3">
-            <div className="h-px w-8 bg-rainbow sm:w-12" />
-
-            <span className="text-[10px] font-black uppercase tracking-[0.22em] text-primary sm:text-xs sm:tracking-[0.4em]">
-              {t("ourServices")}
-            </span>
-          </div>
-
-          <h2
-            id="services-title"
-            className="h2-fluid title-scroll-fx font-black uppercase leading-[1.05] text-foreground"
-          >
-            {t("finishesTransform")}
-          </h2>
-
-          <p className="mt-3 text-sm leading-relaxed text-muted sm:mt-4 sm:text-base">
-            {t("servicesIntro")}
-          </p>
-        </div>
+      <div className="section-shell">
+        <SectionHeader eyebrow={t("ourServices")} title={t("finishesTransform")} intro={t("servicesIntro")} titleId="services-title" />
 
         {/* Loading */}
         {loading || !data ? (
@@ -369,7 +350,7 @@ export default function ServicesSection() {
                     </div>
 
                     {/* Card content */}
-                    <div className="flex min-h-42.5 flex-1 flex-col p-4 sm:p-5">
+                    <div className="flex flex-1 flex-col p-3.5 sm:p-4">
                       <div className="mb-3 flex items-start justify-between gap-3">
                         <h3 className="min-w-0 flex-1 text-lg font-black leading-tight text-foreground sm:text-xl">
                           {text.name}

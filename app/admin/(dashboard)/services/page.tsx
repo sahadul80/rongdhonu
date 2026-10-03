@@ -2,7 +2,7 @@
 
 import AdminLoadingSkeleton from "../AdminLoadingSkeleton";
 import { useEffect, useState } from "react";
-import { FileText, Plus, Save, Search, Trash2, X } from "lucide-react";
+import { Eye, EyeOff, FileText, Plus, Save, Search, Trash2, X } from "lucide-react";
 import ImageUploadInput from "../ImageUploadInput";
 import SuggestionInput from "../SuggestionInput";
 import { validateServiceForm, type ServiceFormValue } from "@/lib/formValidation";
@@ -168,7 +168,7 @@ export default function ServicesEditorPage() {
         }
       >
         <div className="admin-toolbar-search">
-          <Search className="pointer-events-none absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted" aria-hidden="true" />
+          <Search className="pointer-events-none search-icon" aria-hidden="true" />
           <input className="admin-input" value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search service, slug, category or description…" aria-label="Search services" />
         </div>
         <select className="admin-select admin-toolbar-filter" value={categoryFilter} onChange={(event) => setCategoryFilter(event.target.value)} aria-label="Filter service category"><option value="all">All categories</option>{categories.map((category) => <option key={category} value={category}>{category}</option>)}</select>
@@ -178,7 +178,7 @@ export default function ServicesEditorPage() {
       <div className="admin-sticky-feedback"><AdminActionFeedback message={message} /></div>
 
       {creating && (
-        <div className="admin-scroll-panel min-h-0 flex-1 pr-1">
+        <div className="admin-scroll-panel min-h-0">
           <form onSubmit={handleCreate} className="admin-panel p-3 sm:p-4">
             <div className="mb-3"><h2 className="text-sm font-bold text-foreground">New service</h2><p className="text-[10px] text-muted">All required checks run in TypeScript.</p></div>
             <ServiceFields value={newService} onChange={setNewService} />
@@ -187,18 +187,34 @@ export default function ServicesEditorPage() {
         </div>
       )}
 
-      <div className="admin-scroll-panel min-h-0 flex-1 pr-1">
-        <div className="mb-3"><h2 className="text-sm font-bold text-foreground">Saved services</h2><p className="text-[10px] text-muted">{filteredServices.length} shown of {services.length} records</p></div>
-        <div className="admin-scroll-panel min-h-0 flex-1 space-y-2 pr-1">
+      <div className="admin-scroll-panel">
+        <div className="admin-scroll-panel min-h-0 grid gap-2 sm:grid-cols-2">
           {filteredServices.length ? filteredServices.map((service) => (
             <article key={service.id} className={`rounded-xl border p-3 ${service.active ? "border-border bg-background" : "border-dashed border-border bg-surface/60"}`}>
-              <div className="grid gap-2 lg:grid-cols-[0.9fr_1.4fr_0.8fr_auto]">
-                <Field label="Slug" value={service.slug} onChange={(value) => setServices((current) => current.map((item) => item.id === service.id ? { ...item, slug: value } : item))} />
+              <div className="admin-panel-header flex flex-row items-center justify-between p-2 border-b border-border">
+                <h3 className="text-sm font-bold text-foreground">{service.name}</h3>
+                <div>
+                  <span className={`admin-status-pill ${service.active ? "is-active" : "is-hidden"}`}>
+                    {service.active ? <Eye className="h-3.5 w-3.5" aria-hidden="true" /> : <EyeOff className="h-3.5 w-3.5" aria-hidden="true" />}
+                    {service.active ? "Visible" : "Hidden"}
+                  </span>
+                  <button
+                    type="button"
+                    title={service.active ? "Hide this service from the website" : "Show this service on the website"}
+                    aria-label={service.active ? `Hide ${service.name || "service"}` : `Show ${service.name || "service"}`}
+                    onClick={() => setServices((current) => current.map((item) => item.id === service.id ? { ...item, active: !item.active } : item))}
+                    className="admin-icon-button admin-icon-button--compact"
+                  >
+                    {service.active ? <EyeOff className="h-4 w-4" aria-hidden="true" /> : <Eye className="h-4 w-4" aria-hidden="true" />}
+                  </button>
+                </div>
+              </div>
+              <Field label="Slug" value={service.slug} onChange={(value) => setServices((current) => current.map((item) => item.id === service.id ? { ...item, slug: value } : item))} />
+              <div className="grid gap-2 sm:grid-cols-2">
                 <Field label="Service name" value={service.name} onChange={(value) => setServices((current) => current.map((item) => item.id === service.id ? { ...item, name: value } : item))} />
                 <SuggestionInput label="Category" value={service.category} collection="services" field="category" onChange={(value) => setServices((current) => current.map((item) => item.id === service.id ? { ...item, category: value } : item))} />
-                <label className="admin-label"><span>Visibility</span><button type="button" onClick={() => setServices((current) => current.map((item) => item.id === service.id ? { ...item, active: !item.active } : item))} className={`admin-status min-h-10 justify-center rounded-lg border ${service.active ? "border-rd-green/25 bg-rd-green/10 text-rd-green" : "border-border bg-surface-2 text-muted"}`}>{service.active ? "Visible" : "Hidden"}</button></label>
               </div>
-              <div className="mt-2 grid gap-2 lg:grid-cols-4">
+              <div className="grid gap-2 sm:grid-cols-2">
                 <Field label="Name in Bangla" value={service.name_bn} onChange={(value) => setServices((current) => current.map((item) => item.id === service.id ? { ...item, name_bn: value || null } : item))} />
                 <SuggestionInput label="Category in Bangla" value={service.category_bn ?? ""} collection="services" field="categoryBn" onChange={(value) => setServices((current) => current.map((item) => item.id === service.id ? { ...item, category_bn: value || null } : item))} />
                 <SuggestionInput label="Best for" value={service.best_for} collection="services" field="bestFor" onChange={(value) => setServices((current) => current.map((item) => item.id === service.id ? { ...item, best_for: value } : item))} />
@@ -227,18 +243,20 @@ export default function ServicesEditorPage() {
 }
 
 function ServiceFields({ value, onChange }: { value: ServiceFormValue; onChange: (value: ServiceFormValue) => void }) {
-  return <div className="grid gap-2 lg:grid-cols-2">
-    <Field label="Slug" value={value.slug} onChange={(slug) => onChange({ ...value, slug })} />
-    <Field label="Service name" value={value.name} onChange={(name) => onChange({ ...value, name })} />
-    <SuggestionInput label="Category" value={value.category} collection="services" field="category" onChange={(category) => onChange({ ...value, category })} />
-    <Field label="Name in Bangla" value={value.nameBn} onChange={(nameBn) => onChange({ ...value, nameBn })} />
-    <SuggestionInput label="Category in Bangla" value={value.categoryBn} collection="services" field="categoryBn" onChange={(categoryBn) => onChange({ ...value, categoryBn })} />
-    <div className="lg:col-span-2"><TextArea label="Description" value={value.description} onChange={(description) => onChange({ ...value, description })} /></div>
-    <TextArea label="Description in Bangla" value={value.descriptionBn} onChange={(descriptionBn) => onChange({ ...value, descriptionBn })} />
-    <SuggestionInput label="Best for" value={value.bestFor} collection="services" field="bestFor" onChange={(bestFor) => onChange({ ...value, bestFor })} />
-    <SuggestionInput label="Best for in Bangla" value={value.bestForBn} collection="services" field="bestForBn" onChange={(bestForBn) => onChange({ ...value, bestForBn })} />
-    <div><p className="admin-label"><span>Accent</span><span className="flex min-h-10 items-center gap-1.5">{ACCENTS.map((accent) => <button key={accent} type="button" onClick={() => onChange({ ...value, accent })} className={`h-7 w-7 rounded-full border-2 ${ACCENT_CLASS[accent]} ${value.accent === accent ? "border-foreground ring-2 ring-primary/20" : "border-transparent"}`} aria-label={`Use ${accent} accent`} />)}</span></p></div>
-    <ImageUploadInput label="Image" value={value.imageUrl} onChange={(imageUrl) => onChange({ ...value, imageUrl })} />
+  return <div>
+    <div className="w-full"><Field label="Slug" value={value.slug} onChange={(slug) => onChange({ ...value, slug })} /></div>
+    <div className="grid gap-2 lg:grid-cols-2">
+      <Field label="Service name" value={value.name} onChange={(name) => onChange({ ...value, name })} />
+      <SuggestionInput label="Category" value={value.category} collection="services" field="category" onChange={(category) => onChange({ ...value, category })} />
+      <Field label="Name in Bangla" value={value.nameBn} onChange={(nameBn) => onChange({ ...value, nameBn })} />
+      <SuggestionInput label="Category in Bangla" value={value.categoryBn} collection="services" field="categoryBn" onChange={(categoryBn) => onChange({ ...value, categoryBn })} />
+      <div className="lg:col-span-2"><TextArea label="Description" value={value.description} onChange={(description) => onChange({ ...value, description })} /></div>
+      <TextArea label="Description in Bangla" value={value.descriptionBn} onChange={(descriptionBn) => onChange({ ...value, descriptionBn })} />
+      <SuggestionInput label="Best for" value={value.bestFor} collection="services" field="bestFor" onChange={(bestFor) => onChange({ ...value, bestFor })} />
+      <SuggestionInput label="Best for in Bangla" value={value.bestForBn} collection="services" field="bestForBn" onChange={(bestForBn) => onChange({ ...value, bestForBn })} />
+      <div><p className="admin-label"><span>Accent</span><span className="flex min-h-10 items-center gap-1.5">{ACCENTS.map((accent) => <button key={accent} type="button" onClick={() => onChange({ ...value, accent })} className={`h-7 w-7 rounded-full border-2 ${ACCENT_CLASS[accent]} ${value.accent === accent ? "border-foreground ring-2 ring-primary/20" : "border-transparent"}`} aria-label={`Use ${accent} accent`} />)}</span></p></div>
+      <ImageUploadInput label="Image" value={value.imageUrl} onChange={(imageUrl) => onChange({ ...value, imageUrl })} />
+    </div>
   </div>;
 }
 

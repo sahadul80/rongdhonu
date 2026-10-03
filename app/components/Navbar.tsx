@@ -101,13 +101,13 @@ export default function Navbar({ business }: NavbarProps) {
         }`}
       >
         <div className="pointer-events-none absolute inset-x-0 -bottom-px h-4 bg-linear-to-t from-primary/8 via-primary/3 to-transparent blur-[5px]" aria-hidden="true" />
-        <div className="relative mx-auto flex h-16 w-full max-w-7xl items-center justify-between px-4 sm:px-5 lg:px-6">
-          <Link href="/" aria-label={`${business?.name || BRAND.name} — ${t("homeAria")}`} className="shrink-0 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary">
+        <div className="section-shell relative grid h-16 grid-cols-[auto_1fr_auto] items-center md:grid-cols-[1fr_auto_1fr]">
+          <Link href="/" aria-label={`${business?.name || BRAND.name} — ${t("homeAria")}`} className="shrink-0 justify-self-start rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary">
             <BrandLogo size={39} className="sm:hidden" />
             <BrandLogo size={43} className="hidden sm:flex" />
           </Link>
 
-          <div className="hidden min-w-0 flex-1 items-center justify-center gap-1 md:flex" aria-label={t("sectionLinks")}>
+          <div className="hidden min-w-0 items-center justify-center gap-1 md:flex" aria-label={t("sectionLinks")}>
             {navLinks.map(([label, id]) => {
               const active = activeSection === id;
               return (
@@ -124,7 +124,7 @@ export default function Navbar({ business }: NavbarProps) {
             })}
           </div>
 
-          <div className="flex items-center gap-1.5">
+          <div className="col-start-3 flex items-center justify-self-end gap-1.5">
             <div className="hidden items-center gap-1 md:flex">
               <LanguageToggle />
               <ThemeToggle />

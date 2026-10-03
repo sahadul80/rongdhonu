@@ -10,7 +10,7 @@ export default function Footer() {
     <footer className="site-footer">
       <div className="site-footer__inner">
         <div className="site-footer__brand">
-          <BrandLogo size={58} showTagline />
+          <BrandLogo size={58} />
           <p className="site-footer__tagline">{pick(BRAND.tagline, BRAND.taglineBn)}</p>
           <p className="site-footer__address">{pick(BRAND.address, BRAND.addressBn)}</p>
         </div>

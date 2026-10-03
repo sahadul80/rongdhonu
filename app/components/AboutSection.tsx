@@ -2,48 +2,47 @@
 
 import { BRAND } from "@/app/data/brand";
 import { useLanguage } from "./LanguageContext";
+import SectionHeader from "./SectionHeader";
+import AutoSlideRail from "./AutoSlideRail";
+import { ABOUT_ILLUSTRATIONS } from "./AboutIllustrations";
 
 const strengths = [
-  ["Color Planning", "Choose coordinated wall colors and finish combinations for the character of your space.", "text-rd-red"],
-  ["Surface Preparation", "Prepare walls properly, including skim coat work where required before finishing.", "text-rd-amber"],
-  ["Decorative Finishes", "Create distinctive surfaces through marble painting, Ambrose painting and texture work.", "text-rd-green"],
-  ["Transformation", "Bring the selected finish together into a consistent, polished renovation result.", "text-rd-blue"],
+  ["Color Planning", "Choose coordinated wall colors and finish combinations for the character of your space.", "colorPlanningDesc", "রং পরিকল্পনা"],
+  ["Surface Preparation", "Prepare walls properly, including skim coat work where required before finishing.", "prepDesc", "সারফেস প্রস্তুতি"],
+  ["Decorative Finishes", "Create distinctive surfaces through marble painting, Ambrose painting and texture work.", "decorativeDesc", "ডেকোরেটিভ ফিনিশ"],
+  ["Transformation", "Bring the selected finish together into a consistent, polished renovation result.", "transformationDesc", "রূপান্তর"],
 ] as const;
 
 export default function AboutSection() {
   const { t, language, pick } = useLanguage();
   return (
-    <section className="bg-background py-7 sm:py-10">
-      <div className="mx-auto max-w-7xl px-4 sm:px-5 lg:px-6">
-        <div className="grid items-start gap-8 lg:grid-cols-2 lg:gap-12">
-          <div>
-            <div className="mb-3 flex items-center gap-2 sm:mb-4 sm:gap-3">
-              <div className="h-px w-8 bg-rainbow sm:w-12" />
-              <span className="text-[10px] font-black uppercase tracking-[0.22em] text-primary sm:text-xs sm:tracking-[0.4em]">
-                {t("aboutCompany")}
-              </span>
-            </div>
-            <h2 className="h2-fluid title-scroll-fx font-black uppercase leading-[1.05] text-foreground">
-              {t("partnerSpace")}
-            </h2>
+    <section className="section-surface section-y pattern-about bg-background">
+      <div className="section-shell">
+        <SectionHeader eyebrow={t("aboutCompany")} title={t("partnerSpace")} />
+        <div className="grid items-stretch gap-3 lg:grid-cols-2 lg:gap-4">
+          <div className="glass-card reveal flex flex-col justify-around gap-3 p-4 sm:p-5">
             <p className="text-sm leading-relaxed text-muted sm:text-base">
               {pick(BRAND.name, BRAND.nameBn)} {t("aboutText")}
             </p>
-          </div>
-          <div className="grid gap-4 sm:gap-5 lg:gap-6">
-            <div className="mt-5 border-l-2 border-primary pl-4 sm:mt-7 sm:pl-5">
-              <p className="text-sm font-bold leading-relaxed text-muted-strong sm:text-base">
-                {t("aboutGoal")}
-              </p>
+            <div className="border-l-2 border-primary pl-4 sm:pl-5">
+              <p className="text-sm font-bold leading-relaxed text-muted-strong sm:text-base">{t("aboutGoal")}</p>
             </div>
-            <div className="mobile-swipe-rail sm:grid sm:grid-cols-2 sm:gap-4 sm:overflow-visible">
-            {strengths.map(([title, description, accent]) => (
-              <article key={title} className="glass-card swatch-card p-4 sm:p-5">
-                <h3 className="mt-3 text-sm font-black uppercase text-foreground sm:text-base">{language === "bn" ? (title === "Color Planning" ? "রং পরিকল্পনা" : title === "Surface Preparation" ? "সারফেস প্রস্তুতি" : title === "Decorative Finishes" ? "ডেকোরেটিভ ফিনিশ" : "রূপান্তর") : title}</h3>
-                <p className="mt-2 text-xs leading-relaxed text-muted sm:text-sm">{language === "bn" ? (title === "Color Planning" ? t("colorPlanningDesc") : title === "Surface Preparation" ? t("prepDesc") : title === "Decorative Finishes" ? t("decorativeDesc") : t("transformationDesc")) : description}</p>
-              </article>
-            ))}
           </div>
+          <div className="min-w-0">
+            <AutoSlideRail label={t("aboutCompany")}>
+              {strengths.map(([title, description, descKey, titleBn]) => {
+                const Illustration = ABOUT_ILLUSTRATIONS[title];
+                return (
+                  <article key={title} className="glass-card swatch-card auto-rail__item flex flex-col overflow-hidden">
+                    <div className="aspect-7/5 w-full h-full bg-surface-2/70" aria-hidden="true"><Illustration /></div>
+                    <div className="flex flex-1 flex-col p-2">
+                      <h3 className="text-sm font-black uppercase text-foreground sm:text-base">{language === "bn" ? titleBn : title}</h3>
+                      <p className="mt-1.5 text-xs leading-relaxed text-muted sm:text-sm">{language === "bn" ? t(descKey) : description}</p>
+                    </div>
+                  </article>
+                );
+              })}
+            </AutoSlideRail>
           </div>
         </div>
       </div>

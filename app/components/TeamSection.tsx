@@ -4,6 +4,7 @@ import { Mail } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { BRAND } from "@/app/data/brand";
 import { useLanguage } from "./LanguageContext";
+import SectionHeader from "./SectionHeader";
 import { useLazyPublicData } from "./useLazyPublicData";
 import type { CmsTeamMember } from "@/app/types/public-cms";
 import ContentDetailModal from "./ContentDetailModal";
@@ -46,14 +47,7 @@ export default function TeamSection({ embedded = false, teamSlug }: TeamSectionP
   return (
     <section id={teamSlug} ref={ref} className={sectionClass} aria-labelledby="team-title">
       <div className="team-section__inner">
-        <header className="team-section__header">
-          <div className="eyebrow-row">
-            <span className="eyebrow-line" aria-hidden="true" />
-            <span className="eyebrow-text">{t("team")}</span>
-          </div>
-          <h2 id="team-title" className="team-section__title">{t("teamTitle")}</h2>
-          <p className="team-section__intro">{t("teamIntro")}</p>
-        </header>
+        <SectionHeader compact eyebrow={t("team")} title={t("teamTitle")} intro={t("teamIntro")} titleId="team-title" className="team-section__header" />
 
         {loading || !data ? (
           <div className="team-grid-skeleton" aria-label="Loading team members">

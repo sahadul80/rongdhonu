@@ -27,6 +27,7 @@ import {
 } from "lucide-react";
 
 import { useLanguage } from "./LanguageContext";
+import SectionHeader from "./SectionHeader";
 import { useLazyPublicData } from "./useLazyPublicData";
 import type { CmsReview, CmsWork } from "@/app/types/public-cms";
 import ContentDetailModal from "./ContentDetailModal";
@@ -818,34 +819,14 @@ export default function WorkSection() {
   return (
     <section
       ref={ref}
-      className="bg-surface p-2 sm:p-4"
+      className="section-surface section-y pattern-work bg-surface"
       aria-labelledby="work-title"
     >
-      <div className="mx-auto max-w-dvw p-2">
-        <div className="flex items-end justify-between">
-          <div>
-            <div className="flex items-center gap-2">
-              <div className="h-px w-8 bg-rainbow sm:w-12" />
-              <span className="text-[10px] font-black uppercase tracking-[0.22em] text-primary sm:text-xs">
-                {t("work")}
-              </span>
-            </div>
-
-            <h2
-              id="work-title"
-              className="h2-fluid font-black uppercase leading-tight text-foreground"
-            >
-              {t("selectedWork")}
-            </h2>
-
-            <p className="mt-3 max-w-2xl text-sm leading-relaxed text-muted">
-              {t("workIntro")}
-            </p>
-          </div>
-        </div>
+      <div className="section-shell">
+        <SectionHeader eyebrow={t("work")} title={t("selectedWork")} intro={t("workIntro")} titleId="work-title" />
 
         {loading || !workData ? (
-          <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
             {[1, 2, 3, 4].map((item) => (
               <div
                 key={item}
@@ -854,11 +835,11 @@ export default function WorkSection() {
             ))}
           </div>
         ) : error ? (
-          <div className="mt-4 rounded-2xl border border-border bg-background p-5 text-sm text-muted">
+          <div className="rounded-2xl border border-border bg-background p-5 text-sm text-muted">
             {error}
           </div>
         ) : work.length === 0 ? null : (
-          <div className="mobile-swipe-rail mt-4 items-stretch sm:grid sm:grid-cols-2 sm:gap-2 sm:overflow-visible sm:pb-0 lg:grid-cols-4 lg:gap-3 lg:overflow-visible lg:pb-0">
+          <div className="mobile-swipe-rail items-stretch sm:grid sm:grid-cols-4 sm:gap-2 sm:overflow-visible sm:pb-0 lg:gap-3 lg:overflow-visible lg:pb-0">
             {work.map((item) => {
               const title = pick(
                 item.title,
@@ -957,7 +938,7 @@ export default function WorkSection() {
                   className="min-h-0 min-w-0 overflow-hidden border-b border-border md:border-b-0 md:border-r"
                   aria-labelledby="work-modal-title"
                 >
-                  <div className="grid h-full min-h-0 grid-rows-[minmax(0,2fr)_minmax(0,1fr)]">
+                  <div className="grid h-full min-h-0 grid-rows-[minmax(0,2.5fr)_minmax(0,2.5fr)]">
                     <div className="relative min-h-0 w-full overflow-hidden bg-primary/5">
                       {selectedWork.imageUrl ? (
                         <Image
@@ -979,19 +960,15 @@ export default function WorkSection() {
                       </span>
                     </div>
 
-                    <div className="min-h-0 overflow-hidden bg-background p-3 sm:p-4 md:p-5">
-                      <h3
-                        id="work-modal-title"
-                        className="line-clamp-2 text-lg font-black leading-tight text-foreground sm:text-xl md:text-2xl"
-                      >
+                    <div className="flex flex-col justify-around min-h-0 overflow-hidden bg-background p-2 sm:p-4">
+                      <h3 className="hidden sm:inline text-lg font-bold text-foreground sm:text-xl md:text-2xl">
                         {pick(selectedWork.title, selectedWork.titleBn)}
                       </h3>
-
-                      <p className="mt-2 line-clamp-3 text-[11px] leading-5 text-muted-strong sm:text-xs sm:leading-5 md:line-clamp-4">
+                      <p className="line-clamp-3 text-[13px] leading-5 text-muted-strong sm:leading-5 md:line-clamp-4">
                         {pick(selectedWork.description, selectedWork.descriptionBn)}
                       </p>
 
-                      <div className="mt-3 grid min-w-0 grid-cols-2 gap-x-3 gap-y-2 text-[9px] sm:grid-cols-3">
+                      <div className="grid min-w-0 grid-cols-2 gap-4 text-[11px]">
                         <div className="min-w-0">
                           <p className="font-bold uppercase tracking-widest text-muted">{t("clientRole")}</p>
                           <p className="mt-0.5 truncate font-semibold text-foreground">{selectedWork.clientName || "—"}</p>
@@ -1004,49 +981,64 @@ export default function WorkSection() {
                           <p className="font-bold uppercase tracking-widest text-muted">Year</p>
                           <p className="mt-0.5 font-semibold text-foreground">{selectedWork.year || "—"}</p>
                         </div>
+                        <div className="min-w-0">
+                          <p className="text-[8px] font-black uppercase tracking-[.18em] text-muted">Current work rating</p>
+                          <div className="mt-1 flex min-w-0 items-center gap-2">
+                            <span className="text-xl font-black leading-none text-foreground sm:text-2xl">
+                              {reviewStats.rated.length ? reviewStats.average.toFixed(1) : "—"}
+                            </span>
+                            <div className="min-w-0">
+                              <RatingStars rating={reviewStats.average} />
+                              <p className="mt-0.5 truncate text-[9px] text-muted">
+                                {reviewStats.rated.length
+                                  ? `${reviewStats.rated.length} review${reviewStats.rated.length === 1 ? "" : "s"}`
+                                  : "No ratings yet"}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>
                 </section>
 
-                {/* Review area: fixed rating/action header + scrollable form/reviews. */}
                 <section
                   className="grid min-h-0 min-w-0 grid-rows-[auto_minmax(0,1fr)] overflow-hidden bg-surface/35"
                   aria-labelledby="related-reviews-title"
                 >
                   <div className="z-10 shrink-0 border-b border-border bg-background/95 p-3 backdrop-blur-xl sm:p-4 md:p-5">
-                    <div className="flex min-w-0 items-center justify-between gap-3">
-                      <div className="min-w-0">
-                        <p className="text-[8px] font-black uppercase tracking-[.18em] text-muted">Current work rating</p>
-                        <div className="mt-1 flex min-w-0 items-center gap-2">
-                          <span className="text-xl font-black leading-none text-foreground sm:text-2xl">
-                            {reviewStats.rated.length ? reviewStats.average.toFixed(1) : "—"}
-                          </span>
-                          <div className="min-w-0">
-                            <RatingStars rating={reviewStats.average} />
-                            <p className="mt-0.5 truncate text-[9px] text-muted">
-                              {reviewStats.rated.length
-                                ? `${reviewStats.rated.length} review${reviewStats.rated.length === 1 ? "" : "s"}`
-                                : "No ratings yet"}
-                            </p>
-                          </div>
-                        </div>
-                      </div>
+                    <section
+                      aria-labelledby="related-reviews-title"
+                    >
+                      <div className="flex w-full min-w-0 items-center justify-between mx-auto">
+                        <div className="flex items-center gap-2">
+                          <Star
+                            className="h-4 w-4 fill-current text-rd-amber"
+                            aria-hidden="true"
+                          />
 
-                      <button
-                        type="button"
-                        onClick={startNewReview}
-                        className="inline-flex shrink-0 items-center gap-1.5 rounded-lg bg-primary px-3 py-2.5 text-[10px] font-black text-primary-foreground transition hover:bg-primary-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 sm:px-4"
-                      >
-                        {managedReview ? <Pencil className="h-3.5 w-3.5" aria-hidden="true" /> : <Send className="h-3.5 w-3.5" aria-hidden="true" />}
-                        <span className="hidden sm:inline">
-                          {managedReview ? "Edit your review" : "Write a review"}
-                        </span>
-                        <span className="sm:hidden">
-                          {managedReview ? "Edit" : "Review"}
-                        </span>
-                      </button>
-                    </div>
+                          <h4
+                            id="related-reviews-title"
+                            className="text-sm font-black uppercase text-foreground"
+                          >
+                            {t("relatedReviews")}
+                          </h4>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={startNewReview}
+                          className="inline-flex shrink-0 items-center gap-1.5 rounded-lg bg-primary p-2 text-[10px] font-black text-primary-foreground transition hover:bg-primary/10 hover:cursor-pointer hover:bg-primary/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+                        >
+                          {managedReview ? <Pencil className="h-3.5 w-3.5" aria-hidden="true" /> : <Send className="h-3.5 w-3.5" aria-hidden="true" />}
+                          <span className="hidden sm:inline">
+                            {managedReview ? "Edit your review" : "Write a review"}
+                          </span>
+                          <span className="sm:hidden">
+                            {managedReview ? "Edit" : "Review"}
+                          </span>
+                        </button>
+                      </div>
+                    </section>
                   </div>
 
                   {/* Scrollable form/review area */}
@@ -1342,7 +1334,7 @@ export default function WorkSection() {
                             disabled={Boolean(
                               reviewAction,
                             )}
-                            className="inline-flex items-center gap-2 rounded-lg bg-primary px-3 py-2 text-[10px] font-black text-primary-foreground disabled:opacity-60"
+                            className="inline-flex items-center gap-2 rounded-lg bg-primary px-3 py-2 text-[10px] font-black text-primary-foreground disabled:opacity-60 hover:bg-primary/90 hover:cursor-pointer"
                           >
                             {reviewAction ===
                             "create" ||
@@ -1367,30 +1359,6 @@ export default function WorkSection() {
                     </form>
                   ) : (
                     <>
-                      <section
-                        aria-labelledby="related-reviews-title"
-                      >
-                        <div className="flex items-center gap-2">
-                          <Star
-                            className="h-4 w-4 fill-current text-rd-amber"
-                            aria-hidden="true"
-                          />
-
-                          <h4
-                            id="related-reviews-title"
-                            className="text-sm font-black uppercase text-foreground"
-                          >
-                            {t("relatedReviews")}
-                          </h4>
-                        </div>
-
-                        <p className="mt-1 text-[10px] text-muted">
-                          One review per work per email.
-                          Your submitted review can be edited
-                          from this device.
-                        </p>
-                      </section>
-
                       {reviewMessage && (
                         <div
                           role={

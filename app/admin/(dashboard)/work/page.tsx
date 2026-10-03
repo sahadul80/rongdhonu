@@ -2,7 +2,7 @@
 
 import AdminLoadingSkeleton from "../AdminLoadingSkeleton";
 import { useEffect, useMemo, useState } from "react";
-import { Briefcase, Plus, Save, Search, Trash2, X } from "lucide-react";
+import { Briefcase, Eye, EyeOff, Plus, Save, Search, Trash2, X } from "lucide-react";
 import ImageUploadInput from "../ImageUploadInput";
 import SuggestionInput from "../SuggestionInput";
 import { validateWorkForm, type WorkFormValue } from "@/lib/formValidation";
@@ -83,7 +83,7 @@ export default function WorkEditorPage() {
           <AdminActionButton type="button" onClick={()=>setCreating(x=>!x)} className="admin-action bg-primary text-primary-foreground hover:bg-primary-600" icon={creating?<X className="h-4 w-4"/>:<Plus className="h-4 w-4"/>}>{creating?"Close form":"Add work"}</AdminActionButton>
         }
       >
-        <div className="admin-toolbar-search"><Search className="pointer-events-none absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted" aria-hidden="true"/><input className="admin-input" value={search} onChange={(e)=>setSearch(e.target.value)} placeholder="Search title, slug, category, client or location…" aria-label="Search work"/></div>
+        <div className="admin-toolbar-search"><Search className="pointer-events-none search-icon" aria-hidden="true"/><input className="admin-input" value={search} onChange={(e)=>setSearch(e.target.value)} placeholder="Search title, slug, category, client or location…" aria-label="Search work"/></div>
         <select className="admin-select admin-toolbar-filter" value={categoryFilter} onChange={(e)=>setCategoryFilter(e.target.value)} aria-label="Filter work category"><option value="all">All categories</option>{categories.map((category)=><option key={category} value={category}>{category}</option>)}</select>
         <select className="admin-select admin-toolbar-filter" value={visibility} onChange={(e)=>setVisibility(e.target.value as typeof visibility)} aria-label="Filter work visibility"><option value="all">All visibility</option><option value="visible">Visible</option><option value="hidden">Hidden</option></select>
         <span className="admin-toolbar-meta">{filteredWork.length} / {work.length}</span>
@@ -91,30 +91,47 @@ export default function WorkEditorPage() {
       <div className="admin-sticky-feedback"><AdminActionFeedback message={message} /></div>
       
       {creating&&
-      <div className="admin-scroll-panel min-h-0 flex-1 pr-1">
+      <div className="admin-scroll-panel min-h-0 flex-1">
         <form onSubmit={create} className="admin-panel p-3 sm:p-4"><WorkFields value={draft} onChange={setDraft}/><AdminActionButton className="admin-action mt-3 bg-primary text-primary-foreground" type="submit" loading={actionKey === "create"} loadingLabel="Adding…" icon={<Plus className="h-4 w-4"/>}>Add work</AdminActionButton></form>
       </div>}
 
-      <div className="admin-panel flex min-h-0 flex-1 flex-col p-3 sm:p-4">
-        <div className="mb-3">
-          <h2 className="text-sm font-bold text-foreground">Saved work</h2><p className="text-[10px] text-muted">{filteredWork.length} shown of {work.length} records</p>
-        </div>
-        <div className="admin-scroll-panel min-h-0 flex-1 pr-1">
+      <div className="admin-panel">
+        <div className="admin-scroll-panel grid min-h-0 sm:grid-cols-2 gap-2">
           {filteredWork.length?filteredWork.map(item=>
-            <article key={item.id} className="rounded-xl border border-border bg-background p-3">
-              <div className="grid gap-3 xl:grid-cols-[minmax(0,1fr)_13rem]"><WorkFields value={{slug:item.slug,title:item.title,titleBn:item.title_bn||"",category:item.category,categoryBn:item.category_bn||"",description:item.description,descriptionBn:item.description_bn||"",clientName:item.client_name||"",location:item.location||"",year:item.year?String(item.year):"",imageUrl:item.image_url}} onChange={v=>setWork(x=>x.map(i=>i.id===item.id?{...i,slug:v.slug,title:v.title,title_bn:v.titleBn||null,category:v.category,category_bn:v.categoryBn||null,description:v.description,description_bn:v.descriptionBn||null,client_name:v.clientName||null,location:v.location||null,year:v.year?Number(v.year):null,image_url:v.imageUrl}:i))}/>
-                <div className="rounded-xl border border-border bg-surface p-3">
-                  <label className="admin-label">
-                    <span>Visibility</span>
-                    <button type="button" onClick={()=>setWork(x=>x.map(i=>i.id===item.id?{...i,active:!i.active}:i))} className={`admin-status min-h-10 justify-center rounded-lg border ${item.active?"border-rd-green/25 bg-rd-green/10 text-rd-green":"border-border bg-surface-2 text-muted"}`}>{item.active?"Visible":"Hidden"}</button>
-                  </label>
-                  <label className="admin-label mt-2">
-                    <span>Display order</span>
-                    <input className="admin-input" inputMode="numeric" value={String(item.sort_order)} onChange={e=>setWork(x=>x.map(i=>i.id===item.id?{...i,sort_order:Number.isFinite(Number(e.target.value))?Math.max(0,Math.min(9999,Math.trunc(Number(e.target.value)))):0}:i))}/>
-                  </label>
+            <article key={item.id} className="rounded-xl border border-border bg-background p-2">
+              <div className="admin-panel-header flex flex-row items-center justify-between p-2 border-b border-border">
+                <h3 className="text-sm font-bold text-foreground">{item.title}</h3>
+                <div>
+                  <span className={`admin-status-pill ${item.active ? "is-active" : "is-hidden"}`}>
+                    {item.active ? <Eye className="h-3.5 w-3.5" aria-hidden="true" /> : <EyeOff className="h-3.5 w-3.5" aria-hidden="true" />}
+                    {item.active ? "Visible" : "Hidden"}
+                  </span>
+                  <button
+                    type="button"
+                    title={item.active ? "Hide this work from the website" : "Show this work on the website"}
+                    aria-label={item.active ? `Hide ${item.title || "work"}` : `Show ${item.title || "work"}`}
+                    onClick={()=>setWork(x=>x.map(i=>i.id===item.id?{...i,active:!i.active}:i))}
+                    className="admin-icon-button admin-icon-button--compact"
+                  >
+                    {item.active ? <EyeOff className="h-4 w-4" aria-hidden="true" /> : <Eye className="h-4 w-4" aria-hidden="true" />}
+                  </button>
                 </div>
               </div>
-              <div className="mt-3 flex flex-wrap justify-end gap-2 border-t border-border pt-2">{deleting===item.id?
+              <div className="grid gap-3 xl:grid-cols-[minmax(0,1fr)_13rem]">
+                <WorkFields value={{slug:item.slug,title:item.title,titleBn:item.title_bn||"",clientName:item.client_name||"",category:item.category,categoryBn:item.category_bn||"",description:item.description,descriptionBn:item.description_bn||"",location:item.location||"",year:item.year?String(item.year):"",imageUrl:item.image_url}} onChange={v=>setWork(x=>x.map(i=>i.id===item.id?{...i,slug:v.slug,title:v.title,title_bn:v.titleBn||null,category:v.category,category_bn:v.categoryBn||null,description:v.description,description_bn:v.descriptionBn||null,client_name:v.clientName||null,location:v.location||null,year:v.year?Number(v.year):null,image_url:v.imageUrl}:i))}/>
+              </div>
+              <div className="mt-3 flex flex-wrap justify-end gap-2 border-t border-border pt-2">
+                <label className="flex items-center gap-2">
+                  <span className="admin-control-label">Display order</span>
+                  <input
+                    className="admin-input admin-input--compact admin-order-input"
+                    inputMode="numeric"
+                    aria-label={`Display order for ${item.title || "title"}`}
+                    value={String(item.sort_order)}
+                    onChange={e=>setWork(x=>x.map(i=>i.id===item.id?{...i,sort_order:Number.isFinite(Number(e.target.value))?Math.max(0,Math.min(9999,Math.trunc(Number(e.target.value)))):0}:i))}
+                  />
+                </label>
+                {deleting===item.id?
                 <div className="flex items-center gap-2 rounded-lg bg-rd-red/10 px-2.5 py-1.5 text-[10px] font-semibold text-rd-red">
                   <span>Remove this work?</span>
                   <AdminActionButton type="button" onClick={()=>void remove(item.id)} loading={actionKey === `delete:${item.id}`} loadingLabel="Removing…" className="rounded-md bg-rd-red px-2 py-1 text-white">Remove</AdminActionButton>
@@ -133,5 +150,5 @@ export default function WorkEditorPage() {
   )
 }
 
-function WorkFields({value,onChange}:{value:WorkFormValue;onChange:(v:WorkFormValue)=>void}){return <div className="grid gap-3 sm:grid-cols-2"><Field label="Dynamic slug" value={value.slug} onChange={slug=>onChange({...value,slug})}/><Field label="Title" value={value.title} onChange={title=>onChange({...value,title})}/><Field label="Title in Bangla" value={value.titleBn} onChange={titleBn=>onChange({...value,titleBn})}/><SuggestionInput label="Category" value={value.category} collection="work" field="category" onChange={category=>onChange({...value,category})}/><SuggestionInput label="Category in Bangla" value={value.categoryBn} collection="work" field="categoryBn" onChange={categoryBn=>onChange({...value,categoryBn})}/><SuggestionInput label="Client name" value={value.clientName} collection="work" field="clientName" onChange={clientName=>onChange({...value,clientName})}/><SuggestionInput label="Location" value={value.location} collection="work" field="location" onChange={location=>onChange({...value,location})}/><Field label="Year" value={value.year} onChange={year=>onChange({...value,year})}/><div className="sm:col-span-2"><Field label="Description" value={value.description} onChange={description=>onChange({...value,description})} area/></div><div className="sm:col-span-2"><Field label="Description in Bangla" value={value.descriptionBn} onChange={descriptionBn=>onChange({...value,descriptionBn})} area/></div><div className="sm:col-span-2"><ImageUploadInput label="Work image" value={value.imageUrl} onChange={imageUrl=>onChange({...value,imageUrl})}/></div></div>}
+function WorkFields({value,onChange}:{value:WorkFormValue;onChange:(v:WorkFormValue)=>void}){return <div className="p-2"><Field label="Dynamic slug" value={value.slug} onChange={slug=>onChange({...value,slug})}/><div className="grid gap-3 sm:grid-cols-2"><Field label="Title" value={value.title} onChange={title=>onChange({...value,title})}/><SuggestionInput label="Category" value={value.category} collection="work" field="category" onChange={category=>onChange({...value,category})}/><Field label="Title in Bangla" value={value.titleBn} onChange={titleBn=>onChange({...value,titleBn})}/><SuggestionInput label="Category in Bangla" value={value.categoryBn} collection="work" field="categoryBn" onChange={categoryBn=>onChange({...value,categoryBn})}/><SuggestionInput label="Client name" value={value.clientName} collection="work" field="clientName" onChange={clientName=>onChange({...value,clientName})}/><SuggestionInput label="Location" value={value.location} collection="work" field="location" onChange={location=>onChange({...value,location})}/><Field label="Year" value={value.year} onChange={year=>onChange({...value,year})}/><div className="sm:col-span-2"><Field label="Description" value={value.description} onChange={description=>onChange({...value,description})} area/></div><div className="sm:col-span-2"><Field label="Description in Bangla" value={value.descriptionBn} onChange={descriptionBn=>onChange({...value,descriptionBn})} area/></div><div className="sm:col-span-2"><ImageUploadInput label="Work image" value={value.imageUrl} onChange={imageUrl=>onChange({...value,imageUrl})}/></div></div></div>}
 function Field({label,value,onChange,area}:{label:string;value:string;onChange:(v:string)=>void;area?:boolean}){return <label className="admin-label"><span>{label}</span>{area?<textarea className="admin-textarea" rows={3} value={value} onChange={e=>onChange(e.target.value)}/>:<input className="admin-input" value={value} onChange={e=>onChange(e.target.value)}/>}</label>}

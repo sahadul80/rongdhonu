@@ -162,7 +162,7 @@ export default function ReviewsPage() {
         <button type="button" role="tab" aria-selected={tab === "user"} onClick={() => setTab("user")} className={tab === "user" ? "bg-background text-foreground shadow-sm" : "text-muted hover:text-foreground"}><Users className="inline h-4 w-4" /><p className="hidden sm:inline">Website</p>{userReviews.filter((r) => r.status === "pending").length > 0 ? <span className="grid max-h-4 max-w-4 rounded-full bg-rd-red text-[8px] font-black text-white ring-2 ring-background">{userReviews.filter((r) => r.status === "pending").length}</span> : null}</button>
       </div>
       <div className="admin-toolbar-search">
-        <Search className="pointer-events-none absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted" aria-hidden="true" />
+        <Search className="pointer-events-none search-icon" aria-hidden="true" />
         <input className="admin-input" value={search} onChange={(e) => setSearch(e.target.value)} placeholder={tab === "admin" ? "Search reviewer, slug, role or review…" : "Search reviewer, email, work or text…"} aria-label="Search reviews" />
       </div>
       <select className="admin-select admin-toolbar-filter" value={filter} onChange={(e) => setFilter(e.target.value)} aria-label="Filter reviews">
@@ -172,7 +172,7 @@ export default function ReviewsPage() {
     </AdminPageHeader>
     <div className="admin-sticky-feedback"><AdminActionFeedback message={message} /></div>
 
-    {tab === "admin" ? <section className="admin-scroll-panel min-h-0 flex-1 space-y-2 pr-1">
+    {tab === "admin" ? <section className="admin-scroll-panel min-h-0 grid sm:grid-cols-2 gap-2">
       {creating && <form onSubmit={createReview} className="admin-panel shrink-0 p-3 sm:p-4"><div className="mb-3"><h2 className="text-sm font-bold">New admin review</h2><p className="text-[10px] text-muted">This review is editorial content controlled by the CMS.</p></div><ReviewFields value={draft} onChange={setDraft} workOptions={workOptions} /><AdminActionButton type="submit" loading={actionKey === "create"} loadingLabel="Publishing…" className="admin-action mt-3 bg-primary text-primary-foreground"><Plus className="h-4 w-4" />Publish review</AdminActionButton></form>}
       {filteredAdminReviews.map((review) => <article key={review.id} className="admin-review-editor rounded-2xl border border-border bg-background p-3 sm:p-4">
         <div className="rounded-2xl border border-border bg-primary/[0.03] p-3 sm:p-4">
@@ -218,7 +218,7 @@ export default function ReviewsPage() {
         </div>
       </article>)}
       {!filteredAdminReviews.length && <Empty text={adminReviews.length ? "No admin reviews match the current filter." : "No admin-authored reviews yet."} />}
-    </section> : <section className="min-h-0 flex-1 flex flex-col gap-2">
+    </section> : <section className="admin-scroll-panel min-h-0 grid sm:grid-cols-2 gap-2">
       <div className="admin-scroll-panel min-h-0 flex-1 space-y-2 pr-1">
         {filteredUserReviews.map((review) => <article key={review.id} className={`rounded-xl border p-3 ${review.status === "pending" ? "border-primary/30 bg-primary/5" : "border-border bg-background"}`}>
           <div className="flex flex-wrap items-start justify-between gap-3"><div className="min-w-0"><div className="flex flex-wrap items-center gap-2"><span className="text-sm font-black text-foreground">{review.name}</span><span className={`admin-status ${review.status === "visible" ? "bg-rd-green/10 text-rd-green" : review.status === "pending" ? "bg-primary/10 text-primary" : "bg-surface-2 text-muted"}`}>{review.status}</span><span className="admin-status bg-surface-2 text-muted">Website user</span></div><p className="mt-1 break-all text-[10px] text-muted">{review.email}</p>{review.work_title && <p className="mt-1 text-[10px] font-bold uppercase tracking-[0.12em] text-primary">{review.work_title}</p>}</div><div className="shrink-0">{stars(review.rating)}</div></div>

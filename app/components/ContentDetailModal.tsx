@@ -102,8 +102,8 @@ export default function ContentDetailModal({
           overflow-hidden
           rounded-2xl
           border
-          border-white/20
-          bg-background/95
+          border-border
+          bg-secondary
           shadow-2xl
           backdrop-blur-2xl
           sm:max-h-[calc(100dvh-2rem)]
@@ -159,18 +159,20 @@ export default function ContentDetailModal({
               w-9
               shrink-0
               place-items-center
-              rounded-full
+              bg-blur-2xl
+              rounded-xl
               border
               border-border
-              bg-background
-              text-muted-strong
+              text-sm
+              font-black
+              text-foreground
+              text-center
+              text-strong
               transition
-              hover:border-primary
-              hover:text-primary
-              focus:outline-none
-              focus-visible:ring-2
-              focus-visible:ring-primary
-              focus-visible:ring-offset-2
+              bg-surface
+              hover:bg-red-600/10
+              hover:text-red-600
+              hover:cursor-pointer
             "
             aria-label={`Close ${title}`}
           >

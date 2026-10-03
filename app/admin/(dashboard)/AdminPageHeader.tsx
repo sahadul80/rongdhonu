@@ -83,10 +83,6 @@ export default function AdminPageHeader({
 
   return (
     <header className={headerClassName}>
-      {/* =====================================================
-          ROW 1
-          Page icon + title + subtitle + actions
-          ===================================================== */}
       <div className="admin-page-header">
         <div className="admin-page-heading">
           {icon && (

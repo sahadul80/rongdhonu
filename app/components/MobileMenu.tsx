@@ -42,7 +42,7 @@ export default function MobileMenu({ isOpen, activeSection, onClose, business }:
             <button type="button" onClick={onClose} className="tap-target flex h-11 w-11 items-center justify-center rounded-full border border-border text-xl text-foreground transition-colors hover:border-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary" aria-label={t("closeMenuShort")}>&times;</button>
           </div>
         </div>
-        <div className="mt-5 flex flex-col gap-1">
+        <div className="flex flex-col gap-1">
           {links.map(([label, href]) => {
             const id = href.slice(1);
             const active = activeSection === id;

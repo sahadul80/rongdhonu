@@ -111,7 +111,7 @@ export default function BusinessEditorPage() {
             <h2 className="text-sm font-bold text-foreground">Brand assets</h2>
             <p className="text-[10px] text-muted">Images are converted to base64 and stored directly with the CMS record. No upload path is used.</p>
           </div>
-          <div className="space-y-3">
+          <div className="grid sm:grid-cols-3 xl:grid-cols-1 gap-2">
             <ImageUploadInput label="Logo" value={form.logoUrl} onChange={(value) => update("logoUrl", value)} />
             <ImageUploadInput label="Dark / reversed logo" value={form.logoReversedUrl} onChange={(value) => update("logoReversedUrl", value)} />
             <ImageUploadInput label="Icon / favicon" value={form.iconUrl} onChange={(value) => update("iconUrl", value)} maxDimension={512} />

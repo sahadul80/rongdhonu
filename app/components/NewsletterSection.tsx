@@ -74,7 +74,7 @@ export default function NewsletterSection({ embedded = false }: { embedded?: boo
     } catch { setError(t("errNetwork")); setStatus("error"); }
   }
 
-  const sectionClassName = embedded ? "h-full min-w-0" : "bg-background px-4 py-7 sm:py-10";
+  const sectionClassName = embedded ? "h-full min-w-0" : "section-shell section-y";
   const cardClassName = embedded ? "newsletter-section__card swatch-card relative h-full min-w-0 bg-surface p-4 text-center sm:p-5 lg:p-6" : "newsletter-section__card swatch-card relative mx-auto max-w-3xl bg-surface p-5 text-center sm:p-7";
 
   return (
@@ -82,9 +82,9 @@ export default function NewsletterSection({ embedded = false }: { embedded?: boo
       <div className={cardClassName}>
         <div className="mx-auto flex flex-row items-center gap-3 text-center sm:gap-4">
           <BrandLogo size={48} />
-          <span className="h2-fluid title-scroll-fx font-black uppercase text-foreground">{t("discussProject")}</span>
+          <span className="section-title section-title--sm">{t("discussProject")}</span>
         </div>
-        <p className="mx-auto max-w-xl text-sm leading-relaxed text-muted sm:text-base">{t("newsletterText")}</p>
+        <p className="section-lead mx-auto text-center">{t("newsletterText")}</p>
         {status === "done" ? <div className="mt-5 border border-rd-green/40 bg-rd-green/10 p-4 text-sm font-black text-rd-green">{t("thankYou")}<span className="mt-1 block text-[10px] font-semibold">{t("profileSavedText")}</span></div> : (
           <form onSubmit={handleSubmit} className="mx-auto mt-5 flex max-w-xl flex-col gap-2.5 text-left">
             <input type="text" name="website" tabIndex={-1} autoComplete="off" aria-hidden="true" className="absolute left-[-10000px] h-px w-px overflow-hidden opacity-0" />

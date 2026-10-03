@@ -14,7 +14,7 @@ type SkeletonVariant = keyof typeof VARIANT_LAYOUTS;
 export default function PublicSectionSkeleton({ className = "", variant = "generic" }: { className?: string; variant?: SkeletonVariant }) {
   const layout = VARIANT_LAYOUTS[variant];
   return (
-    <div className={`mx-auto max-w-7xl px-4 py-7 sm:px-5 sm:py-10 lg:px-6 ${className}`} aria-hidden="true">
+    <div className={`section-shell section-y ${className}`} aria-hidden="true">
       <div className="mb-6 max-w-2xl space-y-3">
         <div className="h-3 w-24 animate-pulse rounded bg-surface-2" />
         <div className="h-10 w-3/4 animate-pulse rounded bg-surface-2" />
@@ -22,7 +22,7 @@ export default function PublicSectionSkeleton({ className = "", variant = "gener
       </div>
       <div className={layout}>
         {[1, 2, 3].map((item) => (
-          <div key={item} className={`${variant === "process" ? "min-h-56 sm:min-h-72" : variant === "reviews" ? "h-40 min-w-[calc(100vw-2rem)] sm:min-w-97.5" : variant === "contact" ? "min-h-72" : variant === "team" ? "h-72" : "h-44"} animate-pulse rounded-2xl border border-border bg-surface`} />
+          <div key={item} className={`${variant === "process" ? "min-h-40 sm:min-h-48" : variant === "reviews" ? "h-40 min-w-[calc(100vw-2rem)] sm:min-w-97.5" : variant === "contact" ? "min-h-56" : variant === "team" ? "h-72" : "h-36"} animate-pulse rounded-2xl border border-border bg-surface`} />
         ))}
       </div>
     </div>

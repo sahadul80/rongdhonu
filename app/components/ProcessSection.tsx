@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import Image from "next/image";
 import { Pause, Play } from "lucide-react";
 import { useLanguage } from "./LanguageContext";
+import SectionHeader from "./SectionHeader";
 import {
   localizedProcessDescription,
   localizedProcessLabel,
@@ -102,9 +103,9 @@ export default function ProcessSection() {
     return (
       <section
         ref={setSectionRef}
-        className="bg-surface py-7 sm:py-10"
+        className="section-surface section-y pattern-process bg-surface"
       >
-        <div className="mx-auto max-w-7xl px-4 text-sm text-muted sm:px-5 lg:px-6">
+        <div className="section-shell text-sm text-muted">
           {error}
         </div>
       </section>
@@ -114,25 +115,10 @@ export default function ProcessSection() {
   return (
     <section
       ref={setSectionRef}
-      className="bg-surface py-7 sm:py-10"
+      className="section-surface section-y pattern-process bg-surface"
     >
-      <div className="mx-auto max-w-7xl px-4 sm:px-5 lg:px-6">
-        {/* Section heading */}
-        <div className="mb-7 text-center sm:mb-10">
-          <div className="mb-3 flex items-center justify-center gap-2 sm:mb-4 sm:gap-3">
-            <div className="h-px w-8 bg-rainbow sm:w-12" />
-
-            <span className="text-[10px] font-black uppercase tracking-[0.22em] text-primary sm:text-xs sm:tracking-[0.4em]">
-              {t("howWork")}
-            </span>
-
-            <div className="h-px w-8 bg-rainbow sm:w-12" />
-          </div>
-
-          <h2 className="h2-fluid title-scroll-fx font-black uppercase leading-tight text-foreground">
-            {t("ideaFinish")}
-          </h2>
-        </div>
+      <div className="section-shell">
+        <SectionHeader eyebrow={t("howWork")} title={t("ideaFinish")} />
 
         {/* Loading */}
         {loading || !data ? (
@@ -157,7 +143,7 @@ export default function ProcessSection() {
             <div
               role="tablist"
               aria-label={t("processSteps")}
-              className="mx-auto mb-6 flex max-w-3xl items-center gap-1 overflow-x-auto pb-1 sm:mb-8 sm:overflow-visible"
+              className="mx-auto mb-4 flex max-w-3xl items-center gap-1 overflow-x-auto pb-1 sm:mb-5 sm:overflow-visible"
             >
               {steps.map((step, index) => {
                 const isActive =

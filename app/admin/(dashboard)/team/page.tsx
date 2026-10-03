@@ -197,7 +197,7 @@ export default function TeamEditorPage() {
           <span className="admin-count-badge">{team.length}</span>
         </div>
 
-        <div className="team-admin-list">
+        <div className="admin-scroll-panel grid min-h-0 sm:grid-cols-2 gap-2">
           {filteredTeam.length ? (
             filteredTeam.map((member) => (
               <TeamCard
@@ -226,8 +226,11 @@ export default function TeamEditorPage() {
 
 function MemberFields({ value, onChange }: { value: TeamFormValue & { slug: string }; onChange: (value: TeamFormValue & { slug: string }) => void }) {
   return (
-    <div className="team-fields">
-      <Field label="Dynamic slug" value={value.slug} onChange={(slug) => onChange({ ...value, slug })} />
+    <>
+      <div className="w-full">
+        <Field label="Dynamic slug" value={value.slug} onChange={(slug) => onChange({ ...value, slug })} />
+      </div>
+      <div className="team-fields">
       <Field label="Full name" value={value.name} onChange={(name) => onChange({ ...value, name })} />
       <SuggestionInput label="Role" value={value.role} collection="team" field="role" onChange={(role) => onChange({ ...value, role })} />
       <Field label="Name in Bangla" value={value.nameBn} onChange={(nameBn) => onChange({ ...value, nameBn })} />
@@ -238,6 +241,7 @@ function MemberFields({ value, onChange }: { value: TeamFormValue & { slug: stri
         <ImageUploadInput label="Profile photo" value={value.photoUrl} onChange={(photoUrl) => onChange({ ...value, photoUrl })} maxDimension={PHOTO_MAX_PX} />
       </div>
     </div>
+    </>
   );
 }
 
@@ -294,11 +298,11 @@ function TeamCard({
         </div>
       </div>
 
-      <div className="team-admin-card__body">
+      <div className="p-2 sm:p-4">
         <MemberFields
           value={{
             slug: member.slug,
-        name: member.name,
+            name: member.name,
             nameBn: member.name_bn ?? "",
             role: member.role,
             roleBn: member.role_bn ?? "",
@@ -317,32 +321,6 @@ function TeamCard({
             photo_url: value.photoUrl,
           })}
         />
-
-        <aside className="team-admin-card__controls" aria-label={`Publishing controls for ${member.name || "team member"}`}>
-          <div className="admin-control-box">
-            <div>
-              <span className="admin-control-label">Visibility</span>
-              <small>{member.active ? "Shown on the public site" : "Hidden from the public site"}</small>
-            </div>
-            <button type="button" onClick={() => onChange({ active: !member.active })} className={`admin-toggle-control ${member.active ? "is-on" : ""}`}>
-              <span className="admin-toggle-control__dot" aria-hidden="true" />
-              <span>{member.active ? "Visible" : "Hidden"}</span>
-            </button>
-          </div>
-          <label className="admin-control-box">
-            <span>
-              <span className="admin-control-label">Display order</span>
-              <small>Lower numbers appear first</small>
-            </span>
-            <input
-              className="admin-input admin-input--compact admin-order-input"
-              inputMode="numeric"
-              aria-label={`Display order for ${member.name || "team member"}`}
-              value={String(member.sort_order)}
-              onChange={(event) => onChange({ sort_order: parseSortOrder(event.target.value) })}
-            />
-          </label>
-        </aside>
       </div>
 
       <div className="team-admin-card__actions">
@@ -358,6 +336,16 @@ function TeamCard({
           </div>
         ) : (
           <>
+            <label className="flex items-center gap-2">
+              <span className="admin-control-label">Display order</span>
+              <input
+                className="admin-input admin-input--compact admin-order-input"
+                inputMode="numeric"
+                aria-label={`Display order for ${member.name || "team member"}`}
+                value={String(member.sort_order)}
+                onChange={(event) => onChange({ sort_order: parseSortOrder(event.target.value) })}
+              />
+            </label>
             <button type="button" onClick={onDeleteRequest} className="admin-action admin-action--danger admin-action--compact">
               <Trash2 className="h-3.5 w-3.5" aria-hidden="true" />
               Delete
