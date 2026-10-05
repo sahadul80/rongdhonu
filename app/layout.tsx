@@ -4,10 +4,9 @@ import "./globals.css";
 import ThemeProvider from "./components/ThemeProvider";
 import FloatingSupport from "./components/FloatingSupport";
 import { LanguageProvider } from "./components/LanguageContext";
-import AnalyticsTracker from "./components/AnalyticsTracker";
 
 const SITE_URL = "https://www.rongdhonubd.com";
-const SITE_NAME = "Rong Dhonu Renovation Limited";
+const SITE_NAME = "Rong Dhonu";
 const BRAND_NAME = "Rong Dhonu";
 
 const SOCIAL_IMAGE = `${SITE_URL}/images/rong-dhonu/social-card.jpg`;
@@ -68,7 +67,7 @@ export const metadata: Metadata = {
         width: 1200,
         height: 1200,
         alt:
-          "Rong Dhonu Renovation Limited - Home Painting and Renovation Services in Bangladesh",
+          "Rong Dhonu - Home Painting and Renovation Services in Bangladesh",
       },
     ],
   },
@@ -139,7 +138,7 @@ const organizationSchema = {
   logo: LOGO_IMAGE,
 
   description:
-    "Rong Dhonu Renovation Limited provides home painting, wall painting, renovation and decorative finishing solutions across Bangladesh.",
+    "Rong Dhonu provides home painting, wall painting, renovation and decorative finishing solutions across Bangladesh.",
 
   areaServed: {
     "@type": "Country",

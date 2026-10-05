@@ -93,7 +93,7 @@ export default function VisitorAnalyticsTable() {
       {error && <p className="mb-2 rounded-lg bg-rd-red/10 px-3 py-2 text-xs font-semibold text-rd-red">{error}</p>}
 
       <div className="min-h-0 flex-1 overflow-auto rounded-xl border border-border">
-        <table className="min-w-[1250px] w-full border-collapse text-left text-[11px]">
+        <table className="min-w-312.5 w-full border-collapse text-left text-[11px]">
           <thead className="sticky top-0 z-10 bg-surface-2 text-muted-strong">
             <tr>{headers.map((header) => { const active = sort === header.key; return <th key={header.key} className="border-b border-border px-3 py-2.5 font-black uppercase tracking-wider"><button type="button" onClick={() => changeSort(header.key)} className="inline-flex items-center gap-1.5 text-left hover:text-primary">{header.label}{active ? direction === "asc" ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" /> : <ArrowDownUp className="h-3 w-3 opacity-40" />}</button></th>; })}<th className="border-b border-border px-3 py-2.5 font-black uppercase tracking-wider">Details</th></tr>
           </thead>
