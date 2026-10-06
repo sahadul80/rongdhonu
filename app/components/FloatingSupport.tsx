@@ -17,6 +17,7 @@ import {
   X,
 } from "lucide-react";
 import { useLanguage } from "./LanguageContext";
+import { BRAND } from "../data/brand";
 
 type Language = "en" | "bn";
 type Source = { title: string; url: string };
@@ -546,7 +547,7 @@ export default function FloatingSupport() {
       {/* Launchers: hidden on phones while the full-screen sheet is open */}
       <div className={`flex items-center gap-3 ${open ? "max-sm:hidden" : ""}`}>
         <a
-          href="tel:+8801712345678"
+          href={`tel:${BRAND.phone}`}
           aria-label={c.contact}
           title={c.contact}
           className="group relative flex h-14 w-14 items-center justify-center rounded-full bg-background text-foreground shadow-xl transition duration-300 hover:scale-105 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rd-green"
